@@ -1,0 +1,304 @@
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: #f8f8f8;
+  color: #333;
+  min-height: 100vh;
+}
+
+/* ===== CABEÇALHO ===== */
+header {
+    width: 100%;
+    background: #F15A24;
+    padding: 15px 0;
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    top: 0;
+    z-index: 100;
+}
+
+header a {
+    display: flex;             
+    align-items: center;        
+    gap: 8px;                   
+    padding-left: 20px;
+    color: white;
+    text-decoration: none;
+    font-size: 19px;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+/* ===== TÍTULOS ===== */
+h2 {
+  color: #F15A24;
+  text-align: center;
+  font-size: 26px;
+  margin: 50px 0 35px;
+  font-weight: bold;
+}
+
+/* ===== FORMULÁRIO ===== */
+.container {
+  max-width: 500px;
+  margin: 0 auto 60px;
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  margin-top: 50px;
+}
+
+.container label {
+  display: block;
+  margin: 20px 0 8px;
+  font-weight: bold;
+  color: #444;
+  font-size: 15.5px;
+}
+
+.container select,
+.container input {
+  width: 100%;
+  padding: 13px;
+  border: 2.5px solid #F15A24;
+  border-radius: 10px;
+  font-size: 15.5px;
+}
+
+#registrar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50%;
+  margin: 30px auto 0;
+  padding: 16px;
+  background: #F15A24;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+#registrar:hover { background: #e04e1c; transform: translateY(-3px); }
+
+/* ===== BOTÕES ===== */
+.botoes-principais {
+  max-width: 1100px;
+  margin: 20px auto 10px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 14px;
+  padding-right: 4px;
+}
+
+.botoes-principais button {
+  padding: 12px 28px;
+  font-size: 13px;
+  font-weight: bold;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+#exportar { background: #27ae60; color: white; }
+#exportar:hover { background: #218838; }
+
+#excluirRegistro { background: #dc3545; color: white; }
+#excluirRegistro:hover { background: #c82333; }
+
+/* ===== TABELA PRINCIPAL ===== */
+.table-box {
+  max-width: 1100px;
+  margin: 0 auto 80px;
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+}
+
+.table-box table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.table-box thead {
+  background: #F15A24;
+  color: white;
+}
+
+.table-box th,
+.table-box td {
+  padding: 16px 12px;
+  text-align: center;
+  font-size: 14.8px;
+  vertical-align: middle;
+  border-bottom: 1px solid #eee;
+}
+
+.table-box th {
+  font-weight: bold;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.table-box tbody:empty::after {
+  content: "Nenhum registro encontrado";
+  display: block;
+  padding: 120px 20px;
+  text-align: center;
+  font-size: 19px;
+  color: #999;
+  font-style: italic;
+  background: #fdfdfd;
+}
+
+/* LARGURAS */
+.table-box th:nth-child(1), .table-box td:nth-child(1) { width: 70px; }
+.table-box th:nth-child(2), .table-box td:nth-child(2) { width: 340px; }
+.table-box th:nth-child(3), .table-box td:nth-child(3) { width: 200px; }
+.table-box th:nth-child(4), .table-box td:nth-child(4) { width: 90px; }
+.table-box th:nth-child(5), .table-box td:nth-child(5) { width: 180px; }
+.table-box th:nth-child(6), .table-box td:nth-child(6) { width: 170px; }
+
+.table-box td:nth-child(2) {
+  text-align: left;
+  padding-left: 26px;
+  white-space: normal;
+  line-height: 1.5;
+}
+
+#selecionar-todos,
+.checkbox-registro {
+  width: 22px;
+  height: 22px;
+  accent-color: #F15A24;
+  cursor: pointer;
+  display: block;
+  margin: 0 auto;
+}
+
+.table-box tbody tr:nth-child(even) { background: #fff8f2; }
+.table-box tbody tr:hover { background: #ffede1; }
+
+/* ========================================================= */
+/* CARDS NO CELULAR — IMPRESSORA COM SETOR À DIREITA (100% FUNCIONANDO!) */
+/* ========================================================= */
+@media (max-width: 768px) {
+  .table-box {
+    margin: 20px 15px;
+  }
+
+  .table-box table,
+  .table-box thead,
+  .table-box tbody,
+  .table-box th,
+  .table-box td,
+  .table-box tr {
+    display: block;
+  }
+
+  .table-box thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+
+  .table-box tr {
+    border: 1px solid #ddd;
+    border-radius: 14px;
+    margin-bottom: 22px;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+
+  .table-box td {
+    border: none;
+    position: relative;
+    padding: 12px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 15px;
+  }
+
+  .table-box td:last-child { border-bottom: none; }
+
+  .table-box td:before {
+    content: attr(data-label) ":";
+    float: left;
+    width: 50%;
+    font-weight: bold;
+    color: #F15A24;
+    padding-right: 10px;
+  }
+
+  .table-box td:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+
+  /* CHECKBOX */
+  .table-box td:first-child {
+    padding: 16px 20px 8px;
+    text-align: left;
+  }
+  .table-box td:first-child:before { display: none; }
+
+  /* IMPRESSORA — TÍTULO À ESQUERDA, VALOR À DIREITA */
+  .table-box td[data-label="Impressora"] {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 20px;
+    background: #fff5f2;
+    font-weight: bold;
+    font-size: 16px;
+  }
+
+  .table-box td[data-label="Impressora"]::before {
+    content: "Impressora:";
+    color: #F15A24;
+    font-weight: bold;
+  }
+
+  .table-box td[data-label="Impressora"] {
+    color: #333;
+  }
+
+  /* MENSAGEM VAZIA */
+  .table-box tbody:empty::after {
+    content: "Nenhum registro encontrado";
+    display: block;
+    padding: 140px 20px;
+    text-align: center;
+    font-size: 19px;
+    color: #999;
+    font-style: italic;
+  }
+}
+
+/* BOTÕES RESPONSIVOS */
+@media (max-width: 480px) {
+  .botoes-principais {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .botoes-principais button {
+    width: 100%;
+    max-width: 300px;
+  }
+}

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/registros.css">
+    <title>Registros - Cambaí Sementes</title>
+    <link rel="icon" type="image/jpeg" href="assets\logoCambai.jpeg">
+
+</head>
+<body>
+
+<header>
+    <a href="/Printmap.html"><img src="assets\localization.png" alt="icone de localização"width="50" height="50">PrintMap</a>
+    <a href="/reserva.html"><img src="assets\reserva.png" alt="icone de armario" width="50" height="50">Reserva</a>
+    <a href="/registros.html"><img src="assets\registros.png" alt="icone de registros" width="50" height="50">Registros</a>
+    <a href="/integrador.html"><img src="assets\plugin.png" alt="icone de integrador" width="50" height="50">Integrador</a>
+</header>
+
+<div class="container">
+    <h2>REGISTROS DE RETIRADAS</h2>
+
+    <label>Impressora:</label>
+    <select id="impressoraSelect"></select>
+
+    <div id="sSelectContainer" style="margin-top: 12px;">
+        <label for="suprimentoSelect">Selecione o suprimento:</label>
+        <select id="suprimentoSelect" style="width:100%; padding:10px; border:2px solid #F15A24; border-radius:8px;"></select>
+    </div>
+
+    <div id="info-suprimento" style="margin:16px 0; padding:14px; background:#fff8f2; border:2px solid #F15A24; border-radius:10px; font-weight:bold; color:#D4380D;"></div>
+
+    <label>UN:</label>
+    <input id="unidade" type="number" min="1">
+
+    <label for="colaborador">Colaborador</label>
+    <input type="text" id="colaborador" placeholder="Nome do colaborador que retirou o suprimento">
+
+    <label for="dataHora">Data e Hora</label> 
+    <input type="datetime-local" id="dataHora">
+
+    <button id="registrar">REGISTRAR</button>
+</div>
+
+<h2 class="titulo-historico">HISTÓRICO DE RETIRADAS</h2>
+
+<div class="container-tabela-e-botoes">
+
+    <div class="botoes-principais">
+        <button id="exportar">EXPORTAR</button>
+        <button id="excluirRegistro">EXCLUIR</button>
+    </div>
+
+    <div class="table-box">
+        <table>
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="selecionar-todos"></th>
+                    <th>IMPRESSORA</th>
+                    <th>SUPRIMENTO</th>
+                    <th>UN</th>
+                    <th>COLABORADOR</th>
+                    <th>DATA & HORA</th>
+                </tr>
+            </thead>
+            <tbody id="tabela-registros"></tbody>
+        </table>
+    </div>
+
+</div>
+
+<footer style="margin:80px 0 40px; text-align:center; color:#666; font-size:14.5px;">
+    Sistema desenvolvido e mantido pela <strong>Equipe do GI</strong><br>
+    Cambaí Sementes © 2025
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module" src="/registro.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+
+</body>
+</html>

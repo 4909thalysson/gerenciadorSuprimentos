@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/reserva.css">
+    <title>Reserva de Suprimentos - Cambaí Sementes</title>
+    <link rel="icon" type="image/jpeg" href="assets\logoCambai.jpeg">
+</head>
+<body>
+
+<header>
+    <a href="/Printmap.html"><img src="assets\localization.png" alt="icone de localização"width="50" height="50">PrintMap</a>
+    <a href="/reserva.html"><img src="assets\reserva.png" alt="icone de armario" width="50" height="50">Reserva</a>
+    <a href="/registros.html"><img src="assets\registros.png" alt="icone de registros" width="50" height="50">Registros</a>
+    <a href="/integrador.html"><img src="assets\plugin.png" alt="icone de integrador" width="50" height="50">Integrador</a>
+</header>
+
+<div class="cards">
+    <div class="card">
+        Impressoras<br>
+        <span id="totalImpressoras">0</span>
+    </div>
+    <div class="card">
+        Suprimentos<br>
+        <span id="totalSuprimentos">0</span>
+    </div>
+    <div class="card alert">
+        Zerados<br>
+        <span id="suprimentosZerados">0</span>
+    </div>
+    <div class="card">
+        Suprimento Mais Usado<br>
+        <span id="topSuprimento">—</span>
+    </div>
+</div>
+
+<div class="content">
+    <div class="duas-colunas">
+        <div class="form-box">
+            <h2>CADASTRO DE SUPRIMENTOS</h2>
+
+            <label>Descrição do suprimento:</label>
+            <input id="suprimento" type="text" placeholder="Ex: TN-217">
+
+            <label>Impressora compatível {Setor}:</label>
+            <p>Lembre-se de acrescentar o setor entre chaves</p>
+            <input id="impressora" type="text" placeholder="Ex: Brother HL-L3210CW {Financeiro}">
+            
+            <label>Endereço IP:</label>
+            <p>Se não souber, use 192.168.0.1</p>
+            <input id="endereco-ip" type="text" placeholder="Ex: 192.168.0.1"> 
+
+            <label>Cor:</label>
+            <div class="radio-group">
+                <label><input type="radio" name="cor" value="Preto"> Preto</label>
+                <label><input type="radio" name="cor" value="Amarelo"> Amarelo</label>
+                <label><input type="radio" name="cor" value="Ciano"> Ciano</label>
+                <label><input type="radio" name="cor" value="Magenta"> Magenta</label>
+            </div>
+
+            <label>Quantidade:</label>
+            <input id="quantidade" type="number" min="1" value="1">
+
+            <button id="salvar">SALVAR</button>
+        </div>
+
+        <div class="pipefy-coluna">
+            <div class="pipefy-container">
+                <h2>COMPRAR SUPRIMENTOS</h2>
+                <p class="descricao">
+                    Quando o estoque estiver baixo ou acabando,<br>
+                    solicite a compra pelo formulário abaixo.
+                </p>
+                <div class="iframe-wrapper">
+                    <iframe 
+                        src="https://app.pipefy.com/public/form/GaR5akQP?embedded=true"
+                        title="Solicitação de Compra - Pipefy"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="tituloEstoque">ESTOQUE ATUAL</h2>
+
+    <div class="container-tabela"> 
+        <div class="botao-excluir">
+            <button id="excluirRegistro">EXCLUIR</button>
+        </div>
+
+        <div class="table-box">
+            <table>
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="selecionar-todos" title="Marcar todos"></th>
+                        <th>Suprimento</th>
+                        <th>Impressora</th>
+                        <th>Endereço IP</th>
+                        <th>Cor</th>
+                        <th>Qtd</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela"></tbody>
+            </table>
+        </div>
+    </div> 
+</div>
+
+<footer style="margin:80px 0 40px; text-align:center; color:#666; font-size:14.5px;">
+    Sistema desenvolvido e mantido pela <strong>Equipe do GI</strong><br>
+    Cambaí Sementes © 2026
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module" src="/reserva.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="integrador.css">
+    <title>Integrador</title>
+    <link rel="icon" type="image/jpeg" href="assets\logoCambai.jpeg">
+
+</head>
+<header>
+    <a href="/Printmap.html"><img src="assets\localization.png" alt="icone de localização"width="50" height="50">PrintMap</a>
+    <a href="/reserva.html"><img src="assets\reserva.png" alt="icone de armario" width="50" height="50">Reserva</a>
+    <a href="/registros.html"><img src="assets\registros.png" alt="icone de registros" width="50" height="50">Registros</a>
+    <a href="/integrador.html"><img src="assets\plugin.png" alt="icone de integrador" width="50" height="50">Integrador</a>
+</header>
+<body>
+
+    <div class="search-bar">
+        <input type="text" id="input-search" placeholder="Pesquisar por impressora...">
+        <button type="button" id="btn-search">
+            <img src="assets/search.png" alt="Ícone de pesquisa" width="50" height="50">
+        </button>
+    </div>
+
+    <div class="actions actions-top">
+        <button class="btn-primary" onclick="gerarReservas()">Estoque completo</button>
+        <button class="btn-primary" onclick="gerarRegistros()">Histórico de registros</button>
+    </div>
+
+    <div class="email-preview">
+        <h2>Pré-visualização</h2>
+        <pre id="previewConteudo">Vizualização do conteúdo do relatório antes do envio.</pre>
+    </div>
+
+    <div class="actions actions-bottom">
+        <button class="btn-success" onclick="enviarEmail()">Enviar ao Pipefy</button>
+        <button class="btn-danger" onclick="limparTudo()">Limpar</button>
+    </div>
+
+    <form 
+        id="formPipefy"
+        action="https://formspree.io/f/xbdzgyqg"
+        method="POST"
+        style="display:none;"
+    >
+        <input type="email" name="email" id="emailRemetente">
+        <textarea name="message" id="mensagemEmail"></textarea>
+
+        <input type="hidden" name="_subject" value="Relatório Integrador Pipefy">
+        <input type="hidden" name="_captcha" value="false">
+    </form>
+
+    <div class="integration-diagram">
+
+    <h3>Como ocorre essa comunicação?</h3>
+
+    <p class="integration-flow">👤 Usuário → 📝 Formulário → 📨 Formspree → 📊 Pipefy</p>
+
+    </div>
+
+    <footer style="margin:80px 0 40px; text-align:center; color:#666; font-size:14.5px;">
+    Sistema desenvolvido e mantido pela <strong>Equipe do GI</strong><br>
+    Cambaí Sementes © 2026
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="integrador.js"></script>
+</body>
+</html>
