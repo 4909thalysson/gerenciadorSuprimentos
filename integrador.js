@@ -171,10 +171,13 @@ function enviarEmail() {
     document.getElementById("emailRemetente").value =
         "gerenciadorsuprimentosgi@cambai.com";
 
-    const assunto = `RELATÓRIO - ${relatorioAtual.toUpperCase()}\n\n`;
+    const impressora = document.getElementById("input-search").value;
 
-    document.getElementById("mensagemEmail").value =
-        assunto + conteudoEmail;
+    const assunto = `Suprimento: ${impressora}`;
+
+    document.querySelector('input[name="_subject"]').value = assunto;
+
+    document.getElementById("mensagemEmail").value = conteudoEmail;
 
     document.getElementById("formPipefy").submit();
 
