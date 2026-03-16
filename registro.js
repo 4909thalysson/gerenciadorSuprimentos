@@ -4,184 +4,312 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const { createClient } = window.supabase
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
+let suprimentos = []
+
 document.addEventListener("DOMContentLoaded", async () => {
-  const selectImpressora = document.getElementById("impressoraSelect")
+
+  const selectSetor = document.getElementById("setorSelect")
+  const selectToner = document.getElementById("suprimentoSelect")
+
   const inputUnidade = document.getElementById("unidade")
-  const inputColaborador = document.getElementById("colaborador")
+  const inputDataHora = document.getElementById("dataHora")
+
   const btnRegistrar = document.getElementById("registrar")
   const tabela = document.getElementById("tabela-registros")
+
   const selecionarTodos = document.getElementById("selecionar-todos")
   const btnExcluir = document.getElementById("excluirRegistro")
 
-  async function getSuprimentos() {
-    const { data } = await supabase.from('reserva').select('*')
-    return data || []
+  const info = document.getElementById("info-suprimento")
+
+
+  // CARREGAR SUPRIMENTOS
+  async function carregarSuprimentos() {
+
+    const { data, error } = await supabase
+      .from("reserva")
+      .select("*")
+
+    if (error) {
+      console.error("Erro ao carregar suprimentos", error)
+      suprimentos = []
+      return
+    }
+
+    suprimentos = data || []
+
   }
 
-  async function preencherImpressoras() {
-    const suprimentos = await getSuprimentos()
-    const impressorasUnicas = [...new Set(suprimentos.map(s => s.impressora))].sort()
-    selectImpressora.innerHTML = "<option value=''>Selecione uma impressora</option>"
-    impressorasUnicas.forEach(imp => {
+
+
+  // PREENCHER SETORES
+  async function preencherSetores() {
+
+    const setores = [...new Set(suprimentos.map(s => s.setor))].sort()
+
+    selectSetor.innerHTML = "<option value=''>Selecione um setor</option>"
+
+    setores.forEach(setor => {
+
       const opt = document.createElement("option")
-      opt.value = imp
-      opt.textContent = imp
-      selectImpressora.appendChild(opt)
+
+      opt.value = setor
+      opt.textContent = setor
+
+      selectSetor.appendChild(opt)
+
     })
+
   }
 
-  async function mostrarTonerDaImpressora() {
-    const impressora = selectImpressora.value
-    const suprimentos = await getSuprimentos()
-    const toners = suprimentos.filter(s => s.impressora === impressora)
 
-    const infoAntiga = document.getElementById("info-suprimento")
-    if (infoAntiga) infoAntiga.remove()
 
-    const selectToner = document.getElementById("suprimentoSelect")
+  // PREENCHER SUPRIMENTOS PELO SETOR
+  async function preencherSuprimentosPorSetor() {
+
+    const setor = selectSetor.value
+
     selectToner.innerHTML = "<option value=''>Selecione o suprimento</option>"
 
-    if (!impressora || toners.length === 0) {
+    if (!setor) {
+
       selectToner.disabled = true
-    } else {
-      selectToner.disabled = false
-      toners.forEach(item => {
+      info.innerHTML = "Selecione um setor para ver os suprimentos"
+      return
+
+    }
+
+    const filtrado = suprimentos.filter(s => s.setor === setor)
+
+    if (filtrado.length === 0) {
+
+      selectToner.disabled = true
+      info.innerHTML = "Nenhum suprimento encontrado neste setor"
+      return
+
+    }
+
+    selectToner.disabled = false
+
+    filtrado
+      .sort((a, b) => a.un - b.un)
+      .forEach(item => {
+
         const opt = document.createElement("option")
+
         opt.value = item.id
-        opt.textContent = `${item.suprimento} (${item.cor}) → ${item.un} un`
+        opt.textContent =
+          `${item.suprimento} (${item.cor}) → ${item.un} un`
+
         if (item.un <= 0) opt.disabled = true
+
         selectToner.appendChild(opt)
+
       })
-    }
 
-    const info = document.createElement("div")
-    info.id = "info-suprimento"
-    info.style.cssText = `margin:16px 0;padding:14px;background:#fff8f2;border:2px solid #F15A24;border-radius:10px;font-weight:bold;color:#D4380D;font-size:15px;text-align:center;`
-
-    if (!impressora) {
-      info.textContent = "Selecione uma impressora para ver os suprimentos disponíveis"
-    } else {
-      const ip = toners[0]?.enderecoip || "Não informado"
-      info.innerHTML = `<strong>${impressora}</strong><br>IP: ${ip}<br>Cores disponíveis: ${toners.length}`
-    }
-    selectImpressora.parentNode.appendChild(info)
+    info.innerHTML = `
+      <strong>${setor}</strong><br>
+      ${filtrado.length} suprimentos cadastrados
+    `
   }
+
+
 
   // REGISTRAR RETIRADA
   async function registrarRetirada() {
-    const impressora = selectImpressora.value
-    const suprimentoId = document.getElementById("suprimentoSelect").value
-    const quantidade = Number(inputUnidade.value)
-    const colaborador = inputColaborador?.value.trim() || "Não informado"
 
-    if (!impressora || !suprimentoId || quantidade <= 0) {
-      return alert("Preencha todos os campos obrigatórios!")
+    const setor = selectSetor.value
+    const suprimentoId = selectToner.value
+    const quantidade = Number(inputUnidade.value)
+
+    const dataHora = inputDataHora.value
+      ? new Date(inputDataHora.value).toISOString()
+      : new Date().toISOString()
+
+    if (!setor || !suprimentoId || quantidade <= 0) {
+
+      alert("Preencha todos os campos!")
+      return
+
     }
 
-    const suprimentos = await getSuprimentos()
     const item = suprimentos.find(s => s.id == suprimentoId)
 
     if (!item || item.un < quantidade) {
-      return alert("Suprimento não encontrado ou estoque insuficiente!")
+
+      alert("Estoque insuficiente!")
+      return
+
     }
 
-    const { error } = await supabase.from('registros').insert({
-      impressora: item.impressora,
-      suprimento: item.suprimento,
-      un: quantidade,
-      colaborador: colaborador,
-      dataHora: new Date().toISOString()
-    })
+    const { error } = await supabase
+      .from("registros")
+      .insert({
 
-    if (error) return alert("Erro ao salvar: " + error.message)
+        setor: setor,
+        suprimento: item.suprimento,
+        un: quantidade,
+        dataHora: dataHora
 
-    await supabase.from('reserva').update({ un: item.un - quantidade }).eq('id', item.id)
+      })
+
+    if (error) {
+
+      alert("Erro ao registrar: " + error.message)
+      return
+
+    }
+
+    await supabase
+      .from("reserva")
+      .update({ un: item.un - quantidade })
+      .eq("id", item.id)
 
     inputUnidade.value = ""
-    if (inputColaborador) inputColaborador.value = ""
-    await mostrarTonerDaImpressora()
+
+    await carregarSuprimentos()
+    await preencherSuprimentosPorSetor()
     await exibirRegistros()
+
   }
 
-  // EXIBIR REGISTROS — COM data-label PARA CARDS NO CELULAR
-  async function exibirRegistros() {
-    const { data: registros } = await supabase
-      .from('registros')
-      .select('*')
-      .order('dataHora', { ascending: false })
 
-    if (!registros || registros.length === 0) {
+
+  // EXIBIR HISTÓRICO
+  async function exibirRegistros() {
+
+    const { data } = await supabase
+      .from("registros")
+      .select("*")
+      .order("dataHora", { ascending: false })
+
+    if (!data || data.length === 0) {
+
       tabela.innerHTML = `
         <tr>
-          <td colspan="6" style="padding:120px 20px;text-align:center;font-size:19px;color:#999;font-style:italic;background:#fdfdfd;border:none;">
+          <td colspan="5" style="padding:120px;text-align:center;color:#999;">
             Nenhum registro encontrado
           </td>
         </tr>
       `
       return
+
     }
 
-    tabela.innerHTML = registros.map(r => `
+    tabela.innerHTML = data.map(r => `
+
       <tr>
-        <td><input type="checkbox" class="checkbox-registro" data-id="${r.id}"></td>
-        <td data-label="Impressora">${r.impressora}</td>
+
+        <td>
+          <input type="checkbox" class="checkbox-registro" data-id="${r.id}">
+        </td>
+
+        <td data-label="Setor">${r.setor}</td>
         <td data-label="Suprimento">${r.suprimento}</td>
         <td data-label="UN">${r.un}</td>
-        <td data-label="Colaborador">${r.colaborador || "—"}</td>
-        <td data-label="Data/Hora">${new Date(r.dataHora).toLocaleString("pt-BR")}</td>
+        <td data-label="Data/Hora">
+          ${new Date(r.dataHora).toLocaleString("pt-BR")}
+        </td>
+
       </tr>
+
     `).join("")
+
   }
 
-  // EXCLUIR + SELECIONAR TODOS
-  btnExcluir?.addEventListener("click", async () => {
+
+
+  // EXCLUIR REGISTROS
+  btnExcluir.addEventListener("click", async () => {
+
     const selecionados = document.querySelectorAll(".checkbox-registro:checked")
-    if (selecionados.length === 0) return alert("Selecione ao menos um!")
-    if (!confirm(`Excluir ${selecionados.length} registro(s) permanentemente?`)) return
+
+    if (selecionados.length === 0) {
+      alert("Selecione ao menos um registro")
+      return
+    }
+
+    if (!confirm("Excluir registros selecionados?")) return
 
     const ids = Array.from(selecionados).map(cb => Number(cb.dataset.id))
-    await supabase.from('registros').delete().in('id', ids)
-    alert("Registros excluídos com sucesso!")
+
+    await supabase
+      .from("registros")
+      .delete()
+      .in("id", ids)
+
     await exibirRegistros()
+
   })
 
-  selecionarTodos?.addEventListener("change", () => {
-    document.querySelectorAll(".checkbox-registro").forEach(cb => cb.checked = selecionarTodos.checked)
+
+
+  // SELECIONAR TODOS
+  selecionarTodos.addEventListener("change", () => {
+
+    document
+      .querySelectorAll(".checkbox-registro")
+      .forEach(cb => cb.checked = selecionarTodos.checked)
+
   })
+
+
 
   // EVENTOS
-  selectImpressora.addEventListener("change", mostrarTonerDaImpressora)
+  selectSetor.addEventListener("change", preencherSuprimentosPorSetor)
+
   btnRegistrar.addEventListener("click", registrarRetirada)
 
+
+
   // REALTIME
-  supabase.channel('registros').on('postgres_changes', { event: '*', schema: 'public', table: 'registros' }, exibirRegistros).subscribe()
+  supabase
+    .channel("registros")
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "registros" },
+      exibirRegistros
+    )
+    .subscribe()
+
+
 
   // EXPORTAR EXCEL
-  document.getElementById("exportar")?.addEventListener("click", async () => {
-    const { data } = await supabase.from('registros').select('*')
-    if (!data?.length) return alert("Nada para exportar!")
+  document.getElementById("exportar").addEventListener("click", async () => {
 
-    const ordenados = data.sort((a, b) => new Date(b.dataHora) - new Date(a.dataHora))
+    const { data } = await supabase
+      .from("registros")
+      .select("*")
 
-    const dadosExcel = ordenados.map(r => ({
-      "Data/Hora": new Date(r.dataHora).toLocaleString("pt-BR"),
-      "Impressora": r.impressora,
+    if (!data || data.length === 0) {
+      alert("Nada para exportar")
+      return
+    }
+
+    const dados = data.map(r => ({
+
+      "Setor": r.setor,
       "Suprimento": r.suprimento,
       "UN": r.un,
-      "Colaborador": r.colaborador || "—"
+      "Data/Hora": new Date(r.dataHora).toLocaleString("pt-BR")
+
     }))
 
-    const ws = XLSX.utils.json_to_sheet(dadosExcel)
-    ws['!cols'] = [{wch:20},{wch:40},{wch:20},{wch:10},{wch:10},{wch:25}]
+    const ws = XLSX.utils.json_to_sheet(dados)
 
     const wb = XLSX.utils.book_new()
+
     XLSX.utils.book_append_sheet(wb, ws, "Retiradas")
-    XLSX.writeFile(wb, `Retiradas_Suprimentos_Cambai_${new Date().toLocaleDateString("pt-BR").replace(/\//g,"-")}.xlsx`)
-    alert(`Exportado ${data.length} registros!`)
+
+    XLSX.writeFile(wb, "retiradas_suprimentos.xlsx")
+
   })
 
+
+
   // INICIALIZAÇÃO
-  await preencherImpressoras()
+  await carregarSuprimentos()
+  await preencherSetores()
   await exibirRegistros()
-  await mostrarTonerDaImpressora()
+
 })

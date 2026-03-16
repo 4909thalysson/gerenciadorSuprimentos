@@ -20,8 +20,8 @@
 <div class="container">
     <h2>REGISTROS DE RETIRADAS</h2>
 
-    <label>Impressora:</label>
-    <select id="impressoraSelect"></select>
+    <label>Setor:</label>
+    <select id="setorSelect"></select>
 
     <div id="sSelectContainer" style="margin-top: 12px;">
         <label for="suprimentoSelect">Selecione o suprimento:</label>
@@ -32,9 +32,6 @@
 
     <label>UN:</label>
     <input id="unidade" type="number" min="1">
-
-    <label for="colaborador">Colaborador</label>
-    <input type="text" id="colaborador" placeholder="Nome do colaborador que retirou o suprimento">
 
     <label for="dataHora">Data e Hora</label> 
     <input type="datetime-local" id="dataHora">
@@ -54,15 +51,15 @@
     <div class="table-box">
         <table>
             <thead>
+                <thead>
                 <tr>
-                    <th><input type="checkbox" id="selecionar-todos"></th>
-                    <th>IMPRESSORA</th>
-                    <th>SUPRIMENTO</th>
-                    <th>UN</th>
-                    <th>COLABORADOR</th>
-                    <th>DATA & HORA</th>
+                <th><input type="checkbox" id="selecionar-todos"></th>
+                <th>SETOR</th>
+                <th>SUPRIMENTO</th>
+                <th>UN</th>
+                <th>DATA & HORA</th>
                 </tr>
-            </thead>
+                </thead>
             <tbody id="tabela-registros"></tbody>
         </table>
     </div>

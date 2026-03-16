@@ -73,6 +73,10 @@ h2 {
   font-size: 15.5px;
 }
 
+#info-suprimento:empty {
+  display: none;
+}
+
 #registrar {
   display: flex;
   align-items: center;
@@ -193,9 +197,9 @@ h2 {
 .table-box tbody tr:nth-child(even) { background: #fff8f2; }
 .table-box tbody tr:hover { background: #ffede1; }
 
-/* ========================================================= */
-/* CARDS NO CELULAR — IMPRESSORA COM SETOR À DIREITA (100% FUNCIONANDO!) */
-/* ========================================================= */
+/* ================*/
+/* CARDS NO CELULAR*/
+/* ================*/
 @media (max-width: 768px) {
   .table-box {
     margin: 20px 15px;

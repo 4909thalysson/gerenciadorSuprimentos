@@ -208,7 +208,7 @@ input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; marg
 
 /* Botão SALVAR */
 #salvar {
-    margin-top: auto;           
+    margin-top: 15px;           
     width: 100%;                
     max-width: 180px;           
     margin-left: auto;          

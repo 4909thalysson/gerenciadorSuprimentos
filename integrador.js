@@ -5,238 +5,211 @@ const { createClient } = window.supabase;
 const supabaseIntegrador = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ===============================
-// ESTADO GLOBAL CONTROLADO
+// ESTADO GLOBAL
 // ===============================
-let conteudoEmail = "";
-let relatorioAtual = "";
+let conteudoEmail = ""
 
 // ===============================
-// BUSCAR IMPRESSORA
+// BUSCAR DADOS (ESTOQUE + REGISTROS)
 // ===============================
-async function buscarImpressora(termo) {
+async function buscarDados(termo) {
+    try {
+        // Busca registros
+        const { data: registros, error: erroReg } = await supabaseIntegrador
+            .from("registros")
+            .select("*")
+            .or(`setor.ilike.%${termo}%,suprimento.ilike.%${termo}%`)
+        if (erroReg) throw erroReg
 
-    const { data: reservas, error: errorReservas } = await supabaseIntegrador
-        .from("reserva")
-        .select("*")
-        .ilike("impressora", `%${termo}%`);
+        // Busca estoque
+        const { data: reservas, error: erroRes } = await supabaseIntegrador
+            .from("reserva")
+            .select("*")
+            .or(`setor.ilike.%${termo}%,suprimento.ilike.%${termo}%`)
+        if (erroRes) throw erroRes
 
-    const { data: registros, error: errorRegistros } = await supabaseIntegrador
-        .from("registros")
-        .select("*")
-        .ilike("impressora", `%${termo}%`);
+        // Formata os dados para o relatório
+        const dadosFormatados = [
+            ...(registros || []).map(r => ({
+                setor: r.setor || "—",
+                suprimento: r.suprimento,
+                cor: r.cor || "",
+                un: r.un,
+                dataHora: r.dataHora || null,
+                tipo: "REGISTRO"
+            })),
+            ...(reservas || []).map(r => ({
+                setor: r.setor || "—",
+                suprimento: r.suprimento,
+                cor: r.cor || "",
+                un: r.un,
+                dataHora: null,
+                tipo: "ESTOQUE"
+            }))
+        ]
 
-    if (errorReservas || errorRegistros) {
-        console.error(errorReservas || errorRegistros);
-        alert("Erro ao buscar dados.");
-        return null;
+        return dadosFormatados
+
+    } catch (error) {
+        console.error(error)
+        alert("Erro ao buscar dados.")
+        return null
     }
-
-    return {
-        reservas: reservas || [],
-        registros: registros || []
-    };
 }
 
-// ===============================
-// GERAR RELATÓRIO FILTRADO
-// ===============================
-function gerarRelatorioFiltrado(resultado) {
-
-    if (!resultado.reservas.length && !resultado.registros.length) {
-        alert("Nenhum resultado encontrado.");
-        return;
-    }
-
-    let texto = "RELATÓRIO FILTRADO POR IMPRESSORA\n\n";
-
-    if (resultado.reservas.length) {
-        texto += "=== RESERVAS ===\n\n";
-
-        resultado.reservas.forEach(r => {
-            texto += `Impressora: ${r.impressora}\n`;
-            texto += `Suprimento: ${r.suprimento}\n`;
-            texto += `Cor: ${r.cor}\n`;
-            texto += `Unidades: ${r.un}\n`;
-            texto += `IP: ${r.enderecoip}\n`;
-            texto += `Valor: ${r.valor ?? "N/A"}\n`;
-            texto += "---------------------------\n";
-        });
-    }
-
-    if (resultado.registros.length) {
-        texto += "\n=== REGISTROS ===\n\n";
-
-        resultado.registros.forEach(r => {
-            texto += `Impressora: ${r.impressora}\n`;
-            texto += `Suprimento: ${r.suprimento}\n`;
-            texto += `Unidades: ${r.un}\n`;
-            texto += `Data: ${new Date(r.dataHora).toLocaleString()}\n`;
-            texto += `Colaborador: ${r.colaborador}\n`;
-            texto += "---------------------------\n";
-        });
-    }
-
-    conteudoEmail = texto;
-    relatorioAtual = "impressora_filtrada";
-
-    document.getElementById("previewConteudo").textContent = texto;
+// =====================
+// ORGANIZAR POR SETOR
+// =====================
+function organizarPorSetor(dados) {
+    const setores = {}
+    dados.forEach(r => {
+        if (!setores[r.setor]) setores[r.setor] = []
+        setores[r.setor].push(r)
+    })
+    return setores
 }
 
-// ===============================
-// RELATÓRIO COMPLETO - RESERVAS
-// ===============================
-async function gerarReservas() {
-
-    const { data, error } = await supabaseIntegrador
-        .from("reserva")
-        .select("*");
-
-    if (error) {
-        console.error(error);
-        alert("Erro ao buscar reservas.");
-        return;
+// =================
+// GERAR RELATÓRIO
+// =================
+function gerarRelatorio(dados) {
+    if (!dados || !dados.length) {
+        alert("Nenhum resultado encontrado.")
+        return
     }
 
-    if (!data.length) {
-        alert("Nenhuma reserva encontrada.");
-        return;
-    }
+    const setores = organizarPorSetor(dados)
+    let texto = "RELATÓRIO DE SUPRIMENTOS\n\n"
 
-    let texto = "RELATÓRIO DE RESERVAS\n\n";
+    Object.keys(setores).forEach(setor => {
+        texto += `SETOR: ${setor}\n\n`
+        setores[setor].forEach(r => {
+            texto += `• ${r.suprimento}`
+            if (r.cor) texto += ` (${r.cor})`
+            texto += `\n  UN: ${r.un}\n`
+            texto += `  Tipo: ${r.tipo}\n`
+            if (r.dataHora) texto += `  Data: ${new Date(r.dataHora).toLocaleString("pt-BR")}\n`
+            texto += "\n"
+        })
+        texto += "-----------------------------\n\n"
+    })
 
-    data.forEach(r => {
-        texto += `Impressora: ${r.impressora}\n`;
-        texto += `Suprimento: ${r.suprimento}\n`;
-        texto += `Cor: ${r.cor}\n`;
-        texto += `Unidades: ${r.un}\n`;
-        texto += `IP: ${r.enderecoip}\n`;
-        texto += `Valor: ${r.valor ?? "N/A"}\n`;
-        texto += "---------------------------\n";
-    });
-
-    conteudoEmail = texto;
-    relatorioAtual = "reservas";
-
-    document.getElementById("previewConteudo").textContent = texto;
+    conteudoEmail = texto
+    const preview = document.getElementById("previewConteudo")
+    if (preview) preview.textContent = texto
 }
 
-// ===============================
-// RELATÓRIO COMPLETO - REGISTROS
-// ===============================
+// ======================
+// RELATÓRIO REGISTROS
+// ======================
 async function gerarRegistros() {
-
     const { data, error } = await supabaseIntegrador
         .from("registros")
         .select("*")
-        .order("dataHora", { ascending: false });
-
+        .order("dataHora", { ascending: false })
     if (error) {
-        console.error(error);
-        alert("Erro ao buscar registros.");
-        return;
+        console.error(error)
+        alert("Erro ao buscar registros.")
+        return
     }
 
-    if (!data.length) {
-        alert("Nenhum registro encontrado.");
-        return;
+    const dadosFormatados = (data || []).map(r => ({
+        setor: r.setor || "—",
+        suprimento: r.suprimento,
+        cor: r.cor || "",
+        un: r.un,
+        dataHora: r.dataHora,
+        tipo: "REGISTRO"
+    }))
+
+    gerarRelatorio(dadosFormatados)
+}
+
+// =================
+// RELATÓRIO ESTOQUE
+// =================
+async function gerarEstoque() {
+    const { data, error } = await supabaseIntegrador
+        .from("reserva")
+        .select("*")
+        .order("setor", { ascending: true })
+    if (error) {
+        console.error(error)
+        alert("Erro ao buscar estoque.")
+        return
     }
 
-    let texto = "RELATÓRIO DE REGISTROS\n\n";
+    const dadosFormatados = (data || []).map(r => ({
+        setor: r.setor || "—",
+        suprimento: r.suprimento,
+        cor: r.cor || "",
+        un: r.un,
+        dataHora: null,
+        tipo: "ESTOQUE"
+    }))
 
-    data.forEach(r => {
-        texto += `Impressora: ${r.impressora}\n`;
-        texto += `Suprimento: ${r.suprimento}\n`;
-        texto += `Unidades: ${r.un}\n`;
-        texto += `Data: ${new Date(r.dataHora).toLocaleString()}\n`;
-        texto += `Colaborador: ${r.colaborador}\n`;
-        texto += "---------------------------\n";
-    });
-
-    conteudoEmail = texto;
-    relatorioAtual = "registros";
-
-    document.getElementById("previewConteudo").textContent = texto;
+    gerarRelatorio(dadosFormatados)
 }
 
 // ===============================
 // ENVIAR EMAIL
 // ===============================
 function enviarEmail() {
-
     if (!conteudoEmail) {
-        alert("Gere um relatório antes de enviar.");
-        return;
+        alert("Gere um relatório antes de enviar.")
+        return
     }
 
-    document.getElementById("emailRemetente").value =
-        "gerenciadorsuprimentosgi@cambai.com";
+    const email = document.getElementById("emailRemetente")
+    const mensagem = document.getElementById("mensagemEmail")
+    const form = document.getElementById("formPipefy")
 
-    const impressora = document.getElementById("input-search").value;
+    if (email) email.value = "gerenciadorsuprimentosgi@cambai.com"
+    const subject = document.querySelector('input[name="_subject"]')
+    if (subject) subject.value = "Relatório de suprimentos"
+    if (mensagem) mensagem.value = conteudoEmail
+    if (form) form.submit()
 
-    const assunto = `Suprimento: ${impressora}`;
-
-    document.querySelector('input[name="_subject"]').value = assunto;
-
-    document.getElementById("mensagemEmail").value = conteudoEmail;
-
-    document.getElementById("formPipefy").submit();
-
-    alert("Enviado ao Pipefy com sucesso!");
+    alert("Relatório enviado ao Pipefy!")
 }
 
+// ===============================
+// LIMPAR SISTEMA
+// ===============================
 function limparTudo() {
+    const input = document.getElementById("input-search")
+    const preview = document.getElementById("previewConteudo")
 
-    // Captura elementos corretamente
-    const inputSearch = document.getElementById("input-search");
-    const preview = document.getElementById("previewConteudo");
-
-    //Limpa campo de busca
-    if (inputSearch) inputSearch.value = "";
-
-    //Limpa preview do relatório
-    if (preview) preview.textContent = "";
-
-    //Limpa estado interno
-    conteudoEmail = "";
-    relatorioAtual = "";
-
-    // Limpa formulário de envio (se existir)
-    const mensagemEmail = document.getElementById("mensagemEmail");
-    if (mensagemEmail) mensagemEmail.value = "";
-
-    console.log("Sistema resetado com sucesso.");
+    if (input) input.value = ""
+    if (preview) preview.textContent = ""
+    conteudoEmail = ""
 }
 
 // ===============================
 // EVENTOS
 // ===============================
 document.addEventListener("DOMContentLoaded", function () {
+    const btnSearch = document.getElementById("btn-search")
+    const inputSearch = document.getElementById("input-search")
 
-    const btnSearch = document.getElementById("btn-search");
-    const inputSearch = document.getElementById("input-search");
+    if (btnSearch) {
+        btnSearch.addEventListener("click", async function () {
+            const termo = inputSearch.value.trim()
+            if (!termo) {
+                alert("Digite um setor ou suprimento.")
+                return
+            }
+            const dados = await buscarDados(termo)
+            if (!dados) return
+            gerarRelatorio(dados)
+        })
+    }
+})
 
-    btnSearch.addEventListener("click", async function () {
-
-        const termo = inputSearch.value.trim();
-
-        if (!termo) {
-            alert("Digite o nome da impressora.");
-            return;
-        }
-
-        const resultado = await buscarImpressora(termo);
-
-        if (!resultado) return;
-
-        gerarRelatorioFiltrado(resultado);
-    });
-
-});
-
-// ================
-// EXPOSIÇÃO GLOBAL 
-// ================
-window.gerarReservas = gerarReservas;
-window.gerarRegistros = gerarRegistros;
-window.enviarEmail = enviarEmail;
-window.limparTudo = limparTudo;
+// ===============================
+// EXPOSIÇÃO GLOBAL
+// ===============================
+window.gerarRegistros = gerarRegistros
+window.gerarEstoque = gerarEstoque
+window.enviarEmail = enviarEmail
+window.limparTudo = limparTudo

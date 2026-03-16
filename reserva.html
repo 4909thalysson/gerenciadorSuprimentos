@@ -43,10 +43,24 @@
             <label>Descrição do suprimento:</label>
             <input id="suprimento" type="text" placeholder="Ex: TN-217">
 
-            <label>Impressora compatível {Setor}:</label>
-            <p>Lembre-se de acrescentar o setor entre chaves</p>
-            <input id="impressora" type="text" placeholder="Ex: Brother HL-L3210CW {Financeiro}">
-            
+            <label>Impressora compatível:</label>
+            <input id="impressora" type="text" placeholder="Ex: Brother HL-L3210CW">
+
+            <label>Localização - setor</label>
+            <input id="setor" type="text" placeholder="Ex:Laboratório">
+
+            <label for="propriedade">Propriedade</label>
+
+            <select id="propriedade" name="propriedade">
+             
+            <option value=""></option>
+
+            <option value="proprio">Próprio</option>
+
+            <option value="locacao">Locação</option>
+
+            </select>
+
             <label>Endereço IP:</label>
             <p>Se não souber, use 192.168.0.1</p>
             <input id="endereco-ip" type="text" placeholder="Ex: 192.168.0.1"> 
@@ -61,6 +75,20 @@
 
             <label>Quantidade:</label>
             <input id="quantidade" type="number" min="1" value="1">
+
+            <label for="status">Status do Equipamento</label>
+
+            <select id="status" name="status">
+
+            <option value=""></option>
+
+            <option value="uso">Em uso</option>
+
+            <option value="manutencao">Manutenção</option>
+
+            <option value="inativo">Inativo</option>
+
+            </select>
 
             <button id="salvar">SALVAR</button>
         </div>

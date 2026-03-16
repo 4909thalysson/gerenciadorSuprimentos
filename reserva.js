@@ -47,15 +47,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     })
   }
 
-  // =============================================
+  // ========================
   // SALVAR NOVO SUPRIMENTO
-  // =============================================
+  // ========================
   btnSalvar?.addEventListener("click", async () => {
     const suprimento = document.getElementById("suprimento").value.trim()
     const impressora = document.getElementById("impressora").value.trim()
     const enderecoip = document.getElementById("endereco-ip")?.value.trim() || null  
+    const setor = document.getElementById("setor").value.trim()
+    const propriedade = document.getElementById("propriedade").value.trim()
     const quantidade = Number(document.getElementById("quantidade").value)
     const corSelecionada = document.querySelector('input[name="cor"]:checked')
+    const status = document.getElementById("status").value.trim()
 
     if (!suprimento || !impressora || !corSelecionada || !quantidade || quantidade < 1) {
       alert("Preencha todos os campos obrigatórios!")
@@ -67,9 +70,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       .insert({
         suprimento,
         impressora,
-        enderecoip,        
+        enderecoip,
+        setor,
+        propriedade,        
         cor: corSelecionada.value,
-        un: quantidade
+        un: quantidade,
+        status
       })
 
     if (error) {
@@ -89,8 +95,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("suprimento").value = ""
     document.getElementById("impressora").value = ""
     if (document.getElementById("endereco-ip")) document.getElementById("endereco-ip").value = ""
+    document.getElementById("setor").value = ""
+    document.getElementById("propriedade").value = ""
     document.getElementById("quantidade").value = "1"
     document.querySelectorAll('input[name="cor"]').forEach(r => r.checked = false)
+    document.getElementById("status").valeu = ""
   }
 
   // =============================================
