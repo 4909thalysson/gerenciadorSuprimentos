@@ -39,6 +39,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         <td><input type="checkbox" class="checkbox-registro" data-id="${item.id}"></td>
         <td>${item.suprimento}</td>
         <td>${item.impressora}</td>
+        <td>${item.setor}</td>
         <td>${item.enderecoip || "—"}</td>       
         <td>${item.cor}</td>
         <td>${item.un}</td>
