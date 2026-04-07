@@ -2,78 +2,71 @@ const SUPABASE_URL = "https://kxiapqtfwdwiqnvqjtkf.supabase.co"
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4aWFwcXRmd2R3aXFudnFqdGtmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUxNDE5OTcsImV4cCI6MjA4MDcxNzk5N30.IlzANbZ1hSwpPtIeaLcIOkBf2-gIC-XNRehWDYfDins"
 
 const db = window.supabase.createClient(
-SUPABASE_URL,
-SUPABASE_ANON_KEY
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
 )
 
 async function carregarImpressoras(){
 
-const { data, error } = await db
-.from("reserva")
-.select("*")
+  const { data, error } = await db
+    .from("impressoras")
+    .select("*")
 
-if(error){
-console.error("Erro:", error)
-return
-}
+  if(error){
+    console.error("Erro:", error)
+    return
+  }
 
-const container = document.getElementById("printmap")
+  const container = document.getElementById("printmap")
 
-container.innerHTML = ""
+  container.innerHTML = ""
 
-/* remove impressoras duplicadas */
-const impressorasUnicas = {}
+  data.forEach(printer => {
 
-data.forEach(item => {
-impressorasUnicas[item.impressora] = item
-})
+    /* acesso web */
+    let ip = printer.enderecoip
 
-Object.values(impressorasUnicas).forEach(printer => {
+    let webLink = ip && ip !== "192.168.0.1"
+      ? `<a href="http://${ip}" target="_blank">🌐 Web</a>`
+      : `<span class="no-web">Sem Web</span>`
 
-/* acesso web */
-let ip = printer.enderecoip
+    /* classe de status */
+    let statusClass = ""
 
-let webLink = ip && ip !== "192.168.0.1"
-? `<a href="http://${ip}" target="_blank">🌐 Web</a>`
-: `<span class="no-web">Sem Web</span>`
+    if(printer.status === "uso") statusClass = "uso"
+    if(printer.status === "manutencao") statusClass = "manutencao"
+    if(printer.status === "inativo") statusClass = "inativo"
 
-/* classe de status */
-let statusClass = ""
+    /* propriedade */
+    let propriedade = printer.propriedade === "locacao"
+      ? "🏢 Locação"
+      : "📦 Próprio"
 
-if(printer.status === "uso") statusClass = "uso"
-if(printer.status === "manutencao") statusClass = "manutencao"
-if(printer.status === "inativo") statusClass = "inativo"
+    const card = document.createElement("div")
 
-/* propriedade */
-let propriedade = printer.propriedade === "locacao"
-? "🏢 Locação"
-: "📦 Próprio"
+    card.className = "printer"
 
-const card = document.createElement("div")
+    card.innerHTML = `
+      <div class="icon">🖨️</div>
 
-card.className = "printer"
+      <h3>${printer.modelo}</h3>
 
-card.innerHTML = `
-<div class="icon">🖨️</div>
+      <p>${printer.setor}</p>
 
-<h3>${printer.impressora}</h3>
+      <p class="tipo">${propriedade}</p>
 
-<p>${printer.setor}</p>
+      <p class="status ${statusClass}">
+        ${printer.status}
+      </p>
 
-<p class="tipo">${propriedade}</p>
+      <div class="links">
+        ${webLink}
+      </div>
+    `
 
-<p class="status ${statusClass}">
-${printer.status}
-</p>
+    container.appendChild(card)
 
-<div class="links">
-${webLink}
-</div>
-`
-
-container.appendChild(card)
-
-})
+  })
 
 }
 

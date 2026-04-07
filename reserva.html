@@ -43,27 +43,13 @@
             <label>Descrição do suprimento:</label>
             <input id="suprimento" type="text" placeholder="Ex: TN-217">
 
-            <label>Impressora compatível:</label>
-            <input id="impressora" type="text" placeholder="Ex: Brother HL-L3210CW">
+            <label>Impressora:</label>
+            <select id="impressora">
+                <option value="">Carregando impressoras...</option>
+            </select>
 
             <label>Localização - setor</label>
             <input id="setor" type="text" placeholder="Ex:Laboratório">
-
-            <label for="propriedade">Propriedade</label>
-
-            <select id="propriedade" name="propriedade">
-             
-            <option value=""></option>
-
-            <option value="proprio">Próprio</option>
-
-            <option value="locacao">Locação</option>
-
-            </select>
-
-            <label>Endereço IP:</label>
-            <p>Se não souber, use 192.168.0.1</p>
-            <input id="endereco-ip" type="text" placeholder="Ex: 192.168.0.1"> 
 
             <label>Cor:</label>
             <div class="radio-group">
@@ -76,19 +62,8 @@
             <label>Quantidade:</label>
             <input id="quantidade" type="number" min="1" value="1">
 
-            <label for="status">Status do Equipamento</label>
-
-            <select id="status" name="status">
-
-            <option value=""></option>
-
-            <option value="uso">Em uso</option>
-
-            <option value="manutencao">Manutenção</option>
-
-            <option value="inativo">Inativo</option>
-
-            </select>
+            <label>Valor </label> 
+            <input type="text" id="valor" placeholder="R$ 0,00" step="0.01" min="0">
 
             <button id="salvar">SALVAR</button>
         </div>
@@ -122,9 +97,9 @@
                         <th>Suprimento</th>
                         <th>Impressora</th>
                         <th>setor</th>
-                        <th>Endereço IP</th>
                         <th>Cor</th>
                         <th>Qtd</th>
+                        <th>Valor</th>
                     </tr>
                 </thead>
                 <tbody id="tabela"></tbody>
