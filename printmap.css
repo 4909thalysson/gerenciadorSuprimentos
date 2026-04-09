@@ -13,38 +13,68 @@ color:#222;
 line-height:1.5;
 }
 
-
-/* HEADER */
-
-header{
-width:100%;
-background:#F15A24;
-padding:15px 0;
-display:flex;
-justify-content:center;
-gap:50px;
+header {
+    background: #F15A24;
+    padding: 10px 20px;
+    position: relative;
+    z-index: 1000;
 }
 
-header a{
-display:flex;
-align-items:center;
-gap:8px;
-color:white;
-text-decoration:none;
-font-size:18px;
-font-weight:bold;
-transition:0.2s;
+/* MENU DESKTOP */
+#menu {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
 }
 
-header a:hover{
-opacity:0.8;
+#menu a {
+    text-decoration: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-header img{
-width:40px;
-height:40px;
+/* BOTÃO */
+#menu-toggle {
+    display: none;
+    font-size: 28px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: white;
 }
 
+/* MOBILE */
+@media (max-width: 768px) {
+
+    #menu-toggle {
+        display: block;
+    }
+
+    #menu {
+        display: none;
+        flex-direction: column;
+        background: white;
+        position: fixed;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        padding: 15px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        z-index: 1001;
+    }
+
+    #menu a {
+        color: #222;
+        padding: 10px 0;
+    }
+
+    #menu.active {
+        display: flex;
+    }
+}
 
 /* CONTAINER DO MAPA */
 
@@ -237,6 +267,110 @@ font-size:14px;
 
 }
 
+.filtros {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 8px 15px;
+  border-radius: 12px;
+  margin-top: 50px;
+  margin-bottom: 20px;
+}
+
+/* INPUT E SELECT */
+.filtros input,
+.filtros select {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+/* TAMANHO CONTROLADO */
+#filtro-busca {
+  flex: 0 0 90px; 
+}
+
+#filtro-setor,
+#filtro-status {
+  flex: 0 0 150px;
+}
+
+/* FOCUS */
+.filtros input:focus,
+.filtros select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0,123,255,0.15);
+}
+
+/* BOTÃO */
+.filtros button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 8px 12px;
+
+  background: #007bff;
+  color: white;
+
+  border: none;
+  border-radius: 8px;
+
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+
+  transition: all 0.2s ease;
+}
+
+/* hover */
+.filtros button:hover {
+  background: #0056b3;
+}
+
+/* ícone */
+.filtros button img {
+  width: 16px;
+  height: 16px;
+}
+
+@media (max-width: 768px) {
+  .filtros {
+    flex-direction: row; /* mantém horizontal */
+    justify-content: flex-start;
+    overflow-x: auto; /* permite rolagem se faltar espaço */
+    padding: 6px 10px;
+    gap: 8px;
+  }
+
+  /* inputs menores */
+  .filtros input,
+  .filtros select {
+    font-size: 13px;
+    padding: 6px 8px;
+  }
+
+  /* tamanhos mais enxutos */
+  #filtro-busca {
+    flex: 0 0 80px;
+  }
+
+  #filtro-setor,
+  #filtro-status {
+    flex: 0 0 120px;
+  }
+
+  /* botão mais compacto */
+  .filtros button {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+}
 
 /* RESPONSIVO */
 

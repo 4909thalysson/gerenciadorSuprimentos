@@ -12,28 +12,67 @@ body {
   min-height: 100vh;
 }
 
-/* ===== CABEÇALHO ===== */
 header {
-    width: 100%;
     background: #F15A24;
-    padding: 15px 0;
-    display: flex;
-    justify-content: center;
-    gap: 50px;
-    top: 0;
-    z-index: 100;
+    padding: 10px 20px;
+    position: relative;
+    z-index: 1000;
 }
 
-header a {
-    display: flex;             
-    align-items: center;        
-    gap: 8px;                   
-    padding-left: 20px;
-    color: white;
+/* MENU DESKTOP */
+#menu {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+#menu a {
     text-decoration: none;
-    font-size: 19px;
-    font-weight: bold;
-    transition: 0.2s;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* BOTÃO */
+#menu-toggle {
+    display: none;
+    font-size: 28px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: white;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+
+    #menu-toggle {
+        display: block;
+    }
+
+    #menu {
+        display: none;
+        flex-direction: column;
+        background: white;
+        position: fixed;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        padding: 15px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        z-index: 1001;
+    }
+
+    #menu a {
+        color: #222;
+        padding: 10px 0;
+    }
+
+    #menu.active {
+        display: flex;
+    }
 }
 
 /* ===== TÍTULOS ===== */

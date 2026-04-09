@@ -11,10 +11,34 @@
 <body>
 
 <header>
-    <a href="/Printmap.html"><img src="assets\localization.png" alt="icone de localização"width="50" height="50">PrintMap</a>
-    <a href="/reserva.html"><img src="assets\reserva.png" alt="icone de armario" width="50" height="50">Reserva</a>
-    <a href="/registros.html"><img src="assets\registros.png" alt="icone de registros" width="50" height="50">Registros</a>
-    <a href="/integrador.html"><img src="assets\plugin.png" alt="icone de integrador" width="50" height="50">Integrador</a>
+    <div class="topo">
+        <button id="menu-toggle">☰</button>
+    </div>
+
+    <nav id="menu">
+        <a href="/printmap.html">
+            <img src="assets/localization.png" width="50">PrintMap
+        </a>
+        <a href="/reserva.html">
+            <img src="assets/reserva.png" width="50">Reserva
+        </a>
+        <a href="/registros.html">
+            <img src="assets/registros.png" width="50">Registros
+        </a>
+        <a href="/integrador.html">
+            <img src="assets/plugin.png" width="50">Integrador
+        </a>
+    </nav>
+
+    <script>
+        const toggle = document.getElementById("menu-toggle");
+        const menu = document.getElementById("menu");
+
+        toggle.addEventListener("click", () => {
+            menu.classList.toggle("active");
+        });
+    </script>
+
 </header>
 
 <div class="container">
