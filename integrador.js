@@ -8,27 +8,25 @@ const supabaseIntegrador = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 // ESTADO GLOBAL
 // ===============================
 let conteudoEmail = ""
+let dadosGerados = [] 
 
 // ===============================
 // BUSCAR DADOS (ESTOQUE + REGISTROS)
 // ===============================
 async function buscarDados(termo) {
     try {
-        // Busca registros
         const { data: registros, error: erroReg } = await supabaseIntegrador
             .from("registros")
             .select("*")
             .or(`setor.ilike.%${termo}%,suprimento.ilike.%${termo}%`)
         if (erroReg) throw erroReg
 
-        // Busca estoque
         const { data: reservas, error: erroRes } = await supabaseIntegrador
             .from("reserva")
             .select("*")
             .or(`setor.ilike.%${termo}%,suprimento.ilike.%${termo}%`)
         if (erroRes) throw erroRes
 
-        // Formata os dados para o relatório
         const dadosFormatados = [
             ...(registros || []).map(r => ({
                 setor: r.setor || "—",
@@ -69,8 +67,45 @@ function organizarPorSetor(dados) {
     return setores
 }
 
+// ===============================
+// MONTAR MENSAGEM COM TAGS (NOVO)
+// ===============================
+function montarMensagemTags(dados) {
+    const setores = organizarPorSetor(dados)
+
+    let texto = `
+[TIPO] RELATORIO_SUPRIMENTOS
+[ORIGEM] Integrador
+[EMAIL] gerenciadorsuprimentosgi@cambai.com
+[DATA_ENVIO] ${new Date().toLocaleString("pt-BR")}
+
+--------------------------------
+`
+
+    Object.keys(setores).forEach(setor => {
+        texto += `\n[SETOR] ${setor}\n\n`
+
+        setores[setor].forEach(r => {
+            texto += `[ITEM] ${r.suprimento}\n`
+            texto += `[COR] ${r.cor || "-"}\n`
+            texto += `[UN] ${r.un}\n`
+            texto += `[TIPO_REGISTRO] ${r.tipo}\n`
+
+            if (r.dataHora) {
+                texto += `[DATA] ${new Date(r.dataHora).toLocaleString("pt-BR")}\n`
+            }
+
+            texto += `\n`
+        })
+
+        texto += `--------------------------------\n`
+    })
+
+    return texto
+}
+
 // =================
-// GERAR RELATÓRIO
+// GERAR RELATÓRIO (VISUAL)
 // =================
 function gerarRelatorio(dados) {
     if (!dados || !dados.length) {
@@ -95,6 +130,8 @@ function gerarRelatorio(dados) {
     })
 
     conteudoEmail = texto
+    dadosGerados = dados
+
     const preview = document.getElementById("previewConteudo")
     if (preview) preview.textContent = texto
 }
@@ -107,6 +144,7 @@ async function gerarRegistros() {
         .from("registros")
         .select("*")
         .order("dataHora", { ascending: false })
+
     if (error) {
         console.error(error)
         alert("Erro ao buscar registros.")
@@ -133,6 +171,7 @@ async function gerarEstoque() {
         .from("reserva")
         .select("*")
         .order("setor", { ascending: true })
+
     if (error) {
         console.error(error)
         alert("Erro ao buscar estoque.")
@@ -152,10 +191,10 @@ async function gerarEstoque() {
 }
 
 // ===============================
-// ENVIAR EMAIL
+// ENVIAR EMAIL (AJUSTADO)
 // ===============================
 function enviarEmail() {
-    if (!conteudoEmail) {
+    if (!dadosGerados.length) {
         alert("Gere um relatório antes de enviar.")
         return
     }
@@ -165,9 +204,11 @@ function enviarEmail() {
     const form = document.getElementById("formPipefy")
 
     if (email) email.value = "gerenciadorsuprimentosgi@cambai.com"
-    const subject = document.querySelector('input[name="_subject"]')
-    if (subject) subject.value = "Relatório de suprimentos"
-    if (mensagem) mensagem.value = conteudoEmail
+
+    if (mensagem) {
+        mensagem.value = montarMensagemTags(dadosGerados)
+    }
+
     if (form) form.submit()
 
     alert("Relatório enviado ao Pipefy!")
@@ -182,7 +223,9 @@ function limparTudo() {
 
     if (input) input.value = ""
     if (preview) preview.textContent = ""
+
     conteudoEmail = ""
+    dadosGerados = []
 }
 
 // ===============================
@@ -199,8 +242,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 alert("Digite um setor ou suprimento.")
                 return
             }
+
             const dados = await buscarDados(termo)
             if (!dados) return
+
             gerarRelatorio(dados)
         })
     }
