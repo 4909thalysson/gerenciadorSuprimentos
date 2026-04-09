@@ -109,9 +109,22 @@
     <h2 class="tituloEstoque">ESTOQUE ATUAL</h2>
 
     <div class="container-tabela"> 
-        <div class="botao-excluir">
+
+        <div class="filtros-container">
+            <img src="assets/filter.png" alt="filtro" class="icone-filtro">
+            <p>Filtrar por setor:</p>
+            <div class="filtros">
+                <select id="filtro-setor">
+                    <option value="">Todos os setores</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="botoes-principais">
+            <button id="exportar">EXPORTAR</button>
             <button id="excluirRegistro">EXCLUIR</button>
         </div>
+
 
         <div class="table-box">
             <table>
@@ -139,6 +152,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type="module" src="/reserva.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 
 </body>
 </html>

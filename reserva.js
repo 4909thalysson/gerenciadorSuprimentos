@@ -11,8 +11,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   const selecionarTodos = document.getElementById("selecionar-todos")
   const btnExcluir = document.getElementById("excluirRegistro")
 
+  let dadosEstoque = [] // 🔥 memória para filtros
+
   // =============================================
-  // CARREGAR LISTA DE IMPRESSORAS (SELECT)
+  // CARREGAR LISTA DE IMPRESSORAS
   // =============================================
   async function carregarListaImpressoras() {
 
@@ -24,7 +26,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       .order("modelo", { ascending: true })
 
     if (error) {
-      console.error("Erro ao carregar impressoras:", error)
+      console.error(error)
       select.innerHTML = `<option value="">Erro ao carregar</option>`
       return
     }
@@ -52,29 +54,24 @@ document.addEventListener("DOMContentLoaded", async () => {
   })
 
   // =============================================
-  // CARREGAR E ATUALIZAR TABELA
+  // RENDERIZAR TABELA
   // =============================================
-  async function atualizarTabela() {
-
-    const { data: suprimentos } = await supabase
-      .from('reserva')
-      .select('*')
-      .order('impressora', { ascending: true })
+  function renderizarTabela(dados) {
 
     tabela.innerHTML = ""
 
-    if (!suprimentos || suprimentos.length === 0) {
+    if (!dados || dados.length === 0) {
       tabela.innerHTML = `
         <tr>
-          <td colspan="7" style="padding: 40px; color: #999; font-style: italic;">
-            Nenhum suprimento cadastrado
+          <td colspan="7" style="padding: 40px; color: #999;">
+            Nenhum suprimento encontrado
           </td>
         </tr>
       `
       return
     }
 
-    suprimentos.forEach(item => {
+    dados.forEach(item => {
       const row = document.createElement("tr")
 
       row.innerHTML = `
@@ -91,9 +88,60 @@ document.addEventListener("DOMContentLoaded", async () => {
     })
   }
 
-  // ========================
-  // SALVAR NOVO SUPRIMENTO
-  // ========================
+  // =============================================
+  // PREENCHER FILTRO
+  // =============================================
+  function preencherFiltroSetor(dados) {
+
+    const select = document.getElementById("filtro-setor")
+
+    const setores = [...new Set(dados.map(d => d.setor).filter(Boolean))]
+
+    select.innerHTML = `<option value="">Todos os setores</option>`
+
+    setores.forEach(setor => {
+      const option = document.createElement("option")
+      option.value = setor
+      option.textContent = setor
+      select.appendChild(option)
+    })
+  }
+
+  // =============================================
+  // APLICAR FILTRO
+  // =============================================
+  function aplicarFiltro() {
+
+    const setor = document.getElementById("filtro-setor").value
+
+    let filtrados = [...dadosEstoque]
+
+    if (setor) {
+      filtrados = filtrados.filter(item => item.setor === setor)
+    }
+
+    renderizarTabela(filtrados)
+  }
+
+  // =============================================
+  // CARREGAR DADOS
+  // =============================================
+  async function atualizarTabela() {
+
+    const { data: suprimentos } = await supabase
+      .from('reserva')
+      .select('*')
+      .order('impressora', { ascending: true })
+
+    dadosEstoque = suprimentos || []
+
+    preencherFiltroSetor(dadosEstoque)
+    aplicarFiltro() // 🔥 já aplica filtro ativo
+  }
+
+  // =============================================
+  // SALVAR
+  // =============================================
   btnSalvar?.addEventListener("click", async () => {
 
     const suprimento = document.getElementById("suprimento").value.trim()
@@ -104,7 +152,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const valor = document.getElementById("valor").value.trim().replace(",", ".")
 
     if (!suprimento || !impressora || !corSelecionada || !quantidade || quantidade < 1) {
-      alert("Preencha todos os campos obrigatórios!")
+      alert("Preencha os campos obrigatórios!")
       return
     }
 
@@ -113,7 +161,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       .insert({
         suprimento,
         impressora,
-        setor,       
+        setor,
         cor: corSelecionada.value,
         un: quantidade,
         valor: valor ? parseFloat(valor) : null
@@ -129,9 +177,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     await atualizarCards()
   })
 
-  // =============================================
-  // LIMPAR FORMULÁRIO
-  // =============================================
   function limparFormulario() {
     document.getElementById("suprimento").value = ""
     document.getElementById("impressora").value = ""
@@ -142,17 +187,17 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // =============================================
-  // EXCLUIR SUPRIMENTOS
+  // EXCLUIR
   // =============================================
   btnExcluir?.addEventListener("click", async () => {
 
     const selecionados = document.querySelectorAll(".checkbox-registro:checked")
 
     if (selecionados.length === 0) {
-      return alert("Selecione pelo menos um item para excluir!")
+      return alert("Selecione itens!")
     }
 
-    if (!confirm(`Excluir ${selecionados.length} suprimento(s) permanentemente?`)) return
+    if (!confirm(`Excluir ${selecionados.length} item(s)?`)) return
 
     const ids = Array.from(selecionados).map(cb => Number(cb.dataset.id))
 
@@ -166,7 +211,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       return
     }
 
-    alert("Suprimentos excluídos com sucesso!")
     selecionarTodos.checked = false
 
     await atualizarTabela()
@@ -174,13 +218,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   })
 
   // =============================================
-  // CHECKBOX "SELECIONAR TODOS"
+  // CHECKBOX TODOS
   // =============================================
   selecionarTodos?.addEventListener("change", () => {
-    document.querySelectorAll(".checkbox-registro").forEach(cb => {
-      cb.checked = selecionarTodos.checked
-    })
+    document.querySelectorAll(".checkbox-registro")
+      .forEach(cb => cb.checked = selecionarTodos.checked)
   })
+
+  // =============================================
+  // EVENTO FILTRO
+  // =============================================
+  document.getElementById("filtro-setor")
+    .addEventListener("change", aplicarFiltro)
 
   // =============================================
   // CARDS
@@ -196,20 +245,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     document.getElementById("totalImpressoras").textContent = impressorasUnicas
 
-    const totalUnidades = suprimentos.reduce((total, s) => {
-      return total + (Number(s.un) || 0)
-    }, 0)
-
+    const totalUnidades = suprimentos.reduce((t, s) => t + (Number(s.un) || 0), 0)
     document.getElementById("totalSuprimentos").textContent = totalUnidades
 
     const zerados = suprimentos.filter(s => s.un <= 0).length
     document.getElementById("suprimentosZerados").textContent = zerados
 
-    if (!registros || registros.length === 0) {
+    if (!registros?.length) {
       document.getElementById("topSuprimento").textContent = "—"
     } else {
       const contagem = {}
-
       registros.forEach(r => {
         contagem[r.suprimento] = (contagem[r.suprimento] || 0) + r.quantidade
       })
@@ -232,9 +277,28 @@ document.addEventListener("DOMContentLoaded", async () => {
     })
     .subscribe()
 
-  supabase.channel('registros-changes')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'registros' }, atualizarCards)
-    .subscribe()
+  // =============================================
+  // EXPORTAR
+  // =============================================
+  document.getElementById("exportar").addEventListener("click", async () => {
+
+    const { data } = await supabase.from("reserva").select("*")
+
+    if (!data?.length) return alert("Nada para exportar")
+
+    const dados = data.map(r => ({
+      Suprimento: r.suprimento,
+      Cor: r.cor,
+      UN: r.un,
+      Impressora: r.impressora,
+      Setor: r.setor,
+    }))
+
+    const ws = XLSX.utils.json_to_sheet(dados)
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, "Estoque")
+    XLSX.writeFile(wb, "estoque_suprimentos.xlsx")
+  })
 
   // =============================================
   // INICIALIZAÇÃO

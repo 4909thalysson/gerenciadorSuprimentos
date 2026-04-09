@@ -273,31 +273,30 @@ input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; marg
     box-shadow: 0 10px 25px rgba(241, 90, 36, 0.45);
 }
 
-.botao-excluir {
-    display: flex;
-    justify-content: flex-end;  /* AQUI que alinha à direita */
-    padding-right: 10px;        /* opcional */
-    margin: 5px 0 10px; 
+.botoes-principais {
+  max-width: 1100px;
+  margin: 20px auto 10px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 14px;
+  padding-right: 4px;
+}
 
+.botoes-principais button {
+  padding: 12px 28px;
+  font-size: 13px;
+  font-weight: bold;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.25s;
 }
-#excluirRegistro{              
-    max-width: 100px;           
-    margin: 0;        
-    background: #F15A24;
-    color: white;
-    padding: 16px 20px;
-    font-size: 15px;
-    font-weight: bold;
-    border: none;
-    border-radius: 14px;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    box-shadow: 0 5px 15px rgba(241, 90, 36, 0.35);
-    gap: 8px;
-}
+
+#exportar { background: #27ae60; color: white; }
+#exportar:hover { background: #218838; }
 
 #excluirRegistro { background: #dc3545; color: white; }
-#excluirRegistro:hover { background: #c82333; transform: translateY(-4px); }
+#excluirRegistro:hover { background: #c82333; }
 
 .tituloEstoque {
     color: #F15A24;
@@ -309,6 +308,71 @@ input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; marg
     justify-content: center;
 }
 
+/* CONTAINER GERAL */
+.filtros-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    background: white;
+    padding: 10px 15px;
+    border-radius: 8px;
+
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+
+    width: fit-content;
+}
+
+/* ÍCONE */
+.icone-filtro {
+    width: 25px;
+    opacity: 0.7;
+}
+
+/* ÁREA DOS FILTROS */
+.filtros {
+    display: flex;
+    gap: 10px;
+}
+
+/* SELECT */
+.filtros select {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+
+    font-size: 14px;
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+/* HOVER */
+.filtros select:hover {
+    border-color: #F15A24;
+}
+
+/* FOCO */
+.filtros select:focus {
+    outline: none;
+    border-color: #F15A24;
+    box-shadow: 0 0 0 2px rgba(241, 90, 36, 0.2);
+}
+
+@media (max-width: 768px) {
+    .filtros-container {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .filtros {
+        width: 100%;
+    }
+
+    .filtros select {
+        width: 100%;
+    }
+}
 
 /* ===== TABELA DE ESTOQUE ===== */
 
