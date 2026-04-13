@@ -67,48 +67,36 @@ function organizarPorSetor(dados) {
     return setores
 }
 
-// ===============================
-// MONTAR MENSAGEM (PLAIN TEXT OTIMIZADO)
-// ===============================
 function montarMensagemTags(dados) {
     const setores = organizarPorSetor(dados)
     const dataEnvio = new Date().toLocaleString("pt-BR")
 
     let texto = ""
-    texto += "RELATÓRIO DE SUPRIMENTOS\n"
-    texto += "========================================\n\n"
 
-    texto += `TIPO: RELATORIO_SUPRIMENTOS\n`
-    texto += `ORIGEM: Integrador\n`
-    texto += `EMAIL: gerenciadorsuprimentosgi@cambai.com\n`
-    texto += `DATA_ENVIO: ${dataEnvio}\n\n`
-
-    texto += "========================================\n"
+    texto += "RELATORIO_SUPRIMENTOS | "
+    texto += `ORIGEM: Integrador | `
+    texto += `EMAIL: gerenciadorsuprimentosgi@cambai.com | `
+    texto += `DATA: ${dataEnvio} || `
 
     Object.keys(setores).forEach(setor => {
 
-        texto += `\nSETOR: ${setor}\n`
-        texto += "----------------------------------------\n\n"
+        texto += `SETOR: ${setor} || `
 
-        setores[setor].forEach((r, index) => {
+        setores[setor].forEach(r => {
 
-            texto += `ITEM: ${r.suprimento}\n`
-            texto += `COR: ${r.cor || "-"}\n`
-            texto += `UN: ${r.un}\n`
-            texto += `TIPO: ${r.tipo}\n`
+            texto += `ITEM: ${r.suprimento} | `
+            texto += `COR: ${r.cor || "-"} | `
+            texto += `UN: ${r.un} | `
+            texto += `TIPO: ${r.tipo} | `
 
             if (r.dataHora) {
-                texto += `DATA: ${new Date(r.dataHora).toLocaleString("pt-BR")}\n`
+                texto += `DATA: ${new Date(r.dataHora).toLocaleString("pt-BR")} | `
             }
 
-            if (index < setores[setor].length - 1) {
-                texto += "\n--------------------\n\n"
-            } else {
-                texto += "\n"
-            }
+            texto += "## " // separador de item
         })
 
-        texto += "========================================\n"
+        texto += "|| " // separador de setor
     })
 
     return texto
