@@ -67,7 +67,10 @@ function organizarPorSetor(dados) {
     return setores
 }
 
-function montarMensagemTags(dados) {
+// ===============================
+// FORMATO PIPEFY (LINHA ÚNICA)
+// ===============================
+function montarMensagemPipefy(dados) {
     const setores = organizarPorSetor(dados)
     const dataEnvio = new Date().toLocaleString("pt-BR")
 
@@ -93,10 +96,55 @@ function montarMensagemTags(dados) {
                 texto += `DATA: ${new Date(r.dataHora).toLocaleString("pt-BR")} | `
             }
 
-            texto += "## " // separador de item
+            texto += "## "
         })
 
-        texto += "|| " // separador de setor
+        texto += "|| "
+    })
+
+    return texto
+}
+
+// ===============================
+// FORMATO EMAIL (BONITO)
+// ===============================
+function montarMensagemEmail(dados) {
+    const setores = organizarPorSetor(dados)
+    const dataEnvio = new Date().toLocaleString("pt-BR")
+
+    let texto = ""
+    texto += "RELATÓRIO DE SUPRIMENTOS\n"
+    texto += "========================================\n\n"
+
+    texto += `TIPO: RELATORIO_SUPRIMENTOS\n`
+    texto += `ORIGEM: Integrador\n`
+    texto += `EMAIL: gerenciadorsuprimentosgi@cambai.com\n`
+    texto += `DATA_ENVIO: ${dataEnvio}\n\n`
+
+    texto += "========================================\n"
+
+    Object.keys(setores).forEach(setor => {
+        texto += `\nSETOR: ${setor}\n`
+        texto += "----------------------------------------\n\n"
+
+        setores[setor].forEach((r, index) => {
+            texto += `ITEM: ${r.suprimento}\n`
+            texto += `COR: ${r.cor || "-"}\n`
+            texto += `UN: ${r.un}\n`
+            texto += `TIPO: ${r.tipo}\n`
+
+            if (r.dataHora) {
+                texto += `DATA: ${new Date(r.dataHora).toLocaleString("pt-BR")}\n`
+            }
+
+            if (index < setores[setor].length - 1) {
+                texto += "\n--------------------\n\n"
+            } else {
+                texto += "\n"
+            }
+        })
+
+        texto += "========================================\n"
     })
 
     return texto
@@ -189,7 +237,7 @@ async function gerarEstoque() {
 }
 
 // ===============================
-// ENVIAR EMAIL
+// ENVIAR EMAIL (PIPEFY + EMAIL)
 // ===============================
 function enviarEmail() {
     if (!dadosGerados.length) {
@@ -204,7 +252,13 @@ function enviarEmail() {
     if (email) email.value = "gerenciadorsuprimentosgi@cambai.com"
 
     if (mensagem) {
-        mensagem.value = montarMensagemTags(dadosGerados)
+        const pipefy = montarMensagemPipefy(dadosGerados)
+        const emailFormatado = montarMensagemEmail(dadosGerados)
+
+        mensagem.value =
+            pipefy +
+            "\n\n-----------------------------\n\n" +
+            emailFormatado
     }
 
     if (form) form.submit()
