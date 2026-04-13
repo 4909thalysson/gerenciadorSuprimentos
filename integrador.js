@@ -11,7 +11,7 @@ let conteudoEmail = ""
 let dadosGerados = []
 
 // ===============================
-// BUSCAR DADOS (ESTOQUE + REGISTROS)
+// BUSCAR DADOS
 // ===============================
 async function buscarDados(termo) {
     try {
@@ -55,9 +55,9 @@ async function buscarDados(termo) {
     }
 }
 
-// =====================
+// ===============================
 // ORGANIZAR POR SETOR
-// =====================
+// ===============================
 function organizarPorSetor(dados) {
     const setores = {}
     dados.forEach(r => {
@@ -68,91 +68,8 @@ function organizarPorSetor(dados) {
 }
 
 // ===============================
-// FORMATO PIPEFY (LINHA ÚNICA)
-// ===============================
-function montarMensagemPipefy(dados) {
-    const setores = organizarPorSetor(dados)
-    const dataEnvio = new Date().toLocaleString("pt-BR")
-
-    let texto = ""
-
-    texto += "RELATORIO_SUPRIMENTOS | "
-    texto += `ORIGEM: Integrador | `
-    texto += `EMAIL: gerenciadorsuprimentosgi@cambai.com | `
-    texto += `DATA: ${dataEnvio} || `
-
-    Object.keys(setores).forEach(setor => {
-
-        texto += `SETOR: ${setor} || `
-
-        setores[setor].forEach(r => {
-
-            texto += `ITEM: ${r.suprimento} | `
-            texto += `COR: ${r.cor || "-"} | `
-            texto += `UN: ${r.un} | `
-            texto += `TIPO: ${r.tipo} | `
-
-            if (r.dataHora) {
-                texto += `DATA: ${new Date(r.dataHora).toLocaleString("pt-BR")} | `
-            }
-
-            texto += "## "
-        })
-
-        texto += "|| "
-    })
-
-    return texto
-}
-
-// ===============================
-// FORMATO EMAIL (BONITO)
-// ===============================
-function montarMensagemEmail(dados) {
-    const setores = organizarPorSetor(dados)
-    const dataEnvio = new Date().toLocaleString("pt-BR")
-
-    let texto = ""
-    texto += "RELATÓRIO DE SUPRIMENTOS\n"
-    texto += "========================================\n\n"
-
-    texto += `TIPO: RELATORIO_SUPRIMENTOS\n`
-    texto += `ORIGEM: Integrador\n`
-    texto += `EMAIL: gerenciadorsuprimentosgi@cambai.com\n`
-    texto += `DATA_ENVIO: ${dataEnvio}\n\n`
-
-    texto += "========================================\n"
-
-    Object.keys(setores).forEach(setor => {
-        texto += `\nSETOR: ${setor}\n`
-        texto += "----------------------------------------\n\n"
-
-        setores[setor].forEach((r, index) => {
-            texto += `ITEM: ${r.suprimento}\n`
-            texto += `COR: ${r.cor || "-"}\n`
-            texto += `UN: ${r.un}\n`
-            texto += `TIPO: ${r.tipo}\n`
-
-            if (r.dataHora) {
-                texto += `DATA: ${new Date(r.dataHora).toLocaleString("pt-BR")}\n`
-            }
-
-            if (index < setores[setor].length - 1) {
-                texto += "\n--------------------\n\n"
-            } else {
-                texto += "\n"
-            }
-        })
-
-        texto += "========================================\n"
-    })
-
-    return texto
-}
-
-// =================
 // GERAR RELATÓRIO (VISUAL)
-// =================
+// ===============================
 function gerarRelatorio(dados) {
     if (!dados || !dados.length) {
         alert("Nenhum resultado encontrado.")
@@ -182,9 +99,9 @@ function gerarRelatorio(dados) {
     if (preview) preview.textContent = texto
 }
 
-// ======================
+// ===============================
 // RELATÓRIO REGISTROS
-// ======================
+// ===============================
 async function gerarRegistros() {
     const { data, error } = await supabaseIntegrador
         .from("registros")
@@ -209,9 +126,9 @@ async function gerarRegistros() {
     gerarRelatorio(dadosFormatados)
 }
 
-// =================
+// ===============================
 // RELATÓRIO ESTOQUE
-// =================
+// ===============================
 async function gerarEstoque() {
     const { data, error } = await supabaseIntegrador
         .from("reserva")
@@ -237,33 +154,33 @@ async function gerarEstoque() {
 }
 
 // ===============================
-// ENVIAR EMAIL (PIPEFY + EMAIL)
+// ENVIAR EMAIL (AGORA VIA FUNCTION)
 // ===============================
-function enviarEmail() {
+async function enviarEmail() {
     if (!dadosGerados.length) {
         alert("Gere um relatório antes de enviar.")
         return
     }
 
-    const email = document.getElementById("emailRemetente")
-    const mensagem = document.getElementById("mensagemEmail")
-    const form = document.getElementById("formPipefy")
+    try {
+        const response = await fetch("/.netlify/functions/enviar-relatorio", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                registros: dadosGerados
+            })
+        })
 
-    if (email) email.value = "gerenciadorsuprimentosgi@cambai.com"
+        if (!response.ok) throw new Error("Erro no envio")
 
-    if (mensagem) {
-        const pipefy = montarMensagemPipefy(dadosGerados)
-        const emailFormatado = montarMensagemEmail(dadosGerados)
+        alert("Relatório enviado com sucesso!")
 
-        mensagem.value =
-            pipefy +
-            "\n\n-----------------------------\n\n" +
-            emailFormatado
+    } catch (error) {
+        console.error(error)
+        alert("Erro ao enviar relatório.")
     }
-
-    if (form) form.submit()
-
-    alert("Relatório enviado ao Pipefy!")
 }
 
 // ===============================
