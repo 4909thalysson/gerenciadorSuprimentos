@@ -8,7 +8,7 @@ const supabaseIntegrador = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 // ESTADO GLOBAL
 // ===============================
 let conteudoEmail = ""
-let dadosGerados = [] 
+let dadosGerados = []
 
 // ===============================
 // BUSCAR DADOS (ESTOQUE + REGISTROS)
@@ -68,37 +68,47 @@ function organizarPorSetor(dados) {
 }
 
 // ===============================
-// MONTAR MENSAGEM COM TAGS (NOVO)
+// MONTAR MENSAGEM (PLAIN TEXT OTIMIZADO)
 // ===============================
 function montarMensagemTags(dados) {
     const setores = organizarPorSetor(dados)
+    const dataEnvio = new Date().toLocaleString("pt-BR")
 
-    let texto = `
-[TIPO] RELATORIO_SUPRIMENTOS
-[ORIGEM] Integrador
-[EMAIL] gerenciadorsuprimentosgi@cambai.com
-[DATA_ENVIO] ${new Date().toLocaleString("pt-BR")}
+    let texto = ""
+    texto += "RELATÓRIO DE SUPRIMENTOS\n"
+    texto += "========================================\n\n"
 
---------------------------------
-`
+    texto += `TIPO: RELATORIO_SUPRIMENTOS\n`
+    texto += `ORIGEM: Integrador\n`
+    texto += `EMAIL: gerenciadorsuprimentosgi@cambai.com\n`
+    texto += `DATA_ENVIO: ${dataEnvio}\n\n`
+
+    texto += "========================================\n"
 
     Object.keys(setores).forEach(setor => {
-        texto += `\n[SETOR] ${setor}\n\n`
 
-        setores[setor].forEach(r => {
-            texto += `[ITEM] ${r.suprimento}\n`
-            texto += `[COR] ${r.cor || "-"}\n`
-            texto += `[UN] ${r.un}\n`
-            texto += `[TIPO_REGISTRO] ${r.tipo}\n`
+        texto += `\nSETOR: ${setor}\n`
+        texto += "----------------------------------------\n\n"
+
+        setores[setor].forEach((r, index) => {
+
+            texto += `ITEM: ${r.suprimento}\n`
+            texto += `COR: ${r.cor || "-"}\n`
+            texto += `UN: ${r.un}\n`
+            texto += `TIPO: ${r.tipo}\n`
 
             if (r.dataHora) {
-                texto += `[DATA] ${new Date(r.dataHora).toLocaleString("pt-BR")}\n`
+                texto += `DATA: ${new Date(r.dataHora).toLocaleString("pt-BR")}\n`
             }
 
-            texto += `\n`
+            if (index < setores[setor].length - 1) {
+                texto += "\n--------------------\n\n"
+            } else {
+                texto += "\n"
+            }
         })
 
-        texto += `--------------------------------\n`
+        texto += "========================================\n"
     })
 
     return texto
@@ -191,7 +201,7 @@ async function gerarEstoque() {
 }
 
 // ===============================
-// ENVIAR EMAIL (AJUSTADO)
+// ENVIAR EMAIL
 // ===============================
 function enviarEmail() {
     if (!dadosGerados.length) {
