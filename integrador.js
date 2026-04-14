@@ -7,25 +7,28 @@ const supabaseIntegrador = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 // ===============================
 // ESTADO GLOBAL
 // ===============================
-let conteudoEmail = ""
-let dadosGerados = []
+let conteudoEmail = "";
+let dadosGerados = [];
+let relatorioAtual = "";
 
 // ===============================
-// BUSCAR DADOS
+// BUSCAR DADOS (FILTRO)
 // ===============================
 async function buscarDados(termo) {
     try {
         const { data: registros, error: erroReg } = await supabaseIntegrador
             .from("registros")
             .select("*")
-            .or(`setor.ilike.%${termo}%,suprimento.ilike.%${termo}%`)
-        if (erroReg) throw erroReg
+            .or(`setor.ilike.%${termo}%,suprimento.ilike.%${termo}%`);
+
+        if (erroReg) throw erroReg;
 
         const { data: reservas, error: erroRes } = await supabaseIntegrador
             .from("reserva")
             .select("*")
-            .or(`setor.ilike.%${termo}%,suprimento.ilike.%${termo}%`)
-        if (erroRes) throw erroRes
+            .or(`setor.ilike.%${termo}%,suprimento.ilike.%${termo}%`);
+
+        if (erroRes) throw erroRes;
 
         const dadosFormatados = [
             ...(registros || []).map(r => ({
@@ -44,14 +47,14 @@ async function buscarDados(termo) {
                 dataHora: null,
                 tipo: "ESTOQUE"
             }))
-        ]
+        ];
 
-        return dadosFormatados
+        return dadosFormatados;
 
     } catch (error) {
-        console.error(error)
-        alert("Erro ao buscar dados.")
-        return null
+        console.error(error);
+        alert("Erro ao buscar dados.");
+        return null;
     }
 }
 
@@ -59,59 +62,71 @@ async function buscarDados(termo) {
 // ORGANIZAR POR SETOR
 // ===============================
 function organizarPorSetor(dados) {
-    const setores = {}
+    const setores = {};
+
     dados.forEach(r => {
-        if (!setores[r.setor]) setores[r.setor] = []
-        setores[r.setor].push(r)
-    })
-    return setores
+        if (!setores[r.setor]) setores[r.setor] = [];
+        setores[r.setor].push(r);
+    });
+
+    return setores;
 }
 
 // ===============================
-// GERAR RELATÓRIO (VISUAL)
+// GERAR RELATÓRIO
 // ===============================
 function gerarRelatorio(dados) {
     if (!dados || !dados.length) {
-        alert("Nenhum resultado encontrado.")
-        return
+        alert("Nenhum resultado encontrado.");
+        return;
     }
 
-    const setores = organizarPorSetor(dados)
-    let texto = "RELATÓRIO DE SUPRIMENTOS\n\n"
+    const setores = organizarPorSetor(dados);
+
+    let texto = "RELATÓRIO DE SUPRIMENTOS\n\n";
 
     Object.keys(setores).forEach(setor => {
-        texto += `SETOR: ${setor}\n\n`
+        texto += `SETOR: ${setor}\n\n`;
+
         setores[setor].forEach(r => {
-            texto += `• ${r.suprimento}`
-            if (r.cor) texto += ` (${r.cor})`
-            texto += `\n  UN: ${r.un}\n`
-            texto += `  Tipo: ${r.tipo}\n`
-            if (r.dataHora) texto += `  Data: ${new Date(r.dataHora).toLocaleString("pt-BR")}\n`
-            texto += "\n"
-        })
-        texto += "-----------------------------\n\n"
-    })
+            texto += `• ${r.suprimento}`;
+            if (r.cor) texto += ` (${r.cor})`;
 
-    conteudoEmail = texto
-    dadosGerados = dados
+            texto += `\n  UN: ${r.un}`;
+            texto += `\n  Tipo: ${r.tipo}`;
 
-    const preview = document.getElementById("previewConteudo")
-    if (preview) preview.textContent = texto
+            if (r.dataHora) {
+                texto += `\n  Data: ${new Date(r.dataHora).toLocaleString("pt-BR")}`;
+            }
+
+            texto += "\n\n";
+        });
+
+        texto += "-----------------------------\n\n";
+    });
+
+    conteudoEmail = texto;
+    dadosGerados = dados;
+
+    const preview = document.getElementById("previewConteudo");
+    if (preview) preview.textContent = texto;
 }
 
 // ===============================
 // RELATÓRIO REGISTROS
 // ===============================
 async function gerarRegistros() {
+    relatorioAtual = "REGISTROS";
+
     const { data, error } = await supabaseIntegrador
         .from("registros")
         .select("*")
-        .order("dataHora", { ascending: false })
+        .order("dataHora", { ascending: false });
 
     if (error) {
-        console.error(error)
-        alert("Erro ao buscar registros.")
-        return
+        console.error(error);
+        alert("Erro ao buscar registros.");
+        return;
     }
 
     const dadosFormatados = (data || []).map(r => ({
@@ -121,24 +136,26 @@ async function gerarRegistros() {
         un: r.un,
         dataHora: r.dataHora,
         tipo: "REGISTRO"
-    }))
+    }));
 
-    gerarRelatorio(dadosFormatados)
+    gerarRelatorio(dadosFormatados);
 }
 
 // ===============================
 // RELATÓRIO ESTOQUE
 // ===============================
 async function gerarEstoque() {
+    relatorioAtual = "ESTOQUE";
+
     const { data, error } = await supabaseIntegrador
         .from("reserva")
         .select("*")
-        .order("setor", { ascending: true })
+        .order("setor", { ascending: true });
 
     if (error) {
-        console.error(error)
-        alert("Erro ao buscar estoque.")
-        return
+        console.error(error);
+        alert("Erro ao buscar estoque.");
+        return;
     }
 
     const dadosFormatados = (data || []).map(r => ({
@@ -148,82 +165,91 @@ async function gerarEstoque() {
         un: r.un,
         dataHora: null,
         tipo: "ESTOQUE"
-    }))
+    }));
 
-    gerarRelatorio(dadosFormatados)
+    gerarRelatorio(dadosFormatados);
 }
 
 // ===============================
-// ENVIAR EMAIL (AGORA VIA FUNCTION)
+// ENVIAR EMAIL (FORMSPREE)
 // ===============================
-async function enviarEmail() {
-    if (!dadosGerados.length) {
-        alert("Gere um relatório antes de enviar.")
-        return
+function enviarEmail() {
+
+    if (!conteudoEmail) {
+        alert("Gere um relatório antes de enviar.");
+        return;
     }
 
-    try {
-        const response = await fetch("/.netlify/functions/enviar-relatorio", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                registros: dadosGerados
-            })
-        })
+    document.getElementById("emailRemetente").value =
+        "gerenciadorsuprimentosgi@cambai.com";
 
-        if (!response.ok) throw new Error("Erro no envio")
+    const assunto = `RELATÓRIO - ${relatorioAtual || "GERAL"}\n\n`;
 
-        alert("Relatório enviado com sucesso!")
+    document.getElementById("mensagemEmail").value =
+        assunto + conteudoEmail;
 
-    } catch (error) {
-        console.error(error)
-        alert("Erro ao enviar relatório.")
-    }
+    document.getElementById("formPipefy").submit();
 }
 
 // ===============================
 // LIMPAR SISTEMA
 // ===============================
 function limparTudo() {
-    const input = document.getElementById("input-search")
-    const preview = document.getElementById("previewConteudo")
 
-    if (input) input.value = ""
-    if (preview) preview.textContent = ""
+    const inputSearch = document.getElementById("input-search");
+    const preview = document.getElementById("previewConteudo");
+    const mensagemEmail = document.getElementById("mensagemEmail");
 
-    conteudoEmail = ""
-    dadosGerados = []
+    if (inputSearch) inputSearch.value = "";
+    if (preview) preview.textContent = "";
+    if (mensagemEmail) mensagemEmail.value = "";
+
+    conteudoEmail = "";
+    dadosGerados = [];
+    relatorioAtual = "";
+
+    console.log("Sistema resetado.");
 }
 
 // ===============================
 // EVENTOS
 // ===============================
 document.addEventListener("DOMContentLoaded", function () {
-    const btnSearch = document.getElementById("btn-search")
-    const inputSearch = document.getElementById("input-search")
 
-    if (btnSearch) {
-        btnSearch.addEventListener("click", async function () {
-            const termo = inputSearch.value.trim()
-            if (!termo) {
-                alert("Digite um setor ou suprimento.")
-                return
-            }
+    const btnSearch = document.getElementById("btn-search");
+    const inputSearch = document.getElementById("input-search");
 
-            const dados = await buscarDados(termo)
-            if (!dados) return
+    btnSearch.addEventListener("click", async function () {
 
-            gerarRelatorio(dados)
-        })
-    }
-})
+        const termo = inputSearch.value.trim();
+
+        if (!termo) {
+            alert("Digite o nome da impressora.");
+            return;
+        }
+
+        relatorioAtual = "FILTRO";
+
+        const resultado = await buscarDados(termo);
+
+        if (!resultado) return;
+
+        gerarRelatorio(resultado);
+    });
+
+    // ENTER no input
+    inputSearch.addEventListener("keyup", async function (e) {
+        if (e.key === "Enter") {
+            btnSearch.click();
+        }
+    });
+
+});
 
 // ===============================
-// EXPOSIÇÃO GLOBAL
+// EXPOSIÇÃO GLOBAL (HTML)
 // ===============================
-window.gerarRegistros = gerarRegistros
-window.gerarEstoque = gerarEstoque
-window.enviarEmail = enviarEmail
-window.limparTudo = limparTudo
+window.gerarReservas = gerarEstoque;
+window.gerarRegistros = gerarRegistros;
+window.enviarEmail = enviarEmail;
+window.limparTudo = limparTudo;

@@ -39,53 +39,43 @@
 
 </header>
 <body>
+    <div class="container">
+        <div class="toolbar">
+                <div class="search-bar">
+                    <input type="text" id="input-search" placeholder="Pesquisar por impressora...">
+                    <button type="button" id="btn-search">
+                        <img src="assets/search.png" alt="Ícone de pesquisa" width="20" height="20">
+                    </button>
+                </div>
+                <button class="btn-primary" onclick="gerarReservas()">Estoque completo</button>
+                <button class="btn-primary" onclick="gerarRegistros()">Histórico de registros</button>
+            </div>
 
-    <div class="search-bar">
-        <input type="text" id="input-search" placeholder="Pesquisar por setor ou suprimento...">
-        <button type="button" id="btn-search">
-            <img src="assets/search.png" alt="Ícone de pesquisa" width="50" height="50">
-        </button>
-    </div>
 
-    <div class="actions actions-top">
-        <button class="btn-primary" onclick="gerarEstoque()">Estoque completo</button>
-        <button class="btn-primary" onclick="gerarRegistros()">Histórico de registros</button>
-    </div>
-
-    <div class="email-preview">
-        <h2>Pré-visualização</h2>
-        <pre id="previewConteudo">Vizualização do conteúdo do relatório antes do envio.</pre>
-    </div>
-
-    <div class="actions actions-bottom">
-        <button class="btn-success" onclick="enviarEmail()">Enviar ao Pipefy</button>
-        <button class="btn-danger" onclick="limparTudo()">Limpar</button>
-    </div>
+            <div class="preview-section">
+                <div class="email-preview">
+                    <h2>Pré-visualização</h2>
+                    <pre id="previewConteudo">Visualização do conteúdo do relatório antes do envio.</pre>
+                </div>
+                <div class="preview-actions">
+                    <button class="btn-success" onclick="enviarEmail()">Enviar ao Pipefy</button>
+                    <button class="btn-danger" onclick="limparTudo()">Limpar</button>
+                </div>
+            </div>
+    <div>
 
     <form 
         id="formPipefy"
-        name="pipefy"
+        action="https://formspree.io/f/xbdzgyqg"
         method="POST"
-        data-netlify="true"
         style="display:none;"
     >
-        <!-- obrigatório para o Netlify reconhecer -->
-        <input type="hidden" name="form-name" value="pipefy">
-
         <input type="email" name="email" id="emailRemetente">
         <textarea name="message" id="mensagemEmail"></textarea>
 
-        <!-- você pode manter -->
         <input type="hidden" name="_subject" value="Relatório Integrador Pipefy">
+        <input type="hidden" name="_captcha" value="false">
     </form>
-
-    <div class="integration-diagram">
-
-    <h3>Como ocorre essa comunicação?</h3>
-
-    <p class="integration-flow">👤 Usuário → 📝 Formulário → 📊 Pipefy</p>
-
-    </div>
 
     <footer style="margin:80px 0 40px; text-align:center; color:#666; font-size:14.5px;">
     Sistema desenvolvido e mantido pela <strong>Equipe do GI</strong><br>
