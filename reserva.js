@@ -11,118 +11,134 @@ document.addEventListener("DOMContentLoaded", async () => {
   const selecionarTodos = document.getElementById("selecionar-todos")
   const btnExcluir = document.getElementById("excluirRegistro")
 
-  let dadosEstoque = [] // 🔥 memória para filtros
+  let dadosEstoque = [] 
 
-  // =============================================
-  // CARREGAR LISTA DE IMPRESSORAS
-  // =============================================
-  async function carregarListaImpressoras() {
+// =============================================
+// CARREGAR LISTA DE IMPRESSORAS
+// =============================================
+async function carregarListaImpressoras() {
 
-    const select = document.getElementById("impressora")
+  const select = document.getElementById("impressora")
 
-    const { data, error } = await supabase
-      .from("impressoras")
-      .select("modelo, setor")
-      .order("modelo", { ascending: true })
+  const { data, error } = await supabase
+    .from("impressoras")
+    .select("modelo, setor")
+    .order("modelo", { ascending: true })
 
-    if (error) {
-      console.error(error)
-      select.innerHTML = `<option value="">Erro ao carregar</option>`
-      return
-    }
-
-    select.innerHTML = `<option value="">Selecione uma impressora</option>`
-
-    data.forEach(item => {
-      const option = document.createElement("option")
-      option.value = item.modelo
-      option.textContent = `${item.modelo} (${item.setor})`
-      select.appendChild(option)
-    })
+  if (error) {
+    console.error(error)
+    select.innerHTML = `<option value="">Erro ao carregar</option>`
+    return
   }
 
-  // =============================================
-  // AUTO PREENCHER SETOR
-  // =============================================
-  document.getElementById("impressora").addEventListener("change", function() {
-    const selected = this.options[this.selectedIndex].text
-    const setorMatch = selected.match(/\((.*?)\)/)
+  select.innerHTML = `<option value="">Selecione uma impressora</option>`
 
-    if(setorMatch){
-      document.getElementById("setor").value = setorMatch[1]
-    }
+  data.forEach(item => {
+    const option = document.createElement("option")
+    option.value = item.modelo
+    option.textContent = `${item.modelo} (${item.setor})`
+    select.appendChild(option)
   })
+}
 
-  // =============================================
-  // RENDERIZAR TABELA
-  // =============================================
-  function renderizarTabela(dados) {
+// =============================================
+// AUTO PREENCHER SETOR
+// =============================================
+document.getElementById("impressora").addEventListener("change", function() {
+  const selected = this.options[this.selectedIndex].text
+  const setorMatch = selected.match(/\((.*?)\)/)
 
-    tabela.innerHTML = ""
+  if(setorMatch){
+    document.getElementById("setor").value = setorMatch[1]
+  }
+})
 
-    if (!dados || dados.length === 0) {
-      tabela.innerHTML = `
-        <tr>
-          <td colspan="7" style="padding: 40px; color: #999;">
-            Nenhum suprimento encontrado
-          </td>
-        </tr>
-      `
-      return
-    }
+// =============================================
+// RENDERIZAR TABELA
+// =============================================
+function renderizarTabela(dados) {
 
-    dados.forEach(item => {
-      const row = document.createElement("tr")
+  tabela.innerHTML = ""
 
-      row.innerHTML = `
-        <td><input type="checkbox" class="checkbox-registro" data-id="${item.id}"></td>
-        <td>${item.suprimento}</td>
-        <td>${item.impressora}</td>
-        <td>${item.setor}</td>     
-        <td>${item.cor}</td>
-        <td>${item.un}</td>
-        <td>${item.valor ? `R$ ${Number(item.valor).toFixed(2)}` : '—'}</td>
-      `
-
-      tabela.appendChild(row)
-    })
+  if (!dados || dados.length === 0) {
+    tabela.innerHTML = `
+      <tr>
+        <td colspan="7" style="padding: 40px; color: #999;">
+          Nenhum suprimento encontrado
+        </td>
+      </tr>
+    `
+    return
   }
 
-  // =============================================
-  // PREENCHER FILTRO
-  // =============================================
-  function preencherFiltroSetor(dados) {
+  dados.forEach(item => {
+    const row = document.createElement("tr")
 
-    const select = document.getElementById("filtro-setor")
+    row.innerHTML = `
+      <td><input type="checkbox" class="checkbox-registro" data-id="${item.id}"></td>
+      <td>${item.suprimento}</td>
+      <td>${item.impressora}</td>
+      <td>${item.setor}</td>     
+      <td>${item.cor}</td>
+      <td>${item.un}</td>
+      <td>${item.valor ? `R$ ${Number(item.valor).toFixed(2)}` : '—'}</td>
+    `
 
-    const setores = [...new Set(dados.map(d => d.setor).filter(Boolean))]
+    tabela.appendChild(row)
+  })
+}
 
-    select.innerHTML = `<option value="">Todos os setores</option>`
+// =============================================
+// PREENCHER FILTRO
+// =============================================
+function preencherFiltroSetor(dados) {
 
-    setores.forEach(setor => {
-      const option = document.createElement("option")
-      option.value = setor
-      option.textContent = setor
-      select.appendChild(option)
-    })
+  const select = document.getElementById("filtro-setor")
+
+  const setores = [...new Set(dados.map(d => d.setor).filter(Boolean))]
+
+  select.innerHTML = `<option value="">Todos os setores</option>`
+
+  setores.forEach(setor => {
+    const option = document.createElement("option")
+    option.value = setor
+    option.textContent = setor
+    select.appendChild(option)
+  })
+}
+
+// =============================================
+// APLICAR FILTRO (ATUALIZADO)
+// =============================================
+function aplicarFiltro() {
+
+  const setor = document.getElementById("filtro-setor").value
+  const qtd = document.getElementById("qtd").value
+
+  let filtrados = [...dadosEstoque]
+
+  // Filtro por setor
+  if (setor) {
+    filtrados = filtrados.filter(item => item.setor === setor)
   }
 
-  // =============================================
-  // APLICAR FILTRO
-  // =============================================
-  function aplicarFiltro() {
-
-    const setor = document.getElementById("filtro-setor").value
-
-    let filtrados = [...dadosEstoque]
-
-    if (setor) {
-      filtrados = filtrados.filter(item => item.setor === setor)
-    }
-
-    renderizarTabela(filtrados)
+  // Filtro por quantidade
+  if (qtd === "0") {
+    filtrados = filtrados.filter(item => Number(item.un) === 0)
+  } 
+  // (Opcional futuro)
+  else if (qtd === "comQtd") {
+    filtrados = filtrados.filter(item => Number(item.un) > 0)
   }
 
+  renderizarTabela(filtrados)
+}
+
+// =============================================
+// EVENTOS DOS FILTROS
+// =============================================
+document.getElementById("filtro-setor").addEventListener("change", aplicarFiltro)
+document.getElementById("qtd").addEventListener("change", aplicarFiltro)
   // =============================================
   // CARREGAR DADOS
   // =============================================
@@ -236,36 +252,54 @@ document.addEventListener("DOMContentLoaded", async () => {
   // =============================================
   async function atualizarCards() {
 
-    const { data: suprimentos } = await supabase.from('reserva').select('*')
-    const { data: registros } = await supabase.from('registros').select('*')
+  const { data: suprimentos, error: erroSup } = await supabase.from('reserva').select('*')
+  const { data: registros, error: erroReg } = await supabase.from('registros').select('*')
+  const { data: impressoras, error: erroImp } = await supabase.from('impressoras').select('*')
 
-    const impressorasUnicas = new Set(
-      suprimentos.map(s => s.impressora).filter(i => i)
-    ).size
-
-    document.getElementById("totalImpressoras").textContent = impressorasUnicas
-
-    const totalUnidades = suprimentos.reduce((t, s) => t + (Number(s.un) || 0), 0)
-    document.getElementById("totalSuprimentos").textContent = totalUnidades
-
-    const zerados = suprimentos.filter(s => s.un <= 0).length
-    document.getElementById("suprimentosZerados").textContent = zerados
-
-    if (!registros?.length) {
-      document.getElementById("topSuprimento").textContent = "—"
-    } else {
-      const contagem = {}
-      registros.forEach(r => {
-        contagem[r.suprimento] = (contagem[r.suprimento] || 0) + r.quantidade
-      })
-
-      const maisUsado = Object.entries(contagem)
-        .sort((a, b) => b[1] - a[1])[0]
-
-      document.getElementById("topSuprimento").textContent =
-        `${maisUsado[0]} (${maisUsado[1]} un)`
-    }
+  if (erroSup || erroReg || erroImp) {
+    console.error("Erro ao buscar dados:", erroSup, erroReg, erroImp)
+    return
   }
+
+  // Impressoras únicas
+  const impressorasUnicas = new Set(
+    impressoras.map(s => s.modelo).filter(Boolean)
+  ).size
+
+  document.getElementById("totalImpressoras").textContent = impressorasUnicas
+
+  // Total suprimentos
+  const totalUnidades = (suprimentos || []).reduce(
+    (t, s) => t + (Number(s.un) || 0), 0
+  )
+
+  document.getElementById("totalSuprimentos").textContent = totalUnidades
+
+  // Zerados
+  const zerados = (suprimentos || []).filter(
+    s => Number(s.un) <= 0
+  ).length
+
+  document.getElementById("suprimentosZerados").textContent = zerados
+
+  // Top suprimento
+  if (!registros || registros.length === 0) {
+    document.getElementById("topSuprimento").textContent = "—"
+  } else {
+    const contagem = {}
+
+    registros.forEach(r => {
+      contagem[r.suprimento] =
+        (contagem[r.suprimento] || 0) + (Number(r.quantidade) || 0)
+    })
+
+    const maisUsado = Object.entries(contagem)
+      .sort((a, b) => b[1] - a[1])[0]
+
+    document.getElementById("topSuprimento").textContent =
+      `${maisUsado[0]} (${maisUsado[1]} un)`
+  }
+}
 
   // =============================================
   // REALTIME
