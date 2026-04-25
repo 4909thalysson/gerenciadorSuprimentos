@@ -1,42 +1,62 @@
-/* RESET */
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-body{
-font-family:Arial, Helvetica, sans-serif;
-background:#f4f4f4;
-color:#222;
-line-height:1.5;
+/* (HEADER) */
+.topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 30px;
+    background-color: #0445b8; 
 }
 
-header {
-    background: #F15A24;
-    padding: 10px 20px;
-    position: relative;
-    z-index: 1000;
+/* LOGO */
+.titleMenu {
+    display: flex;
+    align-items: center;
+}
+
+.titleMenu img {
+    height: 50px; 
+    width: auto;
 }
 
 /* MENU DESKTOP */
 #menu {
     display: flex;
-    justify-content: center;
     align-items: center;
-    gap: 20px;
+    gap: 25px;
 }
 
+/* LINKS */
 #menu a {
     text-decoration: none;
     color: white;
     display: flex;
     align-items: center;
     gap: 8px;
+    font-size: 15px;
+    transition: 0.2s;
 }
 
-/* BOTÃO */
+#menu a:hover {
+    opacity: 0.7;
+    background-color: white;
+    color: #0445b8;
+    padding: 6px 12px;
+    border-radius: 5px;
+}
+
+/* ÍCONES DO MENU */
+#menu a img {
+    height: 30px;
+    width: auto;
+}
+
+/* BOTÃO MENU MOBILE */
 #menu-toggle {
     display: none;
     font-size: 28px;
@@ -49,6 +69,10 @@ header {
 /* MOBILE */
 @media (max-width: 768px) {
 
+    .topo {
+        flex-wrap: wrap;
+    }
+
     #menu-toggle {
         display: block;
     }
@@ -57,8 +81,8 @@ header {
         display: none;
         flex-direction: column;
         background: white;
-        position: fixed;
-        top: 60px;
+        position: absolute;
+        top: 70px;
         left: 0;
         width: 100%;
         padding: 15px;
@@ -66,13 +90,71 @@ header {
         z-index: 1001;
     }
 
+    #menu.active {
+        display: flex;
+    }
+
     #menu a {
         color: #222;
         padding: 10px 0;
+        font-size: 16px;
     }
 
-    #menu.active {
-        display: flex;
+    #menu a img {
+        height: 22px;
+    }
+}
+/* CONTAINER DOS CARDS */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 220px));
+    justify-content: center;
+    gap: 15px;
+    margin-top: 50px;
+    margin-bottom: 20px;
+}
+
+/* CARD PADRÃO */
+.card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    font-size: 16px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    text-align: center;
+    font-weight: 500;
+    border: #0056b3 2px solid;
+}
+
+/* NÚMEROS */
+.card span {
+    display: block;
+    font-size: 28px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+/* ALERTA (ZERADOS) */
+.card.alert {
+    background: #ffe5e5;
+    border: #b30000 2px solid;
+    color: #b30000;
+}
+
+/* CARD DESTAQUE (TOP SUPRIMENTOS) */
+.card.destaque {
+    max-width: 700px; /* limita largura */
+    margin: 0 auto; /* centraliza */
+}
+
+/* RESPONSIVO */
+@media (max-width: 768px) {
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .card.destaque {
+        margin-top: 10px;
     }
 }
 
@@ -99,7 +181,9 @@ margin:auto;
 
 .printer{
 
-background:white;
+background: #0056b3;
+
+color: white;
 
 border-radius:10px;
 
@@ -143,7 +227,7 @@ font-size:18px;
 
 margin-bottom:6px;
 
-color:#333;
+color: white;
 
 }
 
@@ -154,7 +238,7 @@ color:#333;
 
 font-size:14px;
 
-color:#555;
+color: white;
 
 margin:4px 0;
 
@@ -167,7 +251,7 @@ margin:4px 0;
 
 font-size:13px;
 
-color:#888;
+color: white;
 
 }
 
@@ -215,7 +299,7 @@ margin-top:10px;
 
 display:inline-block;
 
-background:#F15A24;
+background:#0056b3;
 
 color:white;
 
@@ -261,117 +345,68 @@ margin:80px 0 40px;
 
 text-align:center;
 
-color:#666;
+color: white;
 
 font-size:14px;
 
 }
 
-.filtros {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  padding: 8px 15px;
-  border-radius: 12px;
-  margin-top: 50px;
-  margin-bottom: 20px;
+/* TÍTULO CENTRAL */
+.titulo {
+    grid-column: 2;
+    justify-self: center;
+    margin-top: 50px;
+    margin-bottom: 30px;
 }
 
-/* INPUT E SELECT */
-.filtros input,
-.filtros select {
-  padding: 8px 10px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  font-size: 14px;
-  outline: none;
-  transition: all 0.2s ease;
+.titulo h1 {
+    display: inline-block;
+    color: #0056b3;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 35px;
 }
 
-/* TAMANHO CONTROLADO */
-#filtro-busca {
-  flex: 0 0 90px; 
+.titulo h1 strong {
+    color: white;
+    background: #313131;
+    padding: 4px 8px;
+    border-radius: 5px;
 }
 
-#filtro-setor,
-#filtro-status {
-  flex: 0 0 150px;
+/* FILTROS À DIREITA */
+.grupo-filtros {
+    grid-column: 3;
+    justify-self: right;
+    margin-right: 50px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    border-radius: 3px;
+    border: 2px solid #0056b3;
+    padding: 8px 12px;
+
 }
 
-/* FOCUS */
-.filtros input:focus,
-.filtros select:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 0 2px rgba(0,123,255,0.15);
+/* TEXTO FILTROS */
+.grupo-filtros h2 {
+    color: #0056b3;
+    font-size: 14px;
+    font-weight: bold;
 }
 
-/* BOTÃO */
-.filtros button {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-
-  padding: 8px 12px;
-
-  background: #007bff;
-  color: white;
-
-  border: none;
-  border-radius: 8px;
-
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 500;
-
-  transition: all 0.2s ease;
-}
-
-/* hover */
-.filtros button:hover {
-  background: #0056b3;
-}
-
-/* ícone */
-.filtros button img {
-  width: 16px;
-  height: 16px;
-}
-
-@media (max-width: 768px) {
-  .filtros {
-    flex-direction: row; /* mantém horizontal */
-    justify-content: flex-start;
-    overflow-x: auto; /* permite rolagem se faltar espaço */
+/* INPUTS */
+.grupo-filtros select {
     padding: 6px 10px;
-    gap: 8px;
-  }
-
-  /* inputs menores */
-  .filtros input,
-  .filtros select {
-    font-size: 13px;
-    padding: 6px 8px;
-  }
-
-  /* tamanhos mais enxutos */
-  #filtro-busca {
-    flex: 0 0 80px;
-  }
-
-  #filtro-setor,
-  #filtro-status {
-    flex: 0 0 120px;
-  }
-
-  /* botão mais compacto */
-  .filtros button {
-    padding: 6px 10px;
-    font-size: 12px;
-  }
+    font-size: 14px;
+    border-radius: 3px;
+    border: 2px solid transparent;
+    background: #0057b335;
+    color: #333;
+    cursor: pointer;
+    transition: 0.2s;
 }
-
 /* RESPONSIVO */
 
 @media(max-width:600px){

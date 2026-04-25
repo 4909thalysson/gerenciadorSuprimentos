@@ -5,29 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/reserva.css">
     <title>Reserva de Suprimentos - Cambaí Sementes</title>
-    <link rel="icon" type="image/jpeg" href="assets\logoCambai.jpeg">
+    <link rel="icon" type="image/jpeg" href="assets\logoCambai.jpeg"> 
 </head>
 <body>
 
-<header>
-    <div class="topo">
-        <button id="menu-toggle">☰</button>
+<header class="topo">
+    <div class="titleMenu">
+        <img src="assets/logoSuprimentos.png" alt="Logo Cambaí Sementes">
     </div>
+
+    <button id="menu-toggle">☰</button>
 
     <nav id="menu">
         <a href="/printmap.html">
-            <img src="assets/localization.png" width="50">PrintMap
-        </a>
-        <a href="/reserva.html">
-            <img src="assets/reserva.png" width="50">Reserva
+            <img src="assets/apps.png">PrintMap
         </a>
         <a href="/registros.html">
-            <img src="assets/registros.png" width="50">Registros
+            <img src="assets/deposit.png">Registros
         </a>
         <a href="/integrador.html">
-            <img src="assets/plugin.png" width="50">Integrador
+            <img src="assets/plug-connection.png">Integrador
         </a>
     </nav>
+
+</header>
 
     <script>
         const toggle = document.getElementById("menu-toggle");
@@ -37,27 +38,6 @@
             menu.classList.toggle("active");
         });
     </script>
-
-</header>
-
-<div class="cards">
-    <div class="card">
-        Impressoras<br>
-        <span id="totalImpressoras">0</span>
-    </div>
-    <div class="card">
-        Suprimentos<br>
-        <span id="totalSuprimentos">0</span>
-    </div>
-    <div class="card alert">
-        Zerados<br>
-        <span id="suprimentosZerados">0</span>
-    </div>
-    <div class="card">
-        Suprimento Mais Usado<br>
-        <span id="topSuprimento">—</span>
-    </div>
-</div>
 
 <div class="content">
     <div class="duas-colunas">

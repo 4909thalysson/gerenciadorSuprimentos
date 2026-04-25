@@ -132,6 +132,59 @@ document.getElementById("filtro-status").addEventListener("change", aplicarFiltr
 document.getElementById("filtro-tipo").addEventListener("change", aplicarFiltros)
 
 // =============================================
+// CARDS DE RESUMO
+// =============================================
+
+async function atualizarCards() {
+
+  const { data: suprimentos, error: erroSup } = await db.from('reserva').select('*')
+  const { data: registros, error: erroReg } = await db.from('registros').select('*')
+  const { data: impressoras, error: erroImp } = await db.from('impressoras').select('*')
+
+  if (erroSup || erroReg || erroImp) {
+    console.error("Erro ao buscar dados:", erroSup, erroReg, erroImp)
+    return
+  }
+
+  const impressorasUnicas = new Set(
+    impressoras.map(s => s.modelo).filter(Boolean)
+  ).size
+
+  document.getElementById("totalImpressoras").textContent = impressorasUnicas
+
+  const totalUnidades = (suprimentos || []).reduce(
+    (t, s) => t + (Number(s.un) || 0), 0
+  )
+
+  document.getElementById("totalSuprimentos").textContent = totalUnidades
+
+  const zerados = (suprimentos || []).filter(
+    s => Number(s.un) <= 0
+  ).length
+
+  document.getElementById("suprimentosZerados").textContent = zerados
+
+  if (!registros || registros.length === 0) {
+    document.getElementById("topSuprimento").textContent = "—"
+  } else {
+    const contagem = {}
+
+    registros.forEach(r => {
+      contagem[r.suprimento] =
+        (contagem[r.suprimento] || 0) + (Number(r.quantidade) || 0)
+    })
+
+    const ranking = Object.entries(contagem)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3) // TOP 3
+
+    document.getElementById("topSuprimento").innerHTML =
+      ranking.map(([nome]) => nome).join("<br>")
+  }
+}
+
+// =============================================
 // INICIALIZAÇÃO
 // =============================================
 carregarImpressoras()
+atualizarCards()

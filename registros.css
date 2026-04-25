@@ -1,41 +1,62 @@
-
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-body {
-  background: #f8f8f8;
-  color: #333;
-  min-height: 100vh;
+/* (HEADER) */
+.topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 30px;
+    background-color: #0445b8; 
 }
 
-header {
-    background: #F15A24;
-    padding: 10px 20px;
-    position: relative;
-    z-index: 1000;
+/* LOGO */
+.titleMenu {
+    display: flex;
+    align-items: center;
+}
+
+.titleMenu img {
+    height: 50px; 
+    width: auto;
 }
 
 /* MENU DESKTOP */
 #menu {
     display: flex;
-    justify-content: center;
     align-items: center;
-    gap: 20px;
+    gap: 25px;
 }
 
+/* LINKS */
 #menu a {
     text-decoration: none;
     color: white;
     display: flex;
     align-items: center;
     gap: 8px;
+    font-size: 15px;
+    transition: 0.2s;
 }
 
-/* BOTÃO */
+#menu a:hover {
+    opacity: 0.7;
+    background-color: white;
+    color: #0445b8;
+    padding: 6px 12px;
+    border-radius: 5px;
+}
+
+/* ÍCONES DO MENU */
+#menu a img {
+    height: 30px;
+    width: auto;
+}
+
+/* BOTÃO MENU MOBILE */
 #menu-toggle {
     display: none;
     font-size: 28px;
@@ -48,6 +69,10 @@ header {
 /* MOBILE */
 @media (max-width: 768px) {
 
+    .topo {
+        flex-wrap: wrap;
+    }
+
     #menu-toggle {
         display: block;
     }
@@ -56,8 +81,8 @@ header {
         display: none;
         flex-direction: column;
         background: white;
-        position: fixed;
-        top: 60px;
+        position: absolute;
+        top: 70px;
         left: 0;
         width: 100%;
         padding: 15px;
@@ -65,19 +90,24 @@ header {
         z-index: 1001;
     }
 
+    #menu.active {
+        display: flex;
+    }
+
     #menu a {
         color: #222;
         padding: 10px 0;
+        font-size: 16px;
     }
 
-    #menu.active {
-        display: flex;
+    #menu a img {
+        height: 22px;
     }
 }
 
 /* ===== TÍTULOS ===== */
 h2 {
-  color: #F15A24;
+  color: #0445b8;
   text-align: center;
   font-size: 26px;
   margin: 50px 0 35px;
@@ -107,7 +137,7 @@ h2 {
 .container input {
   width: 100%;
   padding: 13px;
-  border: 2.5px solid #F15A24;
+  border: 2.5px solid #0445b8;
   border-radius: 10px;
   font-size: 15.5px;
 }
@@ -123,7 +153,7 @@ h2 {
   width: 50%;
   margin: 30px auto 0;
   padding: 16px;
-  background: #F15A24;
+  background: #0445b8;
   color: white;
   border: none;
   border-radius: 12px;
@@ -132,7 +162,7 @@ h2 {
   cursor: pointer;
   transition: 0.3s;
 }
-#registrar:hover { background: #e04e1c; transform: translateY(-3px); }
+#registrar:hover { background: #0445b8cc; transform: translateY(-3px); }
 
 /* ===== BOTÕES ===== */
 .botoes-principais {
@@ -177,7 +207,7 @@ h2 {
 }
 
 .table-box thead {
-  background: #F15A24;
+  background: #0445b8;
   color: white;
 }
 
@@ -227,14 +257,14 @@ h2 {
 .checkbox-registro {
   width: 22px;
   height: 22px;
-  accent-color: #F15A24;
+  accent-color: #0445b8;
   cursor: pointer;
   display: block;
   margin: 0 auto;
 }
 
-.table-box tbody tr:nth-child(even) { background: #fff8f2; }
-.table-box tbody tr:hover { background: #ffede1; }
+.table-box tbody tr:nth-child(even) { background: #bdcde929; }
+.table-box tbody tr:hover { background: #0445b829; }
 
 /* ================*/
 /* CARDS NO CELULAR*/
@@ -283,7 +313,7 @@ h2 {
     float: left;
     width: 50%;
     font-weight: bold;
-    color: #F15A24;
+    color: #0445b8;
     padding-right: 10px;
   }
 
@@ -313,7 +343,7 @@ h2 {
 
   .table-box td[data-label="Impressora"]::before {
     content: "Impressora:";
-    color: #F15A24;
+    color: #0445b8;
     font-weight: bold;
   }
 

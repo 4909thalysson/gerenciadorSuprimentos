@@ -248,60 +248,6 @@ document.getElementById("qtd").addEventListener("change", aplicarFiltro)
     .addEventListener("change", aplicarFiltro)
 
   // =============================================
-  // CARDS
-  // =============================================
-  async function atualizarCards() {
-
-  const { data: suprimentos, error: erroSup } = await supabase.from('reserva').select('*')
-  const { data: registros, error: erroReg } = await supabase.from('registros').select('*')
-  const { data: impressoras, error: erroImp } = await supabase.from('impressoras').select('*')
-
-  if (erroSup || erroReg || erroImp) {
-    console.error("Erro ao buscar dados:", erroSup, erroReg, erroImp)
-    return
-  }
-
-  // Impressoras únicas
-  const impressorasUnicas = new Set(
-    impressoras.map(s => s.modelo).filter(Boolean)
-  ).size
-
-  document.getElementById("totalImpressoras").textContent = impressorasUnicas
-
-  // Total suprimentos
-  const totalUnidades = (suprimentos || []).reduce(
-    (t, s) => t + (Number(s.un) || 0), 0
-  )
-
-  document.getElementById("totalSuprimentos").textContent = totalUnidades
-
-  // Zerados
-  const zerados = (suprimentos || []).filter(
-    s => Number(s.un) <= 0
-  ).length
-
-  document.getElementById("suprimentosZerados").textContent = zerados
-
-  // Top suprimento
-  if (!registros || registros.length === 0) {
-    document.getElementById("topSuprimento").textContent = "—"
-  } else {
-    const contagem = {}
-
-    registros.forEach(r => {
-      contagem[r.suprimento] =
-        (contagem[r.suprimento] || 0) + (Number(r.quantidade) || 0)
-    })
-
-    const maisUsado = Object.entries(contagem)
-      .sort((a, b) => b[1] - a[1])[0]
-
-    document.getElementById("topSuprimento").textContent =
-      `${maisUsado[0]} (${maisUsado[1]} un)`
-  }
-}
-
-  // =============================================
   // REALTIME
   // =============================================
   supabase.channel('reserva-changes')
@@ -339,6 +285,4 @@ document.getElementById("qtd").addEventListener("change", aplicarFiltro)
   // =============================================
   await carregarListaImpressoras()
   await atualizarTabela()
-  await atualizarCards()
-
 })
