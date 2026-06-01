@@ -25,6 +25,7 @@ async function carregarImpressoras(){
   listaImpressoras = data || []
 
   popularFiltroSetor()
+  popularFiltroTipo()
   renderizarImpressoras(listaImpressoras)
 }
 
@@ -94,6 +95,25 @@ function popularFiltroSetor() {
     const option = document.createElement("option")
     option.value = setor
     option.textContent = setor
+    select.appendChild(option)
+  })
+}
+
+// =============================================
+// POPULAR FILTRO DE TIPO
+// =============================================
+function popularFiltroTipo() {
+
+  const select = document.getElementById("filtro-tipo")
+
+  const tiposUnicos = [...new Set(listaImpressoras.map(i => i.propriedade))]
+    .filter(Boolean)
+    .sort((a, b) => a.localeCompare(b))
+
+  tiposUnicos.forEach(tipo => {
+    const option = document.createElement("option")
+    option.value = tipo
+    option.textContent = tipo === "locacao" ? "Locadas" : "Próprias"
     select.appendChild(option)
   })
 }
