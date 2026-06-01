@@ -178,9 +178,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   // EXIBIR HISTÓRICO
   async function exibirRegistros() {
 
+    const data15DiasAtras = new Date()
+    data15DiasAtras.setDate(data15DiasAtras.getDate() - 15)
+    const dataLimite = data15DiasAtras.toISOString()
+
     const { data } = await supabase
       .from("registros")
       .select("*")
+      .gte("dataHora", dataLimite)
       .order("dataHora", { ascending: false })
 
     if (!data || data.length === 0) {
@@ -277,9 +282,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   // EXPORTAR EXCEL
   document.getElementById("exportar").addEventListener("click", async () => {
 
+    const data15DiasAtras = new Date()
+    data15DiasAtras.setDate(data15DiasAtras.getDate() - 15)
+    const dataLimite = data15DiasAtras.toISOString()
+
     const { data } = await supabase
       .from("registros")
       .select("*")
+      .gte("dataHora", dataLimite)
 
     if (!data || data.length === 0) {
       alert("Nada para exportar")
