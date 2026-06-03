@@ -7,6 +7,51 @@ const db = window.supabase.createClient(
 )
 
 let listaImpressoras = []
+let impressoraAtual = null
+
+// =============================================
+// GERENCIAR MODAL
+// =============================================
+function abrirModalLeitura(impressora) {
+  impressoraAtual = impressora
+  document.getElementById("impressora-nome").value = impressora.modelo
+  document.getElementById("leitura-data").value = new Date().toISOString().split('T')[0]
+  document.getElementById("leitura-contador").value = ""
+  document.getElementById("modal-leitura").classList.add("active")
+}
+
+function fecharModalLeitura() {
+  document.getElementById("modal-leitura").classList.remove("active")
+  impressoraAtual = null
+}
+
+// =============================================
+// SALVAR LEITURA
+// =============================================
+async function salvarLeitura(e) {
+  e.preventDefault()
+
+  if (!impressoraAtual) return
+
+  const data = document.getElementById("leitura-data").value
+  const contador = document.getElementById("leitura-contador").value
+
+  const { error } = await db
+    .from("impressoras")
+    .update({
+      dataLeituraContador: data,
+      leituraContador: parseInt(contador)
+    })
+    .eq("id", impressoraAtual.id)
+
+  if (error) {
+    alert("Erro ao salvar leitura: " + error.message)
+    return
+  }
+
+  alert("Leitura registrada com sucesso!")
+  fecharModalLeitura()
+}
 
 // =============================================
 // CARREGAR IMPRESSORAS
@@ -63,6 +108,8 @@ function renderizarImpressoras(lista){
     const card = document.createElement("div")
     card.className = "printer"
 
+    let leituraDisplay = printer.leituraContador ? printer.leituraContador : "—"
+
     card.innerHTML = `
       <div class="icon">🖨️</div>
       <h3>${printer.modelo}</h3>
@@ -74,7 +121,15 @@ function renderizarImpressoras(lista){
       <div class="links">
         ${webLink}
       </div>
+      <div class="leitura-info">
+        <button class="btn-leitura">📊 Leitura</button>
+        <span class="ultima-leitura">${leituraDisplay}</span>
+      </div>
     `
+
+    card.querySelector(".btn-leitura").addEventListener("click", () => {
+      abrirModalLeitura(printer)
+    })
 
     container.appendChild(card)
   })
@@ -208,3 +263,14 @@ async function atualizarCards() {
 // =============================================
 carregarImpressoras()
 atualizarCards()
+
+// Event listeners do modal
+document.querySelector(".close-btn").addEventListener("click", fecharModalLeitura)
+document.querySelector(".btn-cancelar").addEventListener("click", fecharModalLeitura)
+document.getElementById("form-leitura").addEventListener("submit", salvarLeitura)
+
+document.getElementById("modal-leitura").addEventListener("click", (e) => {
+  if (e.target.id === "modal-leitura") {
+    fecharModalLeitura()
+  }
+})

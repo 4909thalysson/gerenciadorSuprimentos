@@ -90,6 +90,34 @@
 
     <div class="printmap" id="printmap"></div>
 
+    <!-- Modal de Leitura -->
+    <div id="modal-leitura" class="modal-overlay">
+        <div class="modal-conteudo">
+            <div class="modal-header">
+                <h2>Registrar Leitura</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <form id="form-leitura">
+                <div class="form-group">
+                    <label for="impressora-nome">Impressora:</label>
+                    <input type="text" id="impressora-nome" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="leitura-data">Data:</label>
+                    <input type="date" id="leitura-data" required>
+                </div>
+                <div class="form-group">
+                    <label for="leitura-contador">Leitura do Contador:</label>
+                    <input type="number" id="leitura-contador" min="0" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-salvar">Salvar</button>
+                    <button type="button" class="btn-cancelar">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <footer style="margin:80px 0 40px; text-align:center; color:#666; font-size:14.5px;">
     Sistema desenvolvido e mantido pela <strong>Equipe do GI</strong><br>
     Cambaí Sementes © 2026
