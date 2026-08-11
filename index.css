@@ -1,0 +1,626 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+:root {
+    --rail-width: 64px;
+    --sidebar-width: 236px;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #f4f6fa;
+    padding-left: var(--rail-width);
+}
+
+/* Foco visível para acessibilidade (teclado) */
+a:focus-visible,
+button:focus-visible,
+select:focus-visible,
+input:focus-visible {
+    outline: 3px solid #0445b8;
+    outline-offset: 2px;
+}
+
+/* SIDEBAR ESQUERDA (SANFONA)     */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: var(--rail-width);
+    background-color: #0445b8;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 1000;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
+    transition: width 0.3s ease;
+}
+
+.sidebar.expanded {
+    width: var(--sidebar-width);
+}
+
+/* LOGO / BOTÃO QUE ABRE E FECHA O MENU */
+.logo-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    padding: 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    transition: background-color 0.2s ease;
+}
+
+.logo-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.logo-toggle img {
+    height: 90px;
+    width: auto;
+    max-width: 90px;
+    object-fit: contain;
+}
+
+/* LINKS DO MENU */
+#menu {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 14px;
+}
+
+#menu a {
+    text-decoration: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 13px 0 13px 21px;
+    white-space: nowrap;
+    border-radius: 0 24px 24px 0;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+#menu a:hover,
+#menu a:focus-visible {
+    background-color: rgba(255, 255, 255, 0.95);
+    color: #0445b8;
+}
+
+/* ÍCONES DO MENU */
+#menu a img {
+    height: 22px;
+    width: 22px;
+    flex-shrink: 0;
+}
+
+/* RÓTULOS: só ficam legíveis quando a sidebar está expandida;
+   com a sidebar recolhida (overflow:hidden) eles simplesmente
+   ficam cortados fora da faixa de ícones. */
+#menu a span {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.sidebar.expanded #menu a span {
+    opacity: 1;
+}
+
+/* BACKDROP: escurece a página quando o menu está aberto,
+   e fecha o menu ao ser clicado */
+.sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 999;
+}
+
+.sidebar-backdrop.active {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    :root {
+        --rail-width: 56px;
+        --sidebar-width: min(78vw, 260px);
+    }
+
+    #menu a {
+        padding-top: 15px;
+        padding-bottom: 15px;
+    }
+}
+
+/* ============================= */
+/* CARDS RESUMO (TOPO DA PÁGINA)  */
+/* ============================= */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 220px));
+    justify-content: center;
+    gap: 15px;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    padding: 0 20px;
+}
+
+.card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    font-size: 16px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    font-weight: 500;
+    border: #0056b3 2px solid;
+}
+
+.card span {
+    display: block;
+    font-size: 28px;
+    font-weight: bold;
+    margin-top: 10px;
+    color: #0445b8;
+}
+
+.card.alert {
+    background: #ffe5e5;
+    border: #b30000 2px solid;
+    color: #b30000;
+}
+
+.card.alert span {
+    color: #b30000;
+}
+
+.card.destaque {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .card.destaque {
+        margin-top: 10px;
+    }
+}
+
+/* ============================= */
+/* BARRA: TÍTULO + FILTROS        */
+/* ============================= */
+/* .titulo e .grupo-filtros usavam grid-column sem um pai em grid;
+   este wrapper faz o título ficar centralizado de verdade e os
+   filtros alinhados à direita, sem depender da largura de cada um. */
+.mapa-toolbar {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 20px;
+    max-width: 1300px;
+    margin: 50px auto 30px;
+    padding: 0 40px;
+}
+
+.titulo {
+    grid-column: 2;
+    justify-self: center;
+    margin: 0;
+}
+
+.titulo h1 {
+    display: inline-block;
+    color: #0056b3;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 32px;
+    white-space: nowrap;
+}
+
+.titulo h1 strong {
+    color: white;
+    background: #313131;
+    padding: 4px 8px;
+    border-radius: 5px;
+}
+
+.filtros {
+    grid-column: 3;
+    justify-self: end;
+}
+
+.grupo-filtros {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    border-radius: 8px;
+    border: 2px solid #0056b3;
+    padding: 8px 12px;
+    background: #ffffff;
+}
+
+.grupo-filtros h2 {
+    color: #0056b3;
+    font-size: 14px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.grupo-filtros select {
+    padding: 6px 10px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: 2px solid transparent;
+    background: #0057b335;
+    color: #333;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.grupo-filtros select:hover {
+    background: #0057b355;
+}
+
+@media (max-width: 900px) {
+    .mapa-toolbar {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        padding: 0 20px;
+    }
+
+    .titulo,
+    .filtros {
+        justify-self: stretch;
+    }
+
+    .titulo h1 {
+        display: block;
+        text-align: center;
+        white-space: normal;
+    }
+
+    .grupo-filtros {
+        justify-content: center;
+    }
+}
+
+/* ============================= */
+/* GRID DE IMPRESSORAS            */
+/* ============================= */
+.printmap {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 22px;
+    padding: 10px 40px 40px;
+    max-width: 1300px;
+    margin: auto;
+}
+
+/* CARD DA IMPRESSORA */
+.printer {
+    background: #0056b3;
+    color: white;
+    border-radius: 12px;
+    padding: 22px 20px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    border-top: 5px solid rgba(255, 255, 255, 0.25);
+}
+
+.printer:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+}
+
+/* Faixa superior colorida por status (acompanha a classe do próprio
+   texto de status; navegadores sem suporte a :has() só não mostram
+   a faixa colorida e o card continua exatamente como antes) */
+.printer:has(.status.uso) {
+    border-top-color: #27ae60;
+}
+
+.printer:has(.status.manutencao) {
+    border-top-color: #f39c12;
+}
+
+.printer:has(.status.inativo) {
+    border-top-color: #e74c3c;
+}
+
+/* ÍCONE */
+.icon {
+    font-size: 40px;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+/* NOME DA IMPRESSORA */
+.printer h3 {
+    font-size: 17px;
+    margin-bottom: 2px;
+    color: white;
+}
+
+/* INFORMAÇÕES */
+.printer p {
+    font-size: 14px;
+    color: white;
+    margin: 2px 0;
+}
+
+/* TIPO */
+.tipo {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.75);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+/* STATUS — agora como selo (pill), mais fácil de escanear rápido */
+.status {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 13px;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.status.uso {
+    color: #d6f5e3;
+    background: rgba(39, 174, 96, 0.35);
+}
+
+.status.manutencao {
+    color: #fdeacb;
+    background: rgba(243, 156, 18, 0.35);
+}
+
+.status.inativo {
+    color: #fbd9d4;
+    background: rgba(231, 76, 60, 0.35);
+}
+
+/* LINK WEB */
+.links {
+    margin-top: 12px;
+}
+
+.links a {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+.links a:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* SEM WEB */
+.no-web {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* LEITURA */
+.leitura-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-leitura {
+    display: inline-block;
+    background: #27ae60;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-leitura:hover {
+    background: #229954;
+    opacity: 0.9;
+}
+
+.ultima-leitura {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    min-width: 50px;
+    text-align: center;
+}
+
+/* FOOTER */
+footer {
+    margin: 80px 0 40px;
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+}
+
+/* ============================= */
+/* MODAL DE LEITURA                */
+/* ============================= */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal-conteudo {
+    background: white;
+    border-radius: 10px;
+    padding: 30px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-header h2 {
+    color: #0056b3;
+    font-size: 22px;
+    margin: 0;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #999;
+    transition: color 0.2s;
+}
+
+.close-btn:hover {
+    color: #333;
+}
+
+#form-leitura {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+}
+
+.form-group input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #0056b3;
+    box-shadow: 0 0 0 2px rgba(5, 86, 179, 0.1);
+}
+
+.form-group input[readonly] {
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+    color: #666;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn-salvar,
+.btn-cancelar {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-salvar {
+    background-color: #27ae60;
+    color: white;
+}
+
+.btn-salvar:hover {
+    background-color: #229954;
+}
+
+.btn-cancelar {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.btn-cancelar:hover {
+    background-color: #c0392b;
+}
+
+/* RESPONSIVO GERAL */
+@media (max-width: 600px) {
+    .printmap {
+        padding: 10px 16px 30px;
+    }
+
+    .modal-conteudo {
+        width: 95%;
+        padding: 20px;
+    }
+}

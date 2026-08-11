@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/Pages/Styles/registros.css">
+    <title>Registros - Cambaí Sementes</title>
+    <link rel="icon" type="image/jpeg" href="/assets/logoCambai.jpeg">
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <button id="menu-toggle" class="logo-toggle" aria-label="Abrir ou fechar menu" aria-expanded="false" aria-controls="menu">
+            <a href="/index.html"><ref><img src="/assets/logo_cambai_branco.png" alt="Logo Cambaí Sementes"></ref></a>
+        </button>
+
+        <nav id="menu">
+            <a href="/Pages/reserva.html">
+                <img src="/assets/warehouse-alt.png" alt="">
+                <span>Reserva</span>
+            </a>
+            <a href="/Pages/registros.html">
+                <img src="/assets/deposit.png" alt="">
+                <span>Registros</span>
+            </a>
+            <a href="/Pages/integrador.html">
+                <img src="/assets/plug-connection.png" alt="">
+                <span>Integrador</span>
+            </a>
+        </nav>
+    </aside>
+
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+    <script>
+        const toggle = document.getElementById("menu-toggle");
+        const sidebar = document.getElementById("sidebar");
+        const backdrop = document.getElementById("sidebar-backdrop");
+
+        function setSidebar(open) {
+            sidebar.classList.toggle("expanded", open);
+            backdrop.classList.toggle("active", open);
+            toggle.setAttribute("aria-expanded", open);
+        }
+
+        toggle.addEventListener("click", () => {
+            setSidebar(!sidebar.classList.contains("expanded"));
+        });
+
+        backdrop.addEventListener("click", () => setSidebar(false));
+
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") setSidebar(false);
+        });
+
+        document.querySelectorAll("#menu a").forEach((link) => {
+            link.addEventListener("click", () => setSidebar(false));
+        });
+    </script>
+
+<div class="toolbar-acoes">
+    <button id="abrirRegistro" class="btn-abrir-modal">+ REGISTRAR RETIRADA</button>
+</div>
+
+<!-- MODAL: REGISTRO DE RETIRADAS -->
+<div class="modal-overlay" id="modalRegistro">
+    <div class="modal-box">
+        <button class="modal-fechar" data-close="modalRegistro" aria-label="Fechar">&times;</button>
+        <div class="container">
+            <h2>REGISTROS DE RETIRADAS</h2>
+
+            <label>Setor:</label>
+            <select id="setorSelect"></select>
+
+            <div id="sSelectContainer" style="margin-top: 12px;">
+                <label for="suprimentoSelect">Selecione o suprimento:</label>
+                <select id="suprimentoSelect" style="width:100%; padding:10px; border:2px solid #0445b8; border-radius:8px;"></select>
+            </div>
+
+            <div id="info-suprimento" style="margin:16px 0; padding:14px; background:#fff8f2; border:2px solid #0445b8; border-radius:10px; font-weight:bold; color:#0445b8;"></div>
+
+            <label>UN:</label>
+            <input id="unidade" type="number" min="1">
+
+            <label for="dataHora">Data e Hora</label>
+            <input type="datetime-local" id="dataHora">
+
+            <button id="registrar">REGISTRAR</button>
+        </div>
+    </div>
+</div>
+
+<h2 class="titulo-historico">HISTÓRICO DE RETIRADAS</h2>
+
+<div class="container-tabela-e-botoes">
+
+    <div class="botoes-principais">
+        <button id="exportar">EXPORTAR</button>
+        <button id="excluirRegistro">EXCLUIR</button>
+    </div>
+
+    <div class="table-box">
+        <table>
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="selecionar-todos"></th>
+                    <th>SETOR</th>
+                    <th>SUPRIMENTO</th>
+                    <th>UN</th>
+                    <th>DATA & HORA</th>
+                </tr>
+            </thead>
+            <tbody id="tabela-registros"></tbody>
+        </table>
+    </div>
+
+</div>
+
+<footer style="margin:80px 0 40px; text-align:center; color:#666; font-size:14.5px;">
+    Sistema desenvolvido e mantido pela <strong>Equipe do GI</strong><br>
+    Cambaí Sementes © 2025
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module" src="/Pages/Logic/registro.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+
+<script>
+    function configurarModal(btnAbrirId, modalId) {
+        const btnAbrir = document.getElementById(btnAbrirId);
+        const modal = document.getElementById(modalId);
+        if (!btnAbrir || !modal) return;
+
+        function abrir() {
+            modal.classList.add("ativo");
+            document.body.classList.add("modal-aberto");
+        }
+
+        function fechar() {
+            modal.classList.remove("ativo");
+            document.body.classList.remove("modal-aberto");
+        }
+
+        btnAbrir.addEventListener("click", abrir);
+
+        modal.querySelectorAll("[data-close]").forEach((btn) => {
+            btn.addEventListener("click", fechar);
+        });
+
+        modal.addEventListener("click", (e) => {
+            if (e.target === modal) fechar();
+        });
+
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && modal.classList.contains("ativo")) fechar();
+        });
+    }
+
+    configurarModal("abrirRegistro", "modalRegistro");
+</script>
+
+</body>
+</html>

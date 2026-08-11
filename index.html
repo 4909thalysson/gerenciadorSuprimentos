@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="index.css">
+    <link rel="icon" type="image/jpeg" href="/assets/logoCambai.jpeg">
+
+    <title>printMap</title>
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <button id="menu-toggle" class="logo-toggle" aria-label="Abrir ou fechar menu" aria-expanded="false" aria-controls="menu">
+            <a href="index.html"><ref><img src="/assets/logo_cambai_branco.png" alt="Logo Cambaí Sementes"></ref></a>
+        </button> 
+
+        <nav id="menu">
+            <a href="/Pages/reserva.html">
+                <img src="/assets/warehouse-alt.png" alt="">
+                <span>Reserva</span>
+            </a>
+            <a href="/Pages/registros.html">
+                <img src="/assets/deposit.png" alt="">
+                <span>Registros</span>
+            </a>
+            <a href="/Pages/integrador.html">
+                <img src="/assets/plug-connection.png" alt="">
+                <span>Integrador</span>
+            </a>
+        </nav>
+    </aside>
+
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+    <div class="cards">
+        <div class="card">
+            Impressoras<br>
+            <span id="totalImpressoras">0</span>
+        </div>
+        <div class="card">
+            Suprimentos<br>
+            <span id="totalSuprimentos">0</span>
+        </div>
+        <div class="card alert">
+            Zerados<br>
+            <span id="suprimentosZerados">0</span>
+        </div>
+    </div>
+
+    <div class="card destaque">
+        Top Suprimentos<br>
+        <span id="topSuprimento">—</span>
+    </div>
+
+    <div class="mapa-toolbar">
+        <div class="titulo">
+            <h1>Mapeamento de <strong>IMPRESSORAS</strong></h1>
+        </div>
+
+        <div class="filtros">
+            <div class="grupo-filtros">
+                <h2>Filtros:</h2>
+
+                <select id="filtro-setor">
+                    <option value="">Todos os setores</option>
+                </select>
+
+                <select id="filtro-status">
+                    <option value="">Todos os status</option>
+                    <option value="uso">Em uso</option>
+                    <option value="manutencao">Manutenção</option>
+                    <option value="inativo">Inativo</option>
+                </select>
+
+                <select id="filtro-tipo">
+                    <option value="">Todos os tipos</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="printmap" id="printmap"></div>
+
+    <!-- Modal de Leitura -->
+    <div id="modal-leitura" class="modal-overlay">
+        <div class="modal-conteudo">
+            <div class="modal-header">
+                <h2>Registrar Leitura</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <form id="form-leitura">
+                <div class="form-group">
+                    <label for="impressora-nome">Impressora:</label>
+                    <input type="text" id="impressora-nome" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="leitura-data">Data:</label>
+                    <input type="date" id="leitura-data" required>
+                </div>
+                <div class="form-group">
+                    <label for="leitura-contador">Leitura do Contador:</label>
+                    <input type="number" id="leitura-contador" min="0" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-salvar">Salvar</button>
+                    <button type="button" class="btn-cancelar">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        Sistema desenvolvido e mantido pela <strong>Equipe do GI</strong><br>
+        Cambaí Sementes © 2026
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="index.js"></script>
+    <script>
+        const toggle = document.getElementById("menu-toggle");
+        const sidebar = document.getElementById("sidebar");
+        const backdrop = document.getElementById("sidebar-backdrop");
+
+        function setSidebar(open) {
+            sidebar.classList.toggle("expanded", open);
+            backdrop.classList.toggle("active", open);
+            toggle.setAttribute("aria-expanded", open);
+        }
+
+        toggle.addEventListener("click", () => {
+            setSidebar(!sidebar.classList.contains("expanded"));
+        });
+
+        backdrop.addEventListener("click", () => setSidebar(false));
+
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") setSidebar(false);
+        });
+
+        // Fecha o menu ao navegar (útil em telas menores)
+        document.querySelectorAll("#menu a").forEach((link) => {
+            link.addEventListener("click", () => setSidebar(false));
+        });
+    </script>
+
+</body>
+</html>

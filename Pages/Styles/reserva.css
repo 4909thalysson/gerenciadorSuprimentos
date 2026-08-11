@@ -4,104 +4,130 @@
     box-sizing: border-box;
 }
 
-/* (HEADER) */
-.topo {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px 30px;
-    background-color: #0445b8; 
+:root {
+    --rail-width: 64px;
+    --sidebar-width: 236px;
 }
 
-/* LOGO */
-.titleMenu {
-    display: flex;
-    align-items: center;
+body {
+    padding-left: var(--rail-width);
 }
 
-.titleMenu img {
-    height: 50px; 
+/* ============================= */
+/* SIDEBAR ESQUERDA (SANFONA)     */
+/* ============================= */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: var(--rail-width);
+    background-color: #0445b8;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 1000;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
+    transition: width 0.3s ease;
+}
+
+.sidebar.expanded {
+    width: var(--sidebar-width);
+}
+
+/* LOGO / BOTÃO QUE ABRE E FECHA O MENU */
+.logo-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    padding: 16px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    transition: background-color 0.2s ease;
+}
+
+.logo-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.logo-toggle img {
+    height: 90px;
     width: auto;
+    max-width: 90px;
+    object-fit: contain;
 }
 
-/* MENU DESKTOP */
+/* LINKS DO MENU */
 #menu {
     display: flex;
-    align-items: center;
-    gap: 25px;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 14px;
 }
 
-/* LINKS */
 #menu a {
     text-decoration: none;
     color: white;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 16px;
     font-size: 15px;
-    transition: 0.2s;
+    font-weight: 500;
+    padding: 13px 0 13px 21px;
+    white-space: nowrap;
+    border-radius: 0 24px 24px 0;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-#menu a:hover {
-    opacity: 0.7;
-    background-color: white;
+#menu a:hover,
+#menu a:focus-visible {
+    background-color: rgba(255, 255, 255, 0.95);
     color: #0445b8;
-    padding: 6px 12px;
-    border-radius: 5px;
 }
 
 /* ÍCONES DO MENU */
 #menu a img {
-    height: 30px;
-    width: auto;
+    height: 22px;
+    width: 22px;
+    flex-shrink: 0;
 }
 
-/* BOTÃO MENU MOBILE */
-#menu-toggle {
+/* RÓTULOS: só ficam legíveis quando a sidebar está expandida */
+#menu a span {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.sidebar.expanded #menu a span {
+    opacity: 1;
+}
+
+/* BACKDROP: escurece a página quando o menu está aberto */
+.sidebar-backdrop {
     display: none;
-    font-size: 28px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: white;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 999;
 }
 
-/* MOBILE */
+.sidebar-backdrop.active {
+    display: block;
+}
+
 @media (max-width: 768px) {
-
-    .topo {
-        flex-wrap: wrap;
-    }
-
-    #menu-toggle {
-        display: block;
-    }
-
-    #menu {
-        display: none;
-        flex-direction: column;
-        background: white;
-        position: absolute;
-        top: 70px;
-        left: 0;
-        width: 100%;
-        padding: 15px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        z-index: 1001;
-    }
-
-    #menu.active {
-        display: flex;
+    :root {
+        --rail-width: 56px;
+        --sidebar-width: min(78vw, 260px);
     }
 
     #menu a {
-        color: #222;
-        padding: 10px 0;
-        font-size: 16px;
-    }
-
-    #menu a img {
-        height: 22px;
+        padding-top: 15px;
+        padding-bottom: 15px;
     }
 }
 
@@ -115,22 +141,121 @@
     gap: 50px;
 }
 
-/* ===== DUAS COLUNAS: CADASTRO + PIPEFY ===== */
-.duas-colunas {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-    align-items: stretch; /* faz os dois terem a mesma altura */
+/* ===== BARRA DE AÇÕES (BOTÕES QUE ABREM OS MODAIS) ===== */
+.toolbar-acoes {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: -20px;
 }
 
-/* ===== CADASTRO DE TONER ===== */
+.btn-abrir-modal {
+    background: #0445b8;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 15px;
+    font-weight: bold;
+    border-radius: 14px;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(4, 69, 184, 0.35);
+    transition: all 0.25s ease;
+}
+
+.btn-abrir-modal:hover {
+    background: #0445b8cc;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(4, 69, 184, 0.45);
+}
+
+.btn-compra {
+    background: #D4380D;
+    box-shadow: 0 5px 15px rgba(212, 56, 13, 0.35);
+}
+
+.btn-compra:hover {
+    background: #d4380dcc;
+    box-shadow: 0 10px 25px rgba(212, 56, 13, 0.45);
+}
+
+/* ===== MODAL (POP-UP) ===== */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-overlay.ativo {
+    display: flex;
+}
+
+.modal-box {
+    width: 100%;
+    max-width: 620px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    animation: modal-entrada 0.25s ease;
+}
+
+.modal-box-compra {
+    max-width: 640px;
+}
+
+.modal-box .form-box,
+.modal-box .pipefy-container {
+    margin: 0;
+    height: auto;
+}
+
+.modal-fechar {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: white;
+    color: #0445b8;
+    font-size: 22px;
+    font-weight: bold;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+.modal-fechar:hover {
+    background: #0445b8;
+    color: white;
+}
+
+@keyframes modal-entrada {
+    from { opacity: 0; transform: translateY(-20px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+body.modal-aberto {
+    overflow: hidden;
+}
+
+/* ===== CADASTRO DE SUPRIMENTOS (dentro do modal) ===== */
 .form-box {
     background: white;
     padding: 32px 35px;
     border-radius: 16px;
     box-shadow: 0 8px 25px rgba(0,0,0,0.1);
     border: 2px solid #0445b8;
-    height: 100%;
     display: flex;
     flex-direction: column;
 }
@@ -143,21 +268,15 @@
     font-weight: bold;
 }
 
-/* ===== PIPEFY – MESMO TAMANHO, SEM BORDA LARANJA ===== */
-.pipefy-coluna {
-    height: 100%;
-}
-
+/* ===== PIPEFY (dentro do modal) ===== */
 .pipefy-container {
     background: white;
     padding: 32px 30px;
     border-radius: 16px;
     box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-    height: 100%;                    /* mesma altura do cadastro */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    border: none !important;         /* remove qualquer borda laranja */
 }
 
 .pipefy-container h2 {
@@ -176,7 +295,6 @@
 }
 
 .iframe-wrapper {
-    flex: 1;
     min-height: 520px;
     border-radius: 12px;
     overflow: hidden;
@@ -188,20 +306,6 @@
     width: 100%;
     height: 100%;
     border: none;
-}
-
-.pipefy-ajuda {
-    text-align: center;
-    margin-top: 18px;
-}
-
-.pipefy-ajuda small {
-    background: #fff5ec;
-    color: #D4380D;
-    padding: 10px 18px;
-    border-radius: 30px;
-    font-weight: 600;
-    font-size: 14px;
 }
 
 /* ===== CAMPOS DO FORMULÁRIO ===== */
@@ -242,11 +346,11 @@ input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; marg
 
 /* Botão SALVAR */
 #salvar {
-    margin-top: 15px;           
-    width: 100%;                
-    max-width: 180px;           
-    margin-left: auto;          
-    margin-right: auto;         
+    margin-top: 15px;
+    width: 100%;
+    max-width: 180px;
+    margin-left: auto;
+    margin-right: auto;
     background: #0445b8;
     color: white;
     padding: 16px 20px;
@@ -403,22 +507,12 @@ tbody tr:hover { background: #0446b829; }
 
 /* ===== RESPONSIVO ===== */
 @media (max-width: 900px) {
-    header { justify-content: center; gap: 30px; }
-    header a { padding-left: 0; font-size: 18px; }
-
-    .duas-colunas {
-        grid-template-columns: 1fr;
-        gap: 35px;
-    }
-
     .form-box, .pipefy-container {
         padding: 28px 24px;
     }
 }
 
 @media (max-width: 600px) {
-    header a { font-size: 16px; }
-
     .form-box h2, .pipefy-container h2 { font-size: 21px; }
 
     .iframe-wrapper { min-height: 500px; }

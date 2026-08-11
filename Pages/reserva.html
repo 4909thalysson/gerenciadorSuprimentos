@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/Pages/Styles/reserva.css">
+    <title>Reserva de Suprimentos - Cambaí Sementes</title>
+    <link rel="icon" type="image/jpeg" href="/assets/logoCambai.jpeg">
+</head>
+<body>
+
+    <aside class="sidebar" id="sidebar">
+        <button id="menu-toggle" class="logo-toggle" aria-label="Abrir ou fechar menu" aria-expanded="false" aria-controls="menu">
+            <a href="/index.html"><ref><img src="/assets/logo_cambai_branco.png" alt="Logo Cambaí Sementes"></ref></a>
+        </button>
+
+        <nav id="menu">
+            <a href="/Pages/reserva.html">
+                <img src="/assets/warehouse-alt.png" alt="">
+                <span>Reserva</span>
+            </a>
+            <a href="/Pages/registros.html">
+                <img src="/assets/deposit.png" alt="">
+                <span>Registros</span>
+            </a>
+            <a href="/Pages/integrador.html">
+                <img src="/assets/plug-connection.png" alt="">
+                <span>Integrador</span>
+            </a>
+        </nav>
+    </aside>
+
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+    <script>
+        const toggle = document.getElementById("menu-toggle");
+        const sidebar = document.getElementById("sidebar");
+        const backdrop = document.getElementById("sidebar-backdrop");
+
+        function setSidebar(open) {
+            sidebar.classList.toggle("expanded", open);
+            backdrop.classList.toggle("active", open);
+            toggle.setAttribute("aria-expanded", open);
+        }
+
+        toggle.addEventListener("click", () => {
+            setSidebar(!sidebar.classList.contains("expanded"));
+        });
+
+        backdrop.addEventListener("click", () => setSidebar(false));
+
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") setSidebar(false);
+        });
+
+        document.querySelectorAll("#menu a").forEach((link) => {
+            link.addEventListener("click", () => setSidebar(false));
+        });
+    </script>
+
+<div class="content">
+
+    <div class="toolbar-acoes">
+        <button id="abrirCadastro" class="btn-abrir-modal">+ CADASTRAR SUPRIMENTO</button>
+        <button id="abrirCompra" class="btn-abrir-modal btn-compra">SOLICITAR COMPRA</button>
+    </div>
+
+    <!-- MODAL: CADASTRO DE SUPRIMENTOS -->
+    <div class="modal-overlay" id="modalCadastro">
+        <div class="modal-box">
+            <button class="modal-fechar" data-close="modalCadastro" aria-label="Fechar">&times;</button>
+            <div class="form-box">
+                <h2>CADASTRO DE SUPRIMENTOS</h2>
+
+                <label>Descrição do suprimento:</label>
+                <input id="suprimento" type="text" placeholder="Ex: TN-217">
+
+                <label>Impressora:</label>
+                <select id="impressora">
+                    <option value="">Carregando impressoras...</option>
+                </select>
+
+                <label>Localização - setor</label>
+                <input id="setor" type="text" placeholder="Ex:Laboratório">
+
+                <label>Cor:</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="cor" value="Preto"> Preto</label>
+                    <label><input type="radio" name="cor" value="Amarelo"> Amarelo</label>
+                    <label><input type="radio" name="cor" value="Ciano"> Ciano</label>
+                    <label><input type="radio" name="cor" value="Magenta"> Magenta</label>
+                </div>
+
+                <label>Quantidade:</label>
+                <input id="quantidade" type="number" min="1" value="1">
+
+                <label>Valor </label>
+                <input type="text" id="valor" placeholder="R$ 0,00" step="0.01" min="0">
+
+                <button id="salvar">SALVAR</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: COMPRAR SUPRIMENTOS (PIPEFY) -->
+    <div class="modal-overlay" id="modalCompra">
+        <div class="modal-box modal-box-compra">
+            <button class="modal-fechar" data-close="modalCompra" aria-label="Fechar">&times;</button>
+            <div class="pipefy-container">
+                <h2>COMPRAR SUPRIMENTOS</h2>
+                <p class="descricao">
+                    Quando o estoque estiver baixo ou acabando,<br>
+                    solicite a compra pelo formulário abaixo.
+                </p>
+                <div class="iframe-wrapper">
+                    <iframe width='560' height='580' src='https://app.pipefy.com/public/form/BAOY2o5K?embedded=true' frameborder='0'></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="tituloEstoque">ESTOQUE ATUAL</h2>
+
+    <div class="container-tabela">
+
+        <div class="filtros-container">
+            <img src="/assets/filter.png" alt="filtro" class="icone-filtro">
+            <p>Filtros personalizados</p>
+            <div class="filtros">
+                <select id="filtro-setor">
+                    <option value="">Todos os setores</option>
+                </select>
+                <select id="qtd">
+                    <option value="totalQtd">Todas as qtd</option>
+                    <option value="0">Zerados</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="botoes-principais">
+            <button id="exportar">EXPORTAR</button>
+            <button id="excluirRegistro">EXCLUIR</button>
+        </div>
+
+        <div class="table-box">
+            <table>
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="selecionar-todos" title="Marcar todos"></th>
+                        <th>Suprimento</th>
+                        <th>Impressora</th>
+                        <th>setor</th>
+                        <th>Cor</th>
+                        <th>Qtd</th>
+                        <th>Valor</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<footer style="margin:80px 0 40px; text-align:center; color:#666; font-size:14.5px;">
+    Sistema desenvolvido e mantido pela <strong>Equipe do GI</strong><br>
+    Cambaí Sementes © 2026
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module" src="/Pages/Logic/reserva.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+
+<script>
+    function configurarModal(btnAbrirId, modalId) {
+        const btnAbrir = document.getElementById(btnAbrirId);
+        const modal = document.getElementById(modalId);
+        if (!btnAbrir || !modal) return;
+
+        function abrir() {
+            modal.classList.add("ativo");
+            document.body.classList.add("modal-aberto");
+        }
+
+        function fechar() {
+            modal.classList.remove("ativo");
+            document.body.classList.remove("modal-aberto");
+        }
+
+        btnAbrir.addEventListener("click", abrir);
+
+        modal.querySelectorAll("[data-close]").forEach((btn) => {
+            btn.addEventListener("click", fechar);
+        });
+
+        modal.addEventListener("click", (e) => {
+            if (e.target === modal) fechar();
+        });
+
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && modal.classList.contains("ativo")) fechar();
+        });
+    }
+
+    configurarModal("abrirCadastro", "modalCadastro");
+    configurarModal("abrirCompra", "modalCompra");
+</script>
+
+</body>
+</html>

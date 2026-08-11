@@ -4,111 +4,138 @@
     box-sizing: border-box;
 }
 
-/* (HEADER) */
-.topo {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px 30px;
-    background-color: #0445b8; 
+:root {
+    --rail-width: 64px;
+    --sidebar-width: 236px;
 }
 
-/* LOGO */
-.titleMenu {
-    display: flex;
-    align-items: center;
+body {
+    padding-left: var(--rail-width);
 }
 
-.titleMenu img {
-    height: 50px; 
+/* ============================= */
+/* SIDEBAR ESQUERDA (SANFONA)     */
+/* ============================= */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: var(--rail-width);
+    background-color: #0445b8;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 1000;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
+    transition: width 0.3s ease;
+}
+
+.sidebar.expanded {
+    width: var(--sidebar-width);
+}
+
+/* LOGO / BOTÃO QUE ABRE E FECHA O MENU */
+.logo-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    padding: 16px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    transition: background-color 0.2s ease;
+}
+
+.logo-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.logo-toggle img {
+    height: 90px;
     width: auto;
+    max-width: 90px;
+    object-fit: contain;
 }
 
-/* MENU DESKTOP */
+/* LINKS DO MENU */
 #menu {
     display: flex;
-    align-items: center;
-    gap: 25px;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 14px;
 }
 
-/* LINKS */
 #menu a {
     text-decoration: none;
     color: white;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 16px;
     font-size: 15px;
-    transition: 0.2s;
+    font-weight: 500;
+    padding: 13px 0 13px 21px;
+    white-space: nowrap;
+    border-radius: 0 24px 24px 0;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-#menu a:hover {
-    opacity: 0.7;
-    background-color: white;
+#menu a:hover,
+#menu a:focus-visible {
+    background-color: rgba(255, 255, 255, 0.95);
     color: #0445b8;
-    padding: 6px 12px;
-    border-radius: 5px;
 }
 
 /* ÍCONES DO MENU */
 #menu a img {
-    height: 30px;
-    width: auto;
+    height: 22px;
+    width: 22px;
+    flex-shrink: 0;
 }
 
-/* BOTÃO MENU MOBILE */
-#menu-toggle {
+/* RÓTULOS: só ficam legíveis quando a sidebar está expandida */
+#menu a span {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.sidebar.expanded #menu a span {
+    opacity: 1;
+}
+
+/* BACKDROP: escurece a página quando o menu está aberto */
+.sidebar-backdrop {
     display: none;
-    font-size: 28px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: white;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 999;
 }
 
-/* MOBILE */
+.sidebar-backdrop.active {
+    display: block;
+}
+
 @media (max-width: 768px) {
-
-    .topo {
-        flex-wrap: wrap;
-    }
-
-    #menu-toggle {
-        display: block;
-    }
-
-    #menu {
-        display: none;
-        flex-direction: column;
-        background: white;
-        position: absolute;
-        top: 70px;
-        left: 0;
-        width: 100%;
-        padding: 15px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        z-index: 1001;
-    }
-
-    #menu.active {
-        display: flex;
+    :root {
+        --rail-width: 56px;
+        --sidebar-width: min(78vw, 260px);
     }
 
     #menu a {
-        color: #222;
-        padding: 10px 0;
-        font-size: 16px;
-    }
-
-    #menu a img {
-        height: 22px;
+        padding-top: 15px;
+        padding-bottom: 15px;
     }
 }
 
+/* ===== CONTAINER GERAL ===== */
 .container {
-    max-width: 1200px; 
-    margin: 0 auto;    
-    padding: 0 20px;   
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
 /* TOOLBAR */
@@ -206,33 +233,6 @@ button {
 
 /* MOBILE */
 @media (max-width: 768px) {
-
-    #menu-toggle {
-        display: block;
-    }
-
-    #menu {
-        display: none;
-        flex-direction: column;
-        background: white;
-        position: fixed;
-        top: 60px;
-        left: 0;
-        width: 100%;
-        padding: 15px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        z-index: 1001;
-    }
-
-    #menu a {
-        color: #222;
-        padding: 10px 0;
-    }
-
-    #menu.active {
-        display: flex;
-    }
-
     .preview-section {
         flex-direction: column;
     }
