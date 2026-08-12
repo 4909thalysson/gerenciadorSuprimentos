@@ -55,9 +55,9 @@ body {
 }
 
 .logo-toggle img {
-    height: 90px;
+    height: 48px;
     width: auto;
-    max-width: 90px;
+    max-width: 56px;
     object-fit: contain;
 }
 
@@ -205,13 +205,23 @@ body {
 }
 
 .modal-box-compra {
-    max-width: 640px;
+    max-width: 680px;
+    height: 90vh;
+    max-height: 90vh;
+    overflow: visible;
+    display: flex;
 }
 
 .modal-box .form-box,
 .modal-box .pipefy-container {
     margin: 0;
     height: auto;
+}
+
+.modal-box-compra .pipefy-container {
+    flex: 1;
+    height: 100%;
+    overflow: hidden;
 }
 
 .modal-fechar {
@@ -247,6 +257,10 @@ body {
 
 body.modal-aberto {
     overflow: hidden;
+}
+
+body.modal-aberto .sidebar {
+    visibility: hidden;
 }
 
 /* ===== CADASTRO DE SUPRIMENTOS (dentro do modal) ===== */
@@ -295,7 +309,8 @@ body.modal-aberto {
 }
 
 .iframe-wrapper {
-    min-height: 520px;
+    flex: 1;
+    min-height: 0;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: inset 0 0 15px rgba(241,90,36,0.15);

@@ -55,9 +55,9 @@ body {
 }
 
 .logo-toggle img {
-    height: 90px;
+    height: 48px;
     width: auto;
-    max-width: 90px;
+    max-width: 56px;
     object-fit: contain;
 }
 
