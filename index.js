@@ -10,6 +10,25 @@ let listaImpressoras = []
 let impressoraAtual = null
 
 // =============================================
+// PERFIL DO USUÁRIO / LOGOUT
+// =============================================
+async function carregarPerfilUsuario() {
+  const { data, error } = await db.auth.getUser()
+
+  if (error || !data.user) {
+    document.getElementById("perfil-email").textContent = "Visitante"
+    return
+  }
+
+  document.getElementById("perfil-email").textContent = data.user.email
+}
+
+async function sair() {
+  await db.auth.signOut()
+  window.location.href = "/login.html"
+}
+
+// =============================================
 // GERENCIAR MODAL
 // =============================================
 function abrirModalLeitura(impressora) {
@@ -263,6 +282,7 @@ async function atualizarCards() {
 // =============================================
 carregarImpressoras()
 atualizarCards()
+carregarPerfilUsuario()
 
 // Event listeners do modal
 document.querySelector(".close-btn").addEventListener("click", fecharModalLeitura)
@@ -274,3 +294,6 @@ document.getElementById("modal-leitura").addEventListener("click", (e) => {
     fecharModalLeitura()
   }
 })
+
+// Event listener do botão Sair
+document.getElementById("btn-sair").addEventListener("click", sair)

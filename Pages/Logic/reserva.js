@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const selecionarTodos = document.getElementById("selecionar-todos")
   const btnExcluir = document.getElementById("excluirRegistro")
 
-  let dadosEstoque = [] 
+  let dadosEstoque = []
 
 // =============================================
 // CARREGAR LISTA DE IMPRESSORAS

@@ -8,8 +8,10 @@
 
     <title>printMap</title>
 </head>
-<body>
+<body style="visibility:hidden">
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/Pages/Logic/authguard.js"></script>
     <aside class="sidebar" id="sidebar">
         <button id="menu-toggle" class="logo-toggle" aria-label="Abrir ou fechar menu" aria-expanded="false" aria-controls="menu">
             <a href="index.html"><ref><img src="/assets/logo_cambai_branco.png" alt="Logo Cambaí Sementes"></ref></a>
@@ -29,6 +31,17 @@
                 <span>Integrador</span>
             </a>
         </nav>
+
+        <div class="sidebar-footer">
+            <div class="perfil-usuario">
+                <div class="avatar-usuario">👤</div>
+                <span class="email-usuario" id="perfil-email">Carregando...</span>
+            </div>
+            <button id="btn-sair" class="btn-sair" aria-label="Sair da conta">
+                <img src="/assets/logout-icon.png" alt="">
+                <span>Sair</span>
+            </button>
+        </div>
     </aside>
 
     <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
@@ -115,7 +128,6 @@
         Cambaí Sementes © 2026
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="index.js"></script>
     <script>
         const toggle = document.getElementById("menu-toggle");

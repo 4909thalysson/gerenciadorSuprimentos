@@ -1,0 +1,102 @@
+/* =============================== */
+/* LOGIN — tela isolada, sem sidebar */
+/* Depende das variáveis base de index.css */
+/* =============================== */
+
+.login-body {
+    padding-left: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(160deg, #0445b8 0%, #0056b3 45%, #f4f6fa 45%);
+}
+
+.login-wrap {
+    width: 100%;
+    max-width: 380px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+}
+
+.login-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 36px 32px;
+    width: 100%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.login-logo {
+    height: 56px;
+    width: auto;
+    object-fit: contain;
+    background: #0445b8;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+}
+
+.login-card h1 {
+    color: #0056b3;
+    font-size: 24px;
+    margin-bottom: 4px;
+}
+
+.login-subtitulo {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 24px;
+}
+
+.login-card form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: left;
+}
+
+.login-erro {
+    display: none;
+    color: #b30000;
+    background: #ffe5e5;
+    border: 1px solid #f5b5b5;
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 13px;
+    margin: 0;
+}
+
+.login-erro.ativo {
+    display: block;
+}
+
+.login-card .btn-salvar {
+    width: 100%;
+}
+
+.login-card .btn-salvar:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.login-wrap footer {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 13px;
+    text-align: center;
+}
+
+@media (max-width: 480px) {
+    .login-card {
+        padding: 28px 22px;
+    }
+}

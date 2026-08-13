@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/index.css">
+    <link rel="stylesheet" href="/Pages/Styles/paginasimpressas.css">
+    <link rel="stylesheet" href="/Pages/Styles/sidebarperfil.css">
+    <link rel="icon" type="image/jpeg" href="/assets/logoCambai.jpeg">
+
+    <title>Páginas Impressas · printMap</title>
+</head>
+<body style="visibility:hidden">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/Pages/Logic/authguard.js"></script>
+    <aside class="sidebar" id="sidebar">
+        <button id="menu-toggle" class="logo-toggle" aria-label="Abrir ou fechar menu" aria-expanded="false" aria-controls="menu">
+            <a href="/index.html"><ref><img src="/assets/logo_cambai_branco.png" alt="Logo Cambaí Sementes"></ref></a>
+        </button>
+
+        <nav id="menu">
+            <a href="/index.html">
+                <img src="/assets/apps.png" alt="">
+                <span>Início</span>
+            </a>
+            <a href="/Pages/reserva.html">
+                <img src="/assets/warehouse-alt.png" alt="">
+                <span>Reserva</span>
+            </a>
+            <a href="/Pages/registros.html">
+                <img src="/assets/deposit.png" alt="">
+                <span>Registros</span>
+            </a>
+            <a href="/Pages/paginasimpressas.html" class="active">
+                <img src="/assets/report.png" alt="">
+                <span>Páginas Impressas</span>
+            </a>
+            <a href="/Pages/integrador.html">
+                <img src="/assets/plug-connection.png" alt="">
+                <span>Integrador</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="perfil-usuario">
+                <div class="avatar-usuario">👤</div>
+                <span class="email-usuario" id="perfil-email">Carregando...</span>
+            </div>
+            <button id="btn-sair" class="btn-sair" aria-label="Sair da conta">
+                <img src="/assets/logout-icon.png" alt="">
+                <span>Sair</span>
+            </button>
+        </div>
+    </aside>
+
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+    <div class="mapa-toolbar">
+        <div class="titulo">
+            <h1>Histórico de <strong>PÁGINAS IMPRESSAS</strong></h1>
+        </div>
+
+        <div class="filtros">
+            <div class="grupo-filtros">
+                <h2>Filtros:</h2>
+
+                <select id="filtro-impressora">
+                    <option value="">Todas as impressoras</option>
+                </select>
+
+                <select id="filtro-setor">
+                    <option value="">Todos os setores</option>
+                </select>
+
+                <div class="filtro-periodo">
+                    <label for="filtro-data-inicio">De</label>
+                    <input type="date" id="filtro-data-inicio">
+                    <span class="periodo-separador">–</span>
+                    <label for="filtro-data-fim">Até</label>
+                    <input type="date" id="filtro-data-fim">
+                </div>
+
+                <button type="button" id="btn-limpar-filtros" class="btn-limpar-filtros">Limpar filtros</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="leituras-acoes">
+        <button id="btn-nova-leitura" class="btn-leitura">📊 Nova Leitura</button>
+    </div>
+
+    <div class="tabela-leituras-wrap">
+        <table class="tabela-leituras">
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>#</th>
+                    <th>Impressora</th>
+                    <th>Setor</th>
+                    <th>Contador Anterior</th>
+                    <th>Contador Atual</th>
+                    <th>Diferença</th>
+                    <th>Toner</th>
+                    <th>Troca</th>
+                </tr>
+            </thead>
+            <tbody id="corpo-leituras">
+                <tr><td colspan="9" class="sem-dados">Carregando...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal de Nova Leitura -->
+    <div id="modal-leitura" class="modal-overlay">
+        <div class="modal-conteudo">
+            <div class="modal-header">
+                <h2>Registrar Leitura</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <form id="form-leitura">
+                <div class="form-group">
+                    <label for="leitura-impressora">Impressora:</label>
+                    <select id="leitura-impressora" required>
+                        <option value="">Selecione...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="leitura-data">Data:</label>
+                    <input type="date" id="leitura-data" required>
+                </div>
+                <div class="form-group">
+                    <label for="leitura-sequencia">Leitura nº (do dia):</label>
+                    <input type="number" id="leitura-sequencia" min="1" value="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="leitura-contador-anterior">Contador Anterior:</label>
+                    <input type="number" id="leitura-contador-anterior" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="leitura-contador-atual">Contador Atual:</label>
+                    <input type="number" id="leitura-contador-atual" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="leitura-toner">Status do Toner (%):</label>
+                    <input type="number" id="leitura-toner" min="0" max="100">
+                </div>
+                <div class="form-group form-checkbox">
+                    <label for="leitura-troca">
+                        <input type="checkbox" id="leitura-troca">
+                        Houve troca de toner nesta leitura
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label for="leitura-observacao">Observação:</label>
+                    <input type="text" id="leitura-observacao">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-salvar">Salvar</button>
+                    <button type="button" class="btn-cancelar">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        Sistema desenvolvido e mantido pela <strong>Equipe do GI</strong><br>
+        Cambaí Sementes © 2026
+    </footer>
+
+    <script src="/Pages/Logic/sidebarperfil.js"></script>
+    <script src="/Pages/Logic/paginasimpressas.js"></script>
+    <script>
+        const toggle = document.getElementById("menu-toggle");
+        const sidebar = document.getElementById("sidebar");
+        const backdrop = document.getElementById("sidebar-backdrop");
+
+        function setSidebar(open) {
+            sidebar.classList.toggle("expanded", open);
+            backdrop.classList.toggle("active", open);
+            toggle.setAttribute("aria-expanded", open);
+        }
+
+        toggle.addEventListener("click", () => {
+            setSidebar(!sidebar.classList.contains("expanded"));
+        });
+
+        backdrop.addEventListener("click", () => setSidebar(false));
+
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") setSidebar(false);
+        });
+
+        document.querySelectorAll("#menu a").forEach((link) => {
+            link.addEventListener("click", () => setSidebar(false));
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/index.css">
+    <link rel="stylesheet" href="/login.css">
+    <link rel="icon" type="image/jpeg" href="/assets/logoCambai.jpeg">
+
+    <title>Entrar · printMap</title>
+</head>
+<body class="login-body">
+
+    <div class="login-wrap">
+        <div class="login-card">
+            <img class="login-logo" src="/assets/logo_cambai_branco.png" alt="Logo Cambaí Sementes">
+
+            <h1>Print Control</h1>
+            <p class="login-subtitulo">Entre com sua conta para continuar</p>
+
+            <form id="form-login">
+                <div class="form-group">
+                    <label for="login-email">E-mail:</label>
+                    <input type="email" id="login-email" autocomplete="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-senha">Senha:</label>
+                    <input type="password" id="login-senha" autocomplete="current-password" required>
+                </div>
+
+                <p id="login-erro" class="login-erro"></p>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-salvar" id="btn-entrar">Entrar</button>
+                </div>
+            </form>
+        </div>
+
+        <footer>
+            Sistema desenvolvido e mantido pela <strong>Equipe do GI</strong><br>
+            Cambaí Sementes © 2026
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/login.js"></script>
+
+</body>
+</html>

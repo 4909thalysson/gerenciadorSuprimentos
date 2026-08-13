@@ -4,6 +4,37 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const { createClient } = window.supabase;
 const supabaseIntegrador = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// Cliente próprio só para autenticação, isolado do cliente usado
+// pela lógica de cada página (reserva.js, registro.js, etc.)
+const dbAuth = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+ 
+async function carregarPerfilUsuario() {
+  const el = document.getElementById("perfil-email")
+  if (!el) return
+ 
+  const { data, error } = await dbAuth.auth.getUser()
+ 
+  if (error || !data.user) {
+    el.textContent = "Visitante"
+    return
+  }
+ 
+  el.textContent = data.user.email
+}
+ 
+async function sair() {
+  await dbAuth.auth.signOut()
+  window.location.href = "/login.html"
+}
+ 
+document.addEventListener("DOMContentLoaded", () => {
+  const btnSair = document.getElementById("btn-sair")
+  if (btnSair) btnSair.addEventListener("click", sair)
+ 
+  carregarPerfilUsuario()
+})
+
+
 // ===============================
 // ESTADO GLOBAL
 // ===============================

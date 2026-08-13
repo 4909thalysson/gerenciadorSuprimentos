@@ -1,0 +1,212 @@
+/* =============================== */
+/* PÁGINAS IMPRESSAS — estilos específicos desta tela   */
+/* Depende das variáveis e classes base de index.css     */
+/* (sidebar, .cards, .card, .mapa-toolbar, .modal-*)     */
+/* =============================== */
+
+/* Link ativo no menu lateral */
+#menu a.active {
+    background-color: rgba(255, 255, 255, 0.95);
+    color: #0445b8;
+}
+
+#menu a.active img {
+    filter: brightness(0) saturate(100%) invert(20%) sepia(80%) saturate(3000%) hue-rotate(210deg);
+}
+
+/* Inputs de data, pra ficarem visualmente iguais aos selects
+   do mesmo grupo (o navegador não estiliza <input type="date">
+   igual a <select> por padrão) */
+.grupo-filtros input[type="date"] {
+    padding: 6px 8px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: 2px solid transparent;
+    background: #0057b335;
+    color: #333;
+    font-family: inherit;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.grupo-filtros input[type="date"]:hover {
+    background: #0057b355;
+}
+
+/* Período (De/Até) agrupado visualmente, com rótulos visíveis
+   em vez de depender só do title/tooltip */
+.filtro-periodo {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-left: 6px;
+    border-left: 1px solid #0056b333;
+}
+
+.filtro-periodo label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #0056b3;
+    white-space: nowrap;
+}
+
+.periodo-separador {
+    color: #0056b3;
+    font-weight: bold;
+}
+
+/* Botão de limpar filtros */
+.btn-limpar-filtros {
+    background: none;
+    border: 2px solid #b30000;
+    color: #b30000;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: 0.2s;
+}
+
+.btn-limpar-filtros:hover {
+    background: #b30000;
+    color: white;
+}
+
+@media (max-width: 900px) {
+    .filtro-periodo {
+        border-left: none;
+        padding-left: 0;
+        flex-wrap: wrap;
+    }
+}
+
+/* Botão de ação acima da tabela */
+.leituras-acoes {
+    max-width: 1300px;
+    margin: 0 auto 16px;
+    padding: 0 40px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.leituras-acoes .btn-leitura {
+    font-size: 15px;
+    padding: 10px 18px;
+}
+
+/* =============================== */
+/* TABELA DE HISTÓRICO              */
+/* =============================== */
+.tabela-leituras-wrap {
+    max-width: 1300px;
+    margin: 0 auto 40px;
+    padding: 0 40px;
+    overflow-x: auto;
+}
+
+.tabela-leituras {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    font-size: 14px;
+}
+
+.tabela-leituras thead {
+    background: #0056b3;
+}
+
+.tabela-leituras th {
+    color: white;
+    text-align: left;
+    padding: 12px 14px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.tabela-leituras td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #eef1f6;
+    color: #333;
+    white-space: nowrap;
+}
+
+.tabela-leituras tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.tabela-leituras tbody tr:hover {
+    background: #f4f6fa;
+}
+
+.tabela-leituras .sem-dados {
+    text-align: center;
+    color: #888;
+    padding: 24px;
+    white-space: normal;
+}
+
+.tabela-leituras .diferenca {
+    font-weight: 700;
+    color: #0445b8;
+}
+
+/* Selo de status do toner, reaproveitando o padrão visual de .status */
+.toner-pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.toner-alto {
+    color: #1a7a41;
+    background: rgba(39, 174, 96, 0.18);
+}
+
+.toner-medio {
+    color: #a86a00;
+    background: rgba(243, 156, 18, 0.18);
+}
+
+.toner-baixo {
+    color: #b30000;
+    background: rgba(231, 76, 60, 0.18);
+}
+
+.troca-pill {
+    font-size: 12px;
+    color: #27ae60;
+    font-weight: 600;
+}
+
+.sem-troca {
+    color: #aaa;
+}
+
+/* Checkbox dentro do modal */
+.form-checkbox label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.form-checkbox input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+@media (max-width: 600px) {
+    .leituras-acoes,
+    .tabela-leituras-wrap {
+        padding: 0 16px;
+    }
+}

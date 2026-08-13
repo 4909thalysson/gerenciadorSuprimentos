@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/Pages/Styles/registros.css">
+    <link rel="stylesheet" href="/Pages/Styles/sidebarperfil.css">
     <title>Registros - Cambaí Sementes</title>
     <link rel="icon" type="image/jpeg" href="/assets/logoCambai.jpeg">
 </head>
-<body>
+<body style="visibility:hidden">
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/Pages/Logic/authguard.js"></script>
     <aside class="sidebar" id="sidebar">
         <button id="menu-toggle" class="logo-toggle" aria-label="Abrir ou fechar menu" aria-expanded="false" aria-controls="menu">
             <a href="/index.html"><ref><img src="/assets/logo_cambai_branco.png" alt="Logo Cambaí Sementes"></ref></a>
@@ -17,17 +20,36 @@
         <nav id="menu">
             <a href="/index.html">
                 <img src="/assets/apps.png" alt="">
-                <span>PrintMap</span>
+                <span>Início</span>
             </a>
             <a href="/Pages/reserva.html">
                 <img src="/assets/warehouse-alt.png" alt="">
                 <span>Reserva</span>
+            </a>
+            <a href="/Pages/registros.html" class="active">
+                <img src="/assets/deposit.png" alt="">
+                <span>Registros</span>
+            </a>
+            <a href="/Pages/paginasimpressas.html">
+                <img src="/assets/report.png" alt="">
+                <span>Páginas Impressas</span>
             </a>
             <a href="/Pages/integrador.html">
                 <img src="/assets/plug-connection.png" alt="">
                 <span>Integrador</span>
             </a>
         </nav>
+
+        <div class="sidebar-footer">
+            <div class="perfil-usuario">
+                <div class="avatar-usuario">👤</div>
+                <span class="email-usuario" id="perfil-email">Carregando...</span>
+            </div>
+            <button id="btn-sair" class="btn-sair" aria-label="Sair da conta">
+                <img src="/assets/logout-icon.png" alt="">
+                <span>Sair</span>
+            </button>
+        </div>
     </aside>
 
     <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
@@ -122,7 +144,7 @@
 </footer>
 
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/Pages/Logic/sidebarperfil.js"></script>
 <script type="module" src="/Pages/Logic/registro.js"></script>
 <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 
