@@ -56,12 +56,17 @@
 
     <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
 
-    <div class="mapa-toolbar">
+    <div class="mapa-toolbar mapa-toolbar--filtros-abaixo">
         <div class="titulo">
             <h1>Histórico de <strong>PÁGINAS IMPRESSAS</strong></h1>
         </div>
 
-        <div class="filtros">
+        <button type="button" id="btn-toggle-filtros" class="btn-toggle-filtros" aria-expanded="false" aria-controls="painel-filtros">
+            <span>🔍 Filtros</span>
+            <span class="toggle-seta">▾</span>
+        </button>
+
+        <div class="filtros" id="painel-filtros">
             <div class="grupo-filtros">
                 <h2>Filtros:</h2>
 

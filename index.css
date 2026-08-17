@@ -590,6 +590,8 @@ footer {
     width: 90%;
     max-width: 400px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 .modal-header {
@@ -655,6 +657,21 @@ footer {
     background-color: #f5f5f5;
     cursor: not-allowed;
     color: #666;
+}
+
+/* Checkbox "Houve troca de toner nesta leitura" */
+.form-checkbox label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.form-checkbox input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
 }
 
 .form-actions {

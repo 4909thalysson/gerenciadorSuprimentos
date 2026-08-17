@@ -15,7 +15,7 @@
     <aside class="sidebar" id="sidebar">
         <button id="menu-toggle" class="logo-toggle" aria-label="Abrir ou fechar menu" aria-expanded="false" aria-controls="menu">
             <a href="index.html"><ref><img src="/assets/logo_cambai_branco.png" alt="Logo Cambaí Sementes"></ref></a>
-        </button> 
+        </button>
 
         <nav id="menu">
             <a href="/index.html">
@@ -120,8 +120,30 @@
                     <input type="date" id="leitura-data" required>
                 </div>
                 <div class="form-group">
-                    <label for="leitura-contador">Leitura do Contador:</label>
-                    <input type="number" id="leitura-contador" min="0" required>
+                    <label for="leitura-sequencia">Leitura nº (do dia):</label>
+                    <input type="number" id="leitura-sequencia" min="1" value="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="leitura-contador-anterior">Contador Anterior:</label>
+                    <input type="number" id="leitura-contador-anterior" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="leitura-contador-atual">Contador Atual:</label>
+                    <input type="number" id="leitura-contador-atual" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="leitura-toner">Status do Toner (%):</label>
+                    <input type="number" id="leitura-toner" min="0" max="100">
+                </div>
+                <div class="form-group form-checkbox">
+                    <label for="leitura-troca">
+                        <input type="checkbox" id="leitura-troca">
+                        Houve troca de toner nesta leitura
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label for="leitura-observacao">Observação:</label>
+                    <input type="text" id="leitura-observacao">
                 </div>
                 <div class="form-actions">
                     <button type="submit" class="btn-salvar">Salvar</button>

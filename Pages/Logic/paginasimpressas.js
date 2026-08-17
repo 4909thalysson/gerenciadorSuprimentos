@@ -126,6 +126,17 @@ function popularSelectImpressoraModal() {
 }
 
 // =============================================
+// PAINEL DE FILTROS (abrir/fechar com animação)
+// =============================================
+function alternarPainelFiltros() {
+  const painel = document.getElementById("painel-filtros")
+  const botao = document.getElementById("btn-toggle-filtros")
+
+  const aberto = painel.classList.toggle("aberto")
+  botao.setAttribute("aria-expanded", String(aberto))
+}
+
+// =============================================
 // FILTROS DA TABELA
 // =============================================
 function aplicarFiltros() {
@@ -372,6 +383,8 @@ on("leitura-impressora", "change", aoSelecionarImpressoraNoModal)
 on("modal-leitura", "click", (e) => {
   if (e.target.id === "modal-leitura") fecharModalLeitura()
 })
+
+on("btn-toggle-filtros", "click", alternarPainelFiltros)
 
 on("filtro-impressora", "change", aplicarFiltros)
 on("filtro-setor", "change", aplicarFiltros)

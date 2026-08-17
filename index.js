@@ -7,6 +7,7 @@ const db = window.supabase.createClient(
 )
 
 let listaImpressoras = []
+let listaLeituras = []
 let impressoraAtual = null
 
 // =============================================
@@ -29,13 +30,43 @@ async function sair() {
 }
 
 // =============================================
+// HELPERS DE LEITURA
+// =============================================
+// Mesma lógica usada em Páginas Impressas: pega a leitura mais recente
+// (por data e depois por sequência do dia) de uma impressora específica.
+function ultimaLeituraDaImpressora(impressoraId) {
+  const leituras = listaLeituras
+    .filter(l => l.impressoraId === impressoraId)
+    .sort((a, b) => {
+      if (a.data !== b.data) return a.data < b.data ? 1 : -1
+      return b.sequenciaDia - a.sequenciaDia
+    })
+
+  return leituras[0] || null
+}
+
+// =============================================
 // GERENCIAR MODAL
 // =============================================
 function abrirModalLeitura(impressora) {
   impressoraAtual = impressora
+
   document.getElementById("impressora-nome").value = impressora.modelo
   document.getElementById("leitura-data").value = new Date().toISOString().split('T')[0]
-  document.getElementById("leitura-contador").value = ""
+
+  const ultima = ultimaLeituraDaImpressora(impressora.id)
+  document.getElementById("leitura-contador-anterior").value = ultima ? ultima.contadorAtual : 0
+  document.getElementById("leitura-contador-atual").value = ""
+  document.getElementById("leitura-toner").value = ""
+  document.getElementById("leitura-troca").checked = false
+  document.getElementById("leitura-observacao").value = ""
+
+  const hoje = new Date().toISOString().split("T")[0]
+  const leiturasHoje = listaLeituras.filter(
+    l => String(l.impressoraId) === String(impressora.id) && l.data === hoje
+  )
+  document.getElementById("leitura-sequencia").value = leiturasHoje.length + 1
+
   document.getElementById("modal-leitura").classList.add("active")
 }
 
@@ -53,40 +84,74 @@ async function salvarLeitura(e) {
   if (!impressoraAtual) return
 
   const data = document.getElementById("leitura-data").value
-  const contador = document.getElementById("leitura-contador").value
+  const sequenciaDia = parseInt(document.getElementById("leitura-sequencia").value)
+  const contadorAnterior = parseInt(document.getElementById("leitura-contador-anterior").value)
+  const contadorAtual = parseInt(document.getElementById("leitura-contador-atual").value)
+  const statusTonerRaw = document.getElementById("leitura-toner").value
+  const houveTroca = document.getElementById("leitura-troca").checked
+  const observacao = document.getElementById("leitura-observacao").value
+
+  if (contadorAtual < contadorAnterior) {
+    alert("O contador atual não pode ser menor que o contador anterior.")
+    return
+  }
 
   const { error } = await db
-    .from("impressoras")
-    .update({
-      dataLeituraContador: data,
-      leituraContador: parseInt(contador)
+    .from("paginasImpressas")
+    .insert({
+      impressoraId: impressoraAtual.id,
+      data: data,
+      sequenciaDia: sequenciaDia,
+      contadorAnterior: contadorAnterior,
+      contadorAtual: contadorAtual,
+      statusToner: statusTonerRaw === "" ? null : parseInt(statusTonerRaw),
+      trocaToner: houveTroca ? new Date().toISOString() : null,
+      observacao: observacao || null
     })
-    .eq("id", impressoraAtual.id)
 
   if (error) {
     alert("Erro ao salvar leitura: " + error.message)
     return
   }
 
-  alert("Leitura registrada com sucesso!")
   fecharModalLeitura()
+  await carregarLeituras()
+  aplicarFiltros()
 }
 
 // =============================================
-// CARREGAR IMPRESSORAS
+// CARREGAR IMPRESSORAS E LEITURAS
 // =============================================
-async function carregarImpressoras(){
-
+async function carregarImpressoras() {
   const { data, error } = await db
     .from("impressoras")
     .select("*")
 
-  if(error){
-    console.error("Erro:", error)
+  if (error) {
+    console.error("Erro ao carregar impressoras:", error)
     return
   }
 
   listaImpressoras = data || []
+}
+
+async function carregarLeituras() {
+  const { data, error } = await db
+    .from("paginasImpressas")
+    .select("*")
+    .order("data", { ascending: false })
+    .order("sequenciaDia", { ascending: false })
+
+  if (error) {
+    console.error("Erro ao carregar leituras:", error)
+    return
+  }
+
+  listaLeituras = data || []
+}
+
+async function inicializarPrintmap() {
+  await Promise.all([carregarImpressoras(), carregarLeituras()])
 
   popularFiltroSetor()
   popularFiltroTipo()
@@ -127,7 +192,10 @@ function renderizarImpressoras(lista){
     const card = document.createElement("div")
     card.className = "printer"
 
-    let leituraDisplay = printer.leituraContador ? printer.leituraContador : "—"
+    // Última leitura vem de paginasImpressas agora, não de um campo solto
+    // em impressoras (que nem existe mais na tabela).
+    const ultima = ultimaLeituraDaImpressora(printer.id)
+    let leituraDisplay = ultima ? Number(ultima.contadorAtual).toLocaleString("pt-BR") : "—"
 
     card.innerHTML = `
       <div class="icon">🖨️</div>
@@ -280,7 +348,7 @@ async function atualizarCards() {
 // =============================================
 // INICIALIZAÇÃO
 // =============================================
-carregarImpressoras()
+inicializarPrintmap()
 atualizarCards()
 carregarPerfilUsuario()
 

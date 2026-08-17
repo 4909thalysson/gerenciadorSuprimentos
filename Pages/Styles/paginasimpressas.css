@@ -14,6 +14,81 @@
     filter: brightness(0) saturate(100%) invert(20%) sepia(80%) saturate(3000%) hue-rotate(210deg);
 }
 
+/* =============================== */
+/* TOOLBAR: filtros abaixo do título, com painel expansível */
+/* (index.css define .mapa-toolbar como grid de 3 colunas,  */
+/* usado nas outras páginas — aqui sobrescrevemos só com a   */
+/* classe extra .mapa-toolbar--filtros-abaixo, pra não mexer */
+/* no layout de Início/Reserva/Registros)                    */
+/* =============================== */
+.mapa-toolbar--filtros-abaixo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+
+/* Botão que abre/fecha o painel de filtros */
+.btn-toggle-filtros {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #ffffff;
+    border: 2px solid #0056b3;
+    color: #0056b3;
+    padding: 8px 18px;
+    border-radius: 24px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.btn-toggle-filtros:hover {
+    background: #0056b3;
+    color: white;
+}
+
+.toggle-seta {
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.btn-toggle-filtros[aria-expanded="true"] .toggle-seta {
+    transform: rotate(180deg);
+}
+
+/* Painel de filtros: animação de "ampliar" ao abrir.
+   Usa o truque grid-template-rows (0fr -> 1fr), que anima até a
+   altura real do conteúdo sem precisar travar um max-height fixo,
+   combinado com um leve scale/opacity pra dar sensação de crescimento. */
+.mapa-toolbar--filtros-abaixo .filtros {
+    display: grid;
+    grid-template-rows: 0fr;
+    width: 100%;
+    max-width: 900px;
+    transition: grid-template-rows 0.35s ease;
+}
+
+.mapa-toolbar--filtros-abaixo .filtros.aberto {
+    grid-template-rows: 1fr;
+}
+
+.mapa-toolbar--filtros-abaixo .filtros > .grupo-filtros {
+    overflow: hidden;
+    min-height: 0;
+    opacity: 0;
+    transform: scaleY(0.92);
+    transform-origin: top center;
+    transition: opacity 0.25s ease, transform 0.3s ease;
+    justify-content: center;
+}
+
+.mapa-toolbar--filtros-abaixo .filtros.aberto > .grupo-filtros {
+    opacity: 1;
+    transform: scaleY(1);
+}
+
 /* Inputs de data, pra ficarem visualmente iguais aos selects
    do mesmo grupo (o navegador não estiliza <input type="date">
    igual a <select> por padrão) */
@@ -79,6 +154,10 @@
         border-left: none;
         padding-left: 0;
         flex-wrap: wrap;
+    }
+
+    .mapa-toolbar--filtros-abaixo .filtros {
+        max-width: 100%;
     }
 }
 
