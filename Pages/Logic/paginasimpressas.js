@@ -9,6 +9,13 @@ const db = window.supabase.createClient(
 let listaImpressoras = []
 let listaLeituras = []
 
+// Estado da paginação: a lista filtrada completa fica aqui, e só a
+// "fatia" da página atual vai pra tabela. Os cards de resumo continuam
+// olhando pra lista filtrada inteira, não só pra página visível.
+let leiturasFiltradasAtual = []
+let paginaAtual = 1
+let itensPorPagina = 20
+
 // =============================================
 // CARREGAR DADOS
 // =============================================
@@ -148,8 +155,67 @@ function aplicarFiltros() {
     filtrado = filtrado.filter(l => l.data <= dataFim)
   }
 
-  renderizarTabela(filtrado)
+  leiturasFiltradasAtual = filtrado
+  paginaAtual = 1 // toda vez que o filtro muda, volta pra primeira página
+
   atualizarCards(filtrado)
+  renderizarPaginaAtual()
+}
+
+// =============================================
+// PAGINAÇÃO
+// =============================================
+function renderizarPaginaAtual() {
+  const totalItens = leiturasFiltradasAtual.length
+  const totalPaginas = Math.max(1, Math.ceil(totalItens / itensPorPagina))
+
+  if (paginaAtual > totalPaginas) paginaAtual = totalPaginas
+  if (paginaAtual < 1) paginaAtual = 1
+
+  const inicio = (paginaAtual - 1) * itensPorPagina
+  const fim = inicio + itensPorPagina
+  const paginaDeItens = leiturasFiltradasAtual.slice(inicio, fim)
+
+  renderizarTabela(paginaDeItens)
+  renderizarControlesPaginacao(totalItens, totalPaginas, inicio, fim)
+}
+
+function renderizarControlesPaginacao(totalItens, totalPaginas, inicio, fim) {
+  const info = document.getElementById("paginacao-info")
+  const atual = document.getElementById("paginacao-atual")
+  const btnAnterior = document.getElementById("btn-pagina-anterior")
+  const btnProxima = document.getElementById("btn-pagina-proxima")
+
+  if (totalItens === 0) {
+    info.textContent = "Nenhuma leitura encontrada"
+  } else {
+    const primeiro = inicio + 1
+    const ultimo = Math.min(fim, totalItens)
+    info.textContent = `Mostrando ${primeiro}–${ultimo} de ${totalItens} leituras`
+  }
+
+  atual.textContent = `Página ${paginaAtual} de ${totalPaginas}`
+  btnAnterior.disabled = paginaAtual <= 1
+  btnProxima.disabled = paginaAtual >= totalPaginas
+}
+
+function irParaPaginaAnterior() {
+  if (paginaAtual <= 1) return
+  paginaAtual -= 1
+  renderizarPaginaAtual()
+}
+
+function irParaProximaPagina() {
+  const totalPaginas = Math.max(1, Math.ceil(leiturasFiltradasAtual.length / itensPorPagina))
+  if (paginaAtual >= totalPaginas) return
+  paginaAtual += 1
+  renderizarPaginaAtual()
+}
+
+function aoMudarItensPorPagina() {
+  itensPorPagina = parseInt(document.getElementById("filtro-itens-pagina").value) || 20
+  paginaAtual = 1
+  renderizarPaginaAtual()
 }
 
 // =============================================
@@ -312,11 +378,17 @@ on("filtro-setor", "change", aplicarFiltros)
 on("filtro-data-inicio", "change", aplicarFiltros)
 on("filtro-data-fim", "change", aplicarFiltros)
 
+on("btn-pagina-anterior", "click", irParaPaginaAnterior)
+on("btn-pagina-proxima", "click", irParaProximaPagina)
+on("filtro-itens-pagina", "change", aoMudarItensPorPagina)
+
 on("btn-limpar-filtros", "click", () => {
   document.getElementById("filtro-impressora").value = ""
   document.getElementById("filtro-setor").value = ""
   document.getElementById("filtro-data-inicio").value = ""
   document.getElementById("filtro-data-fim").value = ""
+  document.getElementById("filtro-itens-pagina").value = "20"
+  itensPorPagina = 20
   aplicarFiltros()
 })
 

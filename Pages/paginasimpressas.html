@@ -111,6 +111,27 @@
         </table>
     </div>
 
+    <div class="paginacao-wrap" id="paginacao-wrap">
+        <div class="paginacao-resumo">
+            <span class="paginacao-info" id="paginacao-info">Carregando...</span>
+            <label for="filtro-itens-pagina" class="paginacao-itens-label">
+                Itens por página:
+                <select id="filtro-itens-pagina">
+                    <option value="10">10</option>
+                    <option value="20" selected>20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+            </label>
+        </div>
+
+        <div class="paginacao-controles">
+            <button type="button" id="btn-pagina-anterior" class="btn-pagina" aria-label="Página anterior">‹ Anterior</button>
+            <span class="paginacao-atual" id="paginacao-atual">Página 1 de 1</span>
+            <button type="button" id="btn-pagina-proxima" class="btn-pagina" aria-label="Próxima página">Próxima ›</button>
+        </div>
+    </div>
+
     <!-- Modal de Nova Leitura -->
     <div id="modal-leitura" class="modal-overlay">
         <div class="modal-conteudo">
