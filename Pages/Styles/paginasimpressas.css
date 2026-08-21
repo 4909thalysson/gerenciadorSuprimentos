@@ -15,6 +15,149 @@
 }
 
 /* =============================== */
+/* VISUALIZAÇÃO: DIFERENÇA DE PÁGINAS POR IMPRESSORA        */
+/* HTML/CSS puro, sem canvas nem biblioteca externa -- cada  */
+/* barra é uma div cuja largura vem de JS (% do maior valor  */
+/* do conjunto filtrado). Ordenado do maior pro menor.       */
+/* =============================== */
+.grafico-consumo-wrap {
+    max-width: 1300px;
+    margin: 40px auto 0;
+    padding: 0 40px;
+}
+
+.grafico-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 24px 28px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.grafico-titulo {
+    color: #0056b3;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 18px;
+}
+
+.grafico-vazio {
+    color: #888;
+    font-size: 14px;
+    padding: 8px 0;
+}
+
+.grafico-barras {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.barra-item {
+    display: grid;
+    grid-template-columns: 150px 1fr 60px;
+    align-items: center;
+    gap: 12px;
+}
+
+.barra-rotulo {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+    overflow: hidden;
+}
+
+.barra-modelo {
+    font-size: 13px;
+    font-weight: 700;
+    color: #333333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.barra-setor {
+    font-size: 11px;
+    font-weight: 600;
+    color: #898781;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.barra-trilho {
+    position: relative;
+    height: 20px;
+    background: #eef1f6;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.barra-preenchida {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    min-width: 3px;
+    background: #0056b3;
+    border-radius: 4px;
+    transition: background-color 0.15s ease, width 0.3s ease;
+}
+
+.barra-item:hover .barra-preenchida {
+    background: #0445b8;
+}
+
+.barra-valor {
+    font-size: 13px;
+    font-weight: 700;
+    color: #333333;
+    text-align: right;
+    white-space: nowrap;
+}
+
+/* Tooltip simples ao passar o mouse, mostrando o nome completo
+   (a coluna de rótulo já corta com reticências em telas estreitas) */
+.barra-item {
+    position: relative;
+}
+
+.barra-item[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    left: 150px;
+    top: -30px;
+    background: #0b0b0b;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+    z-index: 5;
+    pointer-events: none;
+}
+
+@media (max-width: 600px) {
+    .grafico-consumo-wrap {
+        padding: 0 16px;
+        margin-top: 30px;
+    }
+
+    .grafico-card {
+        padding: 18px;
+    }
+
+    .barra-item {
+        grid-template-columns: 96px 1fr 44px;
+        gap: 8px;
+    }
+
+    .barra-item[title]:hover::after {
+        left: 96px;
+    }
+}
+
+/* =============================== */
 /* TOOLBAR: filtros abaixo do título, com painel expansível */
 /* (index.css define .mapa-toolbar como grid de 3 colunas,  */
 /* usado nas outras páginas — aqui sobrescrevemos só com a   */

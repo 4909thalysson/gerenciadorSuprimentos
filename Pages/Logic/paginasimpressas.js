@@ -10,11 +10,11 @@ let listaImpressoras = []
 let listaLeituras = []
 
 // Estado da paginação: a lista filtrada completa fica aqui, e só a
-// "fatia" da página atual vai pra tabela. Os cards de resumo continuam
-// olhando pra lista filtrada inteira, não só pra página visível.
+// "fatia" da página atual vai pra tabela. A visualização de barras
+// continua olhando pra lista filtrada inteira, não só pra página visível.
 let leiturasFiltradasAtual = []
 let paginaAtual = 1
-let itensPorPagina = 20
+let itensPorPagina = 10
 
 // =============================================
 // CARREGAR DADOS
@@ -169,7 +169,7 @@ function aplicarFiltros() {
   leiturasFiltradasAtual = filtrado
   paginaAtual = 1 // toda vez que o filtro muda, volta pra primeira página
 
-  atualizarCards(filtrado)
+  renderizarGraficoConsumo(calcularConsumoPorImpressora(filtrado))
   renderizarPaginaAtual()
 }
 
@@ -224,7 +224,7 @@ function irParaProximaPagina() {
 }
 
 function aoMudarItensPorPagina() {
-  itensPorPagina = parseInt(document.getElementById("filtro-itens-pagina").value) || 20
+  itensPorPagina = parseInt(document.getElementById("filtro-itens-pagina").value) || 10
   paginaAtual = 1
   renderizarPaginaAtual()
 }
@@ -262,32 +262,73 @@ function renderizarTabela(leituras) {
 }
 
 // =============================================
-// CARDS DE RESUMO
+// VISUALIZAÇÃO: DIFERENÇA DE PÁGINAS POR IMPRESSORA
 // =============================================
-function atualizarCards(leiturasFiltradas) {
-  document.getElementById("totalLeituras").textContent = leiturasFiltradas.length
+// Uma cor só (série nominal — a identidade já vem do rótulo, então
+// todas as barras usam o mesmo azul da marca). Soma a "diferença"
+// (páginas impressas) de cada leitura por impressora, ordenado do
+// maior pro menor consumo, com o valor escrito ao lado de cada barra.
+// HTML/CSS puro (sem canvas nem biblioteca externa) -- de propósito,
+// pra não repetir o problema de carregamento externo que a versão
+// com Chart.js teve.
+function calcularConsumoPorImpressora(leituras) {
+  const totais = {}
 
-  const totalPaginas = leiturasFiltradas.reduce((t, l) => t + (Number(l.diferenca) || 0), 0)
-  document.getElementById("totalPaginas").textContent = totalPaginas.toLocaleString("pt-BR")
-
-  const tonerBaixo = leiturasFiltradas.filter(l => l.statusToner !== null && l.statusToner <= 15).length
-  document.getElementById("totalTonerBaixo").textContent = tonerBaixo
-
-  const consumoPorImpressora = {}
-  leiturasFiltradas.forEach(l => {
-    consumoPorImpressora[l.impressoraId] = (consumoPorImpressora[l.impressoraId] || 0) + (Number(l.diferenca) || 0)
+  leituras.forEach(l => {
+    const chave = l.impressoraId
+    totais[chave] = (totais[chave] || 0) + (Number(l.diferenca) || 0)
   })
 
-  const ranking = Object.entries(consumoPorImpressora).sort((a, b) => b[1] - a[1])
+  return Object.entries(totais)
+    .map(([impressoraId, total]) => {
+      const imp = buscarImpressora(impressoraId) || buscarImpressora(Number(impressoraId))
+      return {
+        modelo: imp ? imp.modelo : `Impressora ${impressoraId}`,
+        setor: imp ? imp.setor : "",
+        total
+      }
+    })
+    .filter(item => item.total > 0)
+    .sort((a, b) => b.total - a.total)
+}
+
+function renderizarGraficoConsumo(ranking) {
+  const container = document.getElementById("grafico-barras")
+  const vazio = document.getElementById("grafico-vazio")
+
+  container.innerHTML = ""
 
   if (ranking.length === 0) {
-    document.getElementById("topConsumo").textContent = "—"
-  } else {
-    const [impressoraId, total] = ranking[0]
-    const imp = buscarImpressora(impressoraId) || buscarImpressora(Number(impressoraId))
-    document.getElementById("topConsumo").textContent =
-      imp ? `${imp.modelo} (${total.toLocaleString("pt-BR")} páginas)` : `${total.toLocaleString("pt-BR")} páginas`
+    container.hidden = true
+    vazio.hidden = false
+    return
   }
+
+  container.hidden = false
+  vazio.hidden = true
+
+  const maiorValor = ranking[0].total
+
+  ranking.forEach(item => {
+    const percentual = maiorValor > 0 ? Math.max(2, (item.total / maiorValor) * 100) : 0
+    const rotuloCompleto = item.setor ? `${item.modelo} — ${item.setor}` : item.modelo
+
+    const linha = document.createElement("div")
+    linha.className = "barra-item"
+    linha.title = `${rotuloCompleto}: ${item.total.toLocaleString("pt-BR")} páginas`
+
+    linha.innerHTML = `
+      <div class="barra-rotulo">
+        <span class="barra-modelo">${item.modelo}</span>
+        ${item.setor ? `<span class="barra-setor">${item.setor}</span>` : ""}
+      </div>
+      <div class="barra-trilho">
+        <div class="barra-preenchida" style="width: ${percentual}%"></div>
+      </div>
+      <span class="barra-valor">${item.total.toLocaleString("pt-BR")}</span>
+    `
+    container.appendChild(linha)
+  })
 }
 
 // =============================================
@@ -400,8 +441,8 @@ on("btn-limpar-filtros", "click", () => {
   document.getElementById("filtro-setor").value = ""
   document.getElementById("filtro-data-inicio").value = ""
   document.getElementById("filtro-data-fim").value = ""
-  document.getElementById("filtro-itens-pagina").value = "20"
-  itensPorPagina = 20
+  document.getElementById("filtro-itens-pagina").value = "10"
+  itensPorPagina = 10
   aplicarFiltros()
 })
 

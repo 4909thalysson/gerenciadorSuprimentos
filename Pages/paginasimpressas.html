@@ -56,6 +56,18 @@
 
     <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
 
+    <!-- Visualização: diferença de páginas impressas por impressora.
+         Sem dependência externa (sem canvas, sem lib de gráfico) -- só
+         HTML/CSS, pra não repetir o problema de carregamento que
+         aconteceu com o Chart.js. Respeita os mesmos filtros da tabela. -->
+    <div class="grafico-consumo-wrap">
+        <div class="grafico-card">
+            <h2 class="grafico-titulo">Páginas Impressas por Impressora</h2>
+            <p class="grafico-vazio" id="grafico-vazio" hidden>Nenhuma leitura no período ou filtro selecionado.</p>
+            <div class="grafico-barras" id="grafico-barras"></div>
+        </div>
+    </div>
+
     <div class="mapa-toolbar mapa-toolbar--filtros-abaixo">
         <div class="titulo">
             <h1>Histórico de <strong>PÁGINAS IMPRESSAS</strong></h1>
