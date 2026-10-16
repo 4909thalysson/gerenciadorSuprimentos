@@ -311,11 +311,48 @@
     padding: 0 40px;
     display: flex;
     justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
 }
 
 .leituras-acoes .btn-leitura {
     font-size: 15px;
     padding: 10px 18px;
+}
+
+/* Botão Imprimir (ao lado de "Nova Leitura") */
+.btn-imprimir {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #ffffff;
+    border: 2px solid #0056b3;
+    color: #0056b3;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.btn-imprimir::before {
+    content: "🖨";
+    font-size: 16px;
+}
+
+.btn-imprimir:hover {
+    background: #0056b3;
+    color: #ffffff;
+}
+
+.btn-imprimir:disabled {
+    border-color: #ccc;
+    color: #aaa;
+    background: #ffffff;
+    cursor: not-allowed;
 }
 
 /* =============================== */

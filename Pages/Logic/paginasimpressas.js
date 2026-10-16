@@ -332,6 +332,117 @@ function renderizarGraficoConsumo(ranking) {
 }
 
 // =============================================
+// IMPRESSÃO DO HISTÓRICO
+// =============================================
+// Imprime TODOS os registros do filtro atual (leiturasFiltradasAtual),
+// ignorando a paginação. Sem filtros, imprime tudo.
+const COLUNAS_IMPRESSAO = [
+  { titulo: "Data",              valor: (l, imp) => formatarData(l.data) },
+  { titulo: "#",                 valor: (l, imp) => `#${l.sequenciaDia}` },
+  { titulo: "Impressora",        valor: (l, imp) => imp ? imp.modelo : "—" },
+  { titulo: "Setor",             valor: (l, imp) => imp ? imp.setor : "—" },
+  { titulo: "Contador Anterior", valor: (l, imp) => l.contadorAnterior },
+  { titulo: "Contador Atual",    valor: (l, imp) => l.contadorAtual },
+  { titulo: "Diferença",         valor: (l, imp) => l.diferenca },
+  { titulo: "Toner",             valor: (l, imp) => l.statusToner !== null && l.statusToner !== undefined ? `${l.statusToner}%` : "—" },
+  { titulo: "Troca",             valor: (l, imp) => l.trocaToner ? `✓ ${new Date(l.trocaToner).toLocaleString("pt-BR")}` : "—" }
+]
+
+function escaparHtml(valor) {
+  return String(valor ?? "").replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[c]))
+}
+
+// Lê os filtros ativos direto dos controles da tela
+function descreverFiltrosAtivos() {
+  const ativos = []
+
+  const selImpressora = document.getElementById("filtro-impressora")
+  if (selImpressora.value) {
+    ativos.push(`Impressora: ${selImpressora.options[selImpressora.selectedIndex].text}`)
+  }
+
+  const selSetor = document.getElementById("filtro-setor")
+  if (selSetor.value) {
+    ativos.push(`Setor: ${selSetor.options[selSetor.selectedIndex].text}`)
+  }
+
+  const inicio = document.getElementById("filtro-data-inicio").value
+  const fim = document.getElementById("filtro-data-fim").value
+  if (inicio) ativos.push(`De: ${formatarData(inicio)}`)
+  if (fim) ativos.push(`Até: ${formatarData(fim)}`)
+
+  return ativos
+}
+
+function imprimirSelecao() {
+  const linhas = leiturasFiltradasAtual
+
+  if (!linhas || linhas.length === 0) {
+    alert("Não há registros para imprimir com os filtros atuais.")
+    return
+  }
+
+  const filtros = descreverFiltrosAtivos()
+  const subtitulo = filtros.length
+    ? `Filtros aplicados: ${escaparHtml(filtros.join(" | "))}`
+    : "Sem filtros (todos os registros)"
+
+  const cabecalho = COLUNAS_IMPRESSAO
+    .map(c => `<th>${escaparHtml(c.titulo)}</th>`)
+    .join("")
+
+  const corpo = linhas.map(l => {
+    const imp = buscarImpressora(l.impressoraId)
+    const celulas = COLUNAS_IMPRESSAO
+      .map(c => `<td>${escaparHtml(c.valor(l, imp))}</td>`)
+      .join("")
+    return `<tr>${celulas}</tr>`
+  }).join("")
+
+  const html = `<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8">
+<title>Páginas Impressas</title>
+<style>
+  @page { size: A4 landscape; margin: 12mm; }
+  body { font-family: Arial, sans-serif; color: #222; font-size: 11px; }
+  h1 { font-size: 18px; color: #0056b3; margin: 0 0 4px; }
+  .sub { font-size: 11px; color: #555; margin-bottom: 4px; }
+  .meta { font-size: 10px; color: #888; margin-bottom: 12px; }
+  table { width: 100%; border-collapse: collapse; }
+  thead { display: table-header-group; }
+  th { background: #0056b3; color: #fff; text-align: left; padding: 6px 8px;
+       -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  td { padding: 5px 8px; border-bottom: 1px solid #ddd; }
+  tr { page-break-inside: avoid; }
+  tbody tr:nth-child(even) { background: #f4f6fa;
+       -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+</style></head><body>
+<h1>Páginas Impressas · printMap</h1>
+<div class="sub">${subtitulo}</div>
+<div class="meta">${linhas.length} registro(s) · Emitido em ${new Date().toLocaleString("pt-BR")}</div>
+<table><thead><tr>${cabecalho}</tr></thead><tbody>${corpo}</tbody></table>
+</body></html>`
+
+  // iframe oculto: evita bloqueio de pop-up e não altera a página atual
+  const iframe = document.createElement("iframe")
+  iframe.style.cssText = "position:fixed;right:0;bottom:0;width:0;height:0;border:0;"
+  document.body.appendChild(iframe)
+
+  const doc = iframe.contentWindow.document
+  doc.open()
+  doc.write(html)
+  doc.close()
+
+  setTimeout(() => {
+    iframe.contentWindow.focus()
+    iframe.contentWindow.print()
+    setTimeout(() => iframe.remove(), 1000)
+  }, 250)
+}
+
+// =============================================
 // MODAL DE NOVA LEITURA
 // =============================================
 function abrirModalLeitura() {
@@ -416,6 +527,7 @@ function on(idOuSeletor, evento, handler, porSeletor = false) {
 }
 
 on("btn-nova-leitura", "click", abrirModalLeitura)
+on("btn-imprimir", "click", imprimirSelecao)
 on(".close-btn", "click", fecharModalLeitura, true)
 on(".btn-cancelar", "click", fecharModalLeitura, true)
 on("form-leitura", "submit", salvarLeitura)
