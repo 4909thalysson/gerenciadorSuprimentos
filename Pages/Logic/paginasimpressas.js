@@ -419,7 +419,7 @@ function imprimirSelecao() {
   tbody tr:nth-child(even) { background: #f4f6fa;
        -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 </style></head><body>
-<h1>Páginas Impressas · printMap</h1>
+<h1>Páginas Impressas · Gerenciador de Impressoras</h1>
 <div class="sub">${subtitulo}</div>
 <div class="meta">${linhas.length} registro(s) · Emitido em ${new Date().toLocaleString("pt-BR")}</div>
 <table><thead><tr>${cabecalho}</tr></thead><tbody>${corpo}</tbody></table>
