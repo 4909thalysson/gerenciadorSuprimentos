@@ -2,7 +2,7 @@
 const SUPABASE_URL = "https://kxiapqtfwdwiqnvqjtkf.supabase.co";
 
 const SUPABASE_ANON_KEY =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXAiLCJyZWYiOiJreGlhcHF0Znd3aXFucWp0a2YiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc2NTE0MTk5NywiZXhwIjoyMDgwNzE3OTk3fQ.IlzANbZ1hSwpPtIeaLcIOkBf2-gIC-XNRehWDYfDins";
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4aWFwcXRmd2R3aXFudnFqdGtmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUxNDE5OTcsImV4cCI6MjA4MDcxNzk5N30.IlzANbZ1hSwpPtIeaLcIOkBf2-gIC-XNRehWDYfDins";
 
 const { createClient } = window.supabase;
 
