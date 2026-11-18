@@ -1,221 +1,462 @@
+
 const SUPABASE_URL = "https://kxiapqtfwdwiqnvqjtkf.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4aWFwcXRmd2R3aXFudnFqdGtmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUxNDE5OTcsImV4cCI6MjA4MDcxNzk5N30.IlzANbZ1hSwpPtIeaLcIOkBf2-gIC-XNRehWDYfDins";
+
+const SUPABASE_ANON_KEY =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXAiLCJyZWYiOiJreGlhcHF0Znd3aXFucWp0a2YiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc2NTE0MTk5NywiZXhwIjoyMDgwNzE3OTk3fQ.IlzANbZ1hSwpPtIeaLcIOkBf2-gIC-XNRehWDYfDins";
 
 const { createClient } = window.supabase;
-const supabaseIntegrador = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Cliente próprio só para autenticação, isolado do cliente usado
-// pela lógica de cada página (reserva.js, registro.js, etc.)
-const dbAuth = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
- 
-async function carregarPerfilUsuario() {
-  const el = document.getElementById("perfil-email")
-  if (!el) return
- 
-  const { data, error } = await dbAuth.auth.getUser()
- 
-  if (error || !data.user) {
-    el.textContent = "Visitante"
-    return
-  }
- 
-  el.textContent = data.user.email
-}
- 
-async function sair() {
-  await dbAuth.auth.signOut()
-  window.location.href = "/login.html"
-}
- 
-document.addEventListener("DOMContentLoaded", () => {
-  const btnSair = document.getElementById("btn-sair")
-  if (btnSair) btnSair.addEventListener("click", sair)
- 
-  carregarPerfilUsuario()
-})
+const supabaseIntegrador = createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+);
 
+const dbAuth = createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+);
 
-// ===============================
-// ESTADO GLOBAL
-// ===============================
-let conteudoEmail = "";
+// ========================================
+// ESTADO
+// ========================================
+
 let dadosGerados = [];
+let registrosSelecionados = new Set();
 let relatorioAtual = "";
 
-// ===============================
-// BUSCAR DADOS (FILTRO)
-// ===============================
+// ========================================
+// PERFIL E AUTENTICAÇÃO
+// ========================================
+
+async function carregarPerfilUsuario() {
+    const elemento = document.getElementById("perfil-email");
+    if (!elemento) return;
+
+    const { data, error } = await dbAuth.auth.getUser();
+
+    if (error || !data.user) {
+        elemento.textContent = "Visitante";
+        return;
+    }
+
+    elemento.textContent = data.user.email;
+}
+
+async function sair() {
+    await dbAuth.auth.signOut();
+    window.location.href = "/login.html";
+}
+
+// ========================================
+// UTILITÁRIOS
+// ========================================
+
+function escaparHTML(valor) {
+    return String(valor ?? "").replace(/[&<>"']/g, caractere => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+    })[caractere]);
+}
+
+function obterModoEnvio() {
+    return document.querySelector(
+        'input[name="modo-envio"]:checked'
+    )?.value || "INDIVIDUAL";
+}
+
+function obterSelecionados() {
+    return [...registrosSelecionados]
+        .sort((a, b) => a - b)
+        .map(indice => dadosGerados[indice])
+        .filter(Boolean);
+}
+
+function formatarData(data) {
+    if (!data) return "—";
+
+    const dataObj = new Date(data);
+
+    if (Number.isNaN(dataObj.getTime())) return "—";
+
+    return dataObj.toLocaleString("pt-BR");
+}
+
+// ========================================
+// BUSCAR DADOS
+// ========================================
+
 async function buscarDados(termo) {
     try {
-        const { data: registros, error: erroReg } = await supabaseIntegrador
-            .from("registros")
-            .select("*")
-            .or(`setor.ilike.%${termo}%,suprimento.ilike.%${termo}%`);
+        const termoSeguro = termo.replace(/[%_]/g, "");
+
+        const { data: registros, error: erroReg } =
+            await supabaseIntegrador
+                .from("registros")
+                .select("*")
+                .or(
+                    `setor.ilike.%${termoSeguro}%,suprimento.ilike.%${termoSeguro}%`
+                );
 
         if (erroReg) throw erroReg;
 
-        const { data: reservas, error: erroRes } = await supabaseIntegrador
-            .from("reserva")
-            .select("*")
-            .or(`setor.ilike.%${termo}%,suprimento.ilike.%${termo}%`);
+        const { data: reservas, error: erroRes } =
+            await supabaseIntegrador
+                .from("reserva")
+                .select("*")
+                .or(
+                    `setor.ilike.%${termoSeguro}%,suprimento.ilike.%${termoSeguro}%`
+                );
 
         if (erroRes) throw erroRes;
 
-        const dadosFormatados = [
-            ...(registros || []).map(r => ({
-                setor: r.setor || "—",
-                suprimento: r.suprimento,
-                cor: r.cor || "",
-                un: r.un,
-                dataHora: r.dataHora || null,
+        return [
+            ...(registros || []).map(registro => ({
+                setor: registro.setor || "—",
+                suprimento: registro.suprimento || "—",
+                cor: registro.cor || "",
+                un: registro.un,
+                dataHora: registro.dataHora || null,
                 tipo: "REGISTRO"
             })),
-            ...(reservas || []).map(r => ({
-                setor: r.setor || "—",
-                suprimento: r.suprimento,
-                cor: r.cor || "",
-                un: r.un,
+
+            ...(reservas || []).map(reserva => ({
+                setor: reserva.setor || "—",
+                suprimento: reserva.suprimento || "—",
+                cor: reserva.cor || "",
+                un: reserva.un,
                 dataHora: null,
                 tipo: "ESTOQUE"
             }))
         ];
 
-        return dadosFormatados;
-
     } catch (error) {
-        console.error(error);
-        alert("Erro ao buscar dados.");
+        console.error("Erro ao buscar dados:", error);
+        mostrarResultado("Não foi possível consultar os dados: " + error.message, "error");
         return null;
     }
 }
 
-// ===============================
-// ORGANIZAR POR SETOR
-// ===============================
-function organizarPorSetor(dados) {
-    const setores = {};
+// ========================================
+// GERAR HISTÓRICO DE REGISTROS
+// ========================================
 
-    dados.forEach(r => {
-        if (!setores[r.setor]) setores[r.setor] = [];
-        setores[r.setor].push(r);
-    });
-
-    return setores;
-}
-
-// ===============================
-// GERAR RELATÓRIO
-// ===============================
-function gerarRelatorio(dados) {
-    if (!dados || !dados.length) {
-        alert("Nenhum resultado encontrado.");
-        return;
-    }
-
-    const setores = organizarPorSetor(dados);
-
-    let texto = "RELATÓRIO DE SUPRIMENTOS\n\n";
-
-    Object.keys(setores).forEach(setor => {
-        texto += `SETOR: ${setor}\n\n`;
-
-        setores[setor].forEach(r => {
-            texto += `• ${r.suprimento}`;
-            if (r.cor) texto += ` (${r.cor})`;
-
-            texto += `\n  UN: ${r.un}`;
-            texto += `\n  Tipo: ${r.tipo}`;
-
-            if (r.dataHora) {
-                texto += `\n  Data: ${new Date(r.dataHora).toLocaleString("pt-BR")}`;
-            }
-
-            texto += "\n\n";
-        });
-
-        texto += "-----------------------------\n\n";
-    });
-
-    conteudoEmail = texto;
-    dadosGerados = dados;
-
-    const preview = document.getElementById("previewConteudo");
-    if (preview) preview.textContent = texto;
-}
-
-// ===============================
-// RELATÓRIO REGISTROS
-// ===============================
 async function gerarRegistros() {
     relatorioAtual = "REGISTROS";
+
+    definirCarregamento(true);
 
     const { data, error } = await supabaseIntegrador
         .from("registros")
         .select("*")
         .order("dataHora", { ascending: false });
 
+    definirCarregamento(false);
+
     if (error) {
         console.error(error);
-        alert("Erro ao buscar registros.");
+        mostrarResultado("Erro ao consultar histórico: " + error.message, "error");
         return;
     }
 
-    const dadosFormatados = (data || []).map(r => ({
-        setor: r.setor || "—",
-        suprimento: r.suprimento,
-        cor: r.cor || "",
-        un: r.un,
-        dataHora: r.dataHora,
+    const dados = (data || []).map(registro => ({
+        setor: registro.setor || "—",
+        suprimento: registro.suprimento || "—",
+        cor: registro.cor || "",
+        un: registro.un,
+        dataHora: registro.dataHora || null,
         tipo: "REGISTRO"
     }));
 
-    gerarRelatorio(dadosFormatados);
+    carregarRegistros(dados, "Histórico de registros");
 }
 
-// ===============================
-// RELATÓRIO ESTOQUE
-// ===============================
+// ========================================
+// GERAR ESTOQUE
+// ========================================
+
 async function gerarEstoque() {
     relatorioAtual = "ESTOQUE";
+
+    definirCarregamento(true);
 
     const { data, error } = await supabaseIntegrador
         .from("reserva")
         .select("*")
         .order("setor", { ascending: true });
 
+    definirCarregamento(false);
+
     if (error) {
         console.error(error);
-        alert("Erro ao buscar estoque.");
+        mostrarResultado("Erro ao consultar estoque: " + error.message, "error");
         return;
     }
 
-    const dadosFormatados = (data || []).map(r => ({
-        setor: r.setor || "—",
-        suprimento: r.suprimento,
-        cor: r.cor || "",
-        un: r.un,
+    const dados = (data || []).map(reserva => ({
+        setor: reserva.setor || "—",
+        suprimento: reserva.suprimento || "—",
+        cor: reserva.cor || "",
+        un: reserva.un,
         dataHora: null,
         tipo: "ESTOQUE"
     }));
 
-    gerarRelatorio(dadosFormatados);
+    carregarRegistros(dados, "Estoque completo");
 }
 
-// ===============================
-// ENVIAR CARDS AO PIPEFY (VERCEL FUNCTION)
-// Cada item gerado no relatório cria um card individual no Pipefy.
-async function enviarAoPipefy() {
+// ========================================
+// CARREGAR REGISTROS NA INTERFACE
+// ========================================
+
+function carregarRegistros(dados, origem) {
+    dadosGerados = dados || [];
+
+    // Por padrão, todos os registros carregados ficam selecionados.
+    registrosSelecionados = new Set(
+        dadosGerados.map((_, indice) => indice)
+    );
+
+    const texto = document.getElementById("texto-registros");
+
+    if (texto) {
+        texto.textContent = `${origem}: ${dadosGerados.length} resultado(s) encontrado(s).`;
+    }
+
+    const resultado = document.getElementById("resultado-envio");
+    if (resultado) {
+        resultado.hidden = true;
+        resultado.textContent = "";
+    }
+
+    renderizarTabela();
+    atualizarResumo();
+    atualizarPrevia();
+}
+
+// ========================================
+// RENDERIZAR TABELA
+// ========================================
+
+function renderizarTabela() {
+    const tbody = document.getElementById("tabela-registros");
+    if (!tbody) return;
+
+    const contador = document.getElementById("contador-registros");
+
+    if (contador) {
+        contador.textContent = dadosGerados.length;
+    }
+
     if (!dadosGerados.length) {
-        alert("Gere um relatório antes de enviar.");
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" class="empty-state">
+                    Nenhum registro encontrado.
+                </td>
+            </tr>
+        `;
+
+        atualizarCheckboxTodos();
         return;
     }
+
+    tbody.innerHTML = dadosGerados.map((registro, indice) => {
+        const selecionado = registrosSelecionados.has(indice);
+
+        const classeTipo = registro.tipo === "REGISTRO"
+            ? "type-registro"
+            : "type-estoque";
+
+        const data = formatarData(registro.dataHora);
+
+        return `
+            <tr>
+                <td>
+                    <input
+                        type="checkbox"
+                        class="checkbox-registro"
+                        data-indice="${indice}"
+                        ${selecionado ? "checked" : ""}
+                        aria-label="Selecionar registro ${indice + 1}"
+                    >
+                </td>
+
+                <td>${escaparHTML(registro.setor)}</td>
+
+                <td>
+                    <strong>${escaparHTML(registro.suprimento)}</strong>
+                </td>
+
+                <td>${escaparHTML(registro.cor || "—")}</td>
+
+                <td>${escaparHTML(registro.un ?? "—")}</td>
+
+                <td>
+                    <span class="type-tag ${classeTipo}">
+                        ${escaparHTML(registro.tipo)}
+                    </span>
+                </td>
+
+                <td>${escaparHTML(data)}</td>
+            </tr>
+        `;
+    }).join("");
+
+    tbody.querySelectorAll(".checkbox-registro").forEach(checkbox => {
+        checkbox.addEventListener("change", event => {
+            const indice = Number(event.target.dataset.indice);
+
+            if (event.target.checked) {
+                registrosSelecionados.add(indice);
+            } else {
+                registrosSelecionados.delete(indice);
+            }
+
+            atualizarCheckboxTodos();
+            atualizarResumo();
+            atualizarPrevia();
+        });
+    });
+
+    atualizarCheckboxTodos();
+}
+
+// ========================================
+// SELEÇÃO DE TODOS OS REGISTROS
+// ========================================
+
+function atualizarCheckboxTodos() {
+    const checkbox = document.getElementById("selecionar-todos");
+    if (!checkbox) return;
+
+    const total = dadosGerados.length;
+    const selecionados = registrosSelecionados.size;
+
+    checkbox.checked = total > 0 && selecionados === total;
+    checkbox.indeterminate = selecionados > 0 && selecionados < total;
+}
+
+function selecionarTodos(estado) {
+    registrosSelecionados.clear();
+
+    if (estado) {
+        dadosGerados.forEach((_, indice) => {
+            registrosSelecionados.add(indice);
+        });
+    }
+
+    renderizarTabela();
+    atualizarResumo();
+    atualizarPrevia();
+}
+
+function limparSelecao() {
+    selecionarTodos(false);
+}
+
+// ========================================
+// RESUMO DO ENVIO
+// ========================================
+
+function atualizarResumo() {
+    const selecionados = obterSelecionados();
+    const modo = obterModoEnvio();
+
+    const cardsPrevistos = modo === "INDIVIDUAL"
+        ? selecionados.length
+        : selecionados.length > 0 ? 1 : 0;
+
+    document.getElementById("resumo-selecionados").textContent =
+        selecionados.length;
+
+    document.getElementById("resumo-cards").textContent =
+        cardsPrevistos;
+
+    document.getElementById("resumo-modalidade").textContent =
+        modo === "INDIVIDUAL" ? "Individual" : "Consolidado";
+}
+
+// ========================================
+// PRÉ-VISUALIZAÇÃO
+// ========================================
+
+function atualizarPrevia() {
+    const preview = document.getElementById("previewConteudo");
+    if (!preview) return;
+
+    const selecionados = obterSelecionados();
+    const modo = obterModoEnvio();
+
+    if (!selecionados.length) {
+        preview.textContent = "Nenhum registro selecionado.";
+        return;
+    }
+
+    let texto = "";
+
+    texto += modo === "INDIVIDUAL"
+        ? "ENVIO INDIVIDUAL AO PIPEFY\n"
+        : "ENVIO CONSOLIDADO AO PIPEFY\n";
+
+    texto += "========================================\n\n";
+
+    selecionados.forEach((registro, indice) => {
+        texto += `REGISTRO ${indice + 1}\n`;
+        texto += `Setor: ${registro.setor}\n`;
+        texto += `Suprimento: ${registro.suprimento}\n`;
+        texto += `Cor: ${registro.cor || "—"}\n`;
+        texto += `Quantidade: ${registro.un ?? "—"}\n`;
+        texto += `Tipo: ${registro.tipo}\n`;
+        texto += `Data: ${formatarData(registro.dataHora)}\n`;
+        texto += "----------------------------------------\n";
+    });
+
+    texto += `\nTotal de registros: ${selecionados.length}`;
+
+    if (modo === "INDIVIDUAL") {
+        texto += `\nCards previstos: ${selecionados.length}`;
+    } else {
+        texto += "\nCards previstos: 1";
+    }
+
+    preview.textContent = texto;
+}
+
+// ========================================
+// ENVIAR AO PIPEFY
+// ========================================
+
+async function enviarAoPipefy() {
+    const selecionados = obterSelecionados();
+    const modo = obterModoEnvio();
+
+    if (!selecionados.length) {
+        mostrarResultado(
+            "Selecione pelo menos um registro antes de enviar.",
+            "error"
+        );
+        return;
+    }
+
+    const quantidadeCards = modo === "INDIVIDUAL"
+        ? selecionados.length
+        : 1;
+
+    const confirmacao = confirm(
+        `Você selecionou ${selecionados.length} registro(s).\n\n` +
+        `Modalidade: ${modo === "INDIVIDUAL" ? "Individual" : "Consolidado"}\n` +
+        `Cards previstos: ${quantidadeCards}\n\n` +
+        "Deseja continuar?"
+    );
+
+    if (!confirmacao) return;
 
     const botao = document.getElementById("btn-enviar-pipefy");
-    if (botao?.disabled) return;
 
-    if (!confirm(`Serão enviados ${dadosGerados.length} registro(s), criando um card por registro no Pipefy. Deseja continuar?`)) {
-        return;
-    }
+    if (botao?.disabled) return;
 
     if (botao) {
         botao.disabled = true;
@@ -223,55 +464,94 @@ async function enviarAoPipefy() {
     }
 
     try {
-        const { data: sessaoData, error: sessaoErro } = await supabaseIntegrador.auth.getSession();
+        const { data: sessaoData, error: sessaoErro } =
+            await supabaseIntegrador.auth.getSession();
+
         const accessToken = sessaoData?.session?.access_token;
 
         if (sessaoErro || !accessToken) {
-            throw new Error("Sua sessão expirou. Entre novamente no sistema.");
+            throw new Error(
+                "Sua sessão expirou. Entre novamente no sistema."
+            );
         }
+
+        const registros = selecionados.map(item => ({
+            tipo: item.tipo,
+            setor: item.setor,
+            suprimento: item.suprimento,
+            cor: item.cor || "",
+            quantidade: Number(item.un),
+            dataHora: item.dataHora || null
+        }));
 
         const resposta = await fetch("/api/pipefy", {
             method: "POST",
+
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${accessToken}`
             },
+
             body: JSON.stringify({
-                registros: dadosGerados.map(item => ({
-                    tipo: item.tipo,
-                    setor: item.setor,
-                    suprimento: item.suprimento,
-                    cor: item.cor || "",
-                    quantidade: Number(item.un),
-                    dataHora: item.dataHora || null
-                }))
+                modo,
+                registros
             })
         });
 
         const resultado = await resposta.json().catch(() => ({}));
+
         if (!resposta.ok) {
-            throw new Error(resultado.error || `Falha na integração (HTTP ${resposta.status}).`);
+            throw new Error(
+                resultado.error ||
+                `Falha na integração (HTTP ${resposta.status}).`
+            );
         }
 
         const criados = resultado.criados || [];
         const falhas = resultado.falhas || [];
-        let mensagem = `${criados.length} card(s) criado(s) no Pipefy.`;
+
+        let mensagem =
+            `${criados.length} card(s) criado(s) no Pipefy.\n`;
+
+        mensagem += `Modalidade: ${
+            modo === "INDIVIDUAL" ? "Individual" : "Consolidado"
+        }\n`;
 
         if (criados.length) {
-            mensagem += "\n\nCards criados:\n" + criados.map(card =>
-                `${card.tipo} — ${card.setor} — ${card.suprimento}\n${card.url}`
-            ).join("\n\n");
+            mensagem += "\nCards criados:\n";
+
+            criados.forEach(card => {
+                mensagem += `\n${card.title || "Card criado"}`;
+
+                if (card.url) {
+                    mensagem += `\n${card.url}`;
+                }
+            });
         }
 
         if (falhas.length) {
-            mensagem += `\n\n${falhas.length} registro(s) não foram enviados:\n` +
-                falhas.map(f => `${f.tipo} — ${f.setor} — ${f.suprimento}: ${f.error}`).join("\n");
+            mensagem += `\n\nFalhas: ${falhas.length}\n`;
+
+            falhas.forEach(falha => {
+                mensagem += `\n${falha.setor || "—"} — `;
+                mensagem += `${falha.suprimento || "—"}: `;
+                mensagem += `${falha.error || "Erro não identificado"}\n`;
+            });
         }
 
-        alert(mensagem);
+        mostrarResultado(
+            mensagem,
+            falhas.length ? "error" : "success"
+        );
+
     } catch (error) {
-        console.error("Erro ao enviar cards ao Pipefy:", error);
-        alert(`Não foi possível concluir o envio: ${error.message}`);
+        console.error("Erro no envio ao Pipefy:", error);
+
+        mostrarResultado(
+            "Não foi possível concluir o envio: " + error.message,
+            "error"
+        );
+
     } finally {
         if (botao) {
             botao.disabled = false;
@@ -280,64 +560,155 @@ async function enviarAoPipefy() {
     }
 }
 
-// ===============================
-// LIMPAR SISTEMA
-// ===============================
-function limparTudo() {
+// ========================================
+// RESULTADO DA INTEGRAÇÃO
+// ========================================
 
-    const inputSearch = document.getElementById("input-search");
-    const preview = document.getElementById("previewConteudo");
-    const mensagemEmail = document.getElementById("mensagemEmail");
+function mostrarResultado(mensagem, tipo) {
+    const elemento = document.getElementById("resultado-envio");
 
-    if (inputSearch) inputSearch.value = "";
-    if (preview) preview.textContent = "";
-    if (mensagemEmail) mensagemEmail.value = "";
+    if (!elemento) {
+        alert(mensagem);
+        return;
+    }
 
-    conteudoEmail = "";
-    dadosGerados = [];
-    relatorioAtual = "";
-
-    console.log("Sistema resetado.");
+    elemento.hidden = false;
+    elemento.className = `send-result ${tipo}`;
+    elemento.textContent = mensagem;
 }
 
-// ===============================
+// ========================================
+// CARREGAMENTO
+// ========================================
+
+function definirCarregamento(carregando) {
+    const botoes = [
+        document.getElementById("btn-search"),
+        document.querySelector('button[onclick="gerarRegistros()"]'),
+        document.querySelector('button[onclick="gerarReservas()"]')
+    ];
+
+    botoes.forEach(botao => {
+        if (botao) botao.disabled = carregando;
+    });
+}
+
+// ========================================
+// LIMPAR CONSULTA
+// ========================================
+
+function limparTudo() {
+    const input = document.getElementById("input-search");
+    const preview = document.getElementById("previewConteudo");
+    const tbody = document.getElementById("tabela-registros");
+    const texto = document.getElementById("texto-registros");
+    const resultado = document.getElementById("resultado-envio");
+
+    if (input) input.value = "";
+
+    if (preview) {
+        preview.textContent = "Nenhum registro selecionado.";
+    }
+
+    if (tbody) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" class="empty-state">
+                    Nenhum registro carregado.
+                </td>
+            </tr>
+        `;
+    }
+
+    if (texto) {
+        texto.textContent =
+            "Consulte o histórico ou pesquise uma impressora.";
+    }
+
+    if (resultado) {
+        resultado.hidden = true;
+        resultado.textContent = "";
+    }
+
+    dadosGerados = [];
+    registrosSelecionados.clear();
+    relatorioAtual = "";
+
+    document.getElementById("contador-registros").textContent = "0";
+    document.getElementById("selecionar-todos").checked = false;
+
+    atualizarResumo();
+}
+
+// ========================================
 // EVENTOS
-// ===============================
-document.addEventListener("DOMContentLoaded", function () {
+// ========================================
+
+document.addEventListener("DOMContentLoaded", () => {
+    const btnSair = document.getElementById("btn-sair");
+
+    if (btnSair) {
+        btnSair.addEventListener("click", sair);
+    }
+
+    carregarPerfilUsuario();
 
     const btnSearch = document.getElementById("btn-search");
     const inputSearch = document.getElementById("input-search");
 
-    btnSearch.addEventListener("click", async function () {
-
+    btnSearch.addEventListener("click", async () => {
         const termo = inputSearch.value.trim();
 
         if (!termo) {
-            alert("Digite o nome da impressora.");
+            mostrarResultado(
+                "Digite o nome da impressora, setor ou suprimento.",
+                "error"
+            );
             return;
         }
 
         relatorioAtual = "FILTRO";
+        definirCarregamento(true);
 
         const resultado = await buscarDados(termo);
 
-        if (!resultado) return;
+        definirCarregamento(false);
 
-        gerarRelatorio(resultado);
+        if (resultado) {
+            carregarRegistros(resultado, `Pesquisa: ${termo}`);
+        }
     });
 
-    // ENTER no input
-    inputSearch.addEventListener("keyup", async function (e) {
-        if (e.key === "Enter") {
+    inputSearch.addEventListener("keydown", event => {
+        if (event.key === "Enter") {
             btnSearch.click();
         }
     });
 
+    document.getElementById("selecionar-todos")
+        .addEventListener("change", event => {
+            selecionarTodos(event.target.checked);
+        });
+
+    document.getElementById("btn-limpar-selecao")
+        .addEventListener("click", limparSelecao);
+
+    document.querySelectorAll('input[name="modo-envio"]')
+        .forEach(radio => {
+            radio.addEventListener("change", () => {
+                atualizarResumo();
+                atualizarPrevia();
+            });
+        });
+
+    atualizarResumo();
+    atualizarPrevia();
 });
 
-// ===============================
-// EXPOSIÇÃO GLOBAL (HTML)
-// ===============================
+// ========================================
+// FUNÇÕES DISPONÍVEIS NO HTML
+// ========================================
+
 window.gerarReservas = gerarEstoque;
 window.gerarRegistros = gerarRegistros;
 window.enviarAoPipefy = enviarAoPipefy;

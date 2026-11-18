@@ -1,21 +1,32 @@
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Integrador | Cambaí Sementes</title>
+
+    <link rel="icon" type="image/jpeg" href="/assets/logoCambai.jpeg">
     <link rel="stylesheet" href="/Pages/Styles/integrador.css">
     <link rel="stylesheet" href="/Pages/Styles/sidebarperfil.css">
-    <title>Integrador</title>
-    <link rel="icon" type="image/jpeg" href="/assets/logoCambai.jpeg">
     <link rel="stylesheet" href="/Pages/Styles/enterprise.css">
 </head>
+
 <body style="visibility:hidden">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="/Pages/Logic/authguard.js"></script>
+
     <aside class="sidebar" id="sidebar">
-        <button id="menu-toggle" class="logo-toggle" aria-label="Abrir ou fechar menu" aria-expanded="false" aria-controls="menu">
-            <a href="/index.html"><ref><img src="/assets/logo_cambai_branco.png" alt="Logo Cambaí Sementes"></ref></a>
+        <button id="menu-toggle" class="logo-toggle"
+            aria-label="Abrir ou fechar menu"
+            aria-expanded="false"
+            aria-controls="menu">
+
+            <a href="/index.html">
+                <img src="/assets/logo_cambai_branco.png" alt="Logo Cambaí">
+            </a>
         </button>
 
         <nav id="menu">
@@ -23,18 +34,22 @@
                 <img src="/assets/apps.png" alt="">
                 <span>Início</span>
             </a>
+
             <a href="/Pages/reserva.html">
                 <img src="/assets/warehouse-alt.png" alt="">
                 <span>Reserva</span>
             </a>
+
             <a href="/Pages/registros.html">
                 <img src="/assets/deposit.png" alt="">
                 <span>Registros</span>
             </a>
+
             <a href="/Pages/paginasimpressas.html">
                 <img src="/assets/report.png" alt="">
                 <span>Páginas Impressas</span>
             </a>
+
             <a href="/Pages/integrador.html" class="active">
                 <img src="/assets/plug-connection.png" alt="">
                 <span>Integrador</span>
@@ -44,9 +59,12 @@
         <div class="sidebar-footer">
             <div class="perfil-usuario">
                 <div class="avatar-usuario">👤</div>
-                <span class="email-usuario" id="perfil-email">Carregando...</span>
+                <span class="email-usuario" id="perfil-email">
+                    Carregando...
+                </span>
             </div>
-            <button id="btn-sair" class="btn-sair" aria-label="Sair da conta">
+
+            <button id="btn-sair" class="btn-sair">
                 <img src="/assets/logout-icon.png" alt="">
                 <span>Sair</span>
             </button>
@@ -54,6 +72,251 @@
     </aside>
 
     <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+    <main class="integrador-container">
+
+        <header class="page-header">
+            <div>
+                <span class="page-eyebrow">INTEGRAÇÕES</span>
+                <h1>Central de integração</h1>
+                <p>
+                    Consulte movimentações e envie informações
+                    diretamente para o Pipefy.
+                </p>
+            </div>
+
+            <div class="integration-status">
+                <span class="status-dot"></span>
+                Integração Pipefy
+            </div>
+        </header>
+
+        <!-- CONSULTA -->
+        <section class="integrador-card">
+
+            <div class="section-heading">
+                <div>
+                    <h2>Consultar movimentações</h2>
+                    <p>Pesquise por impressora, setor ou suprimento.</p>
+                </div>
+            </div>
+
+            <div class="search-toolbar">
+
+                <div class="search-field">
+                    <img src="/assets/search.png" alt="">
+
+                    <input
+                        type="text"
+                        id="input-search"
+                        placeholder="Digite o nome da impressora, setor ou suprimento..."
+                    >
+
+                    <button type="button" id="btn-search">
+                        Pesquisar
+                    </button>
+                </div>
+
+                <div class="toolbar-actions">
+                    <button type="button" class="btn-secondary"
+                        onclick="gerarRegistros()">
+                        Histórico de registros
+                    </button>
+
+                    <button type="button" class="btn-secondary"
+                        onclick="gerarReservas()">
+                        Estoque completo
+                    </button>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- REGISTROS -->
+        <section class="integrador-card">
+
+            <div class="section-heading records-heading">
+                <div>
+                    <h2>Registros encontrados</h2>
+                    <p id="texto-registros">
+                        Consulte o histórico ou pesquise uma impressora.
+                    </p>
+                </div>
+
+                <div class="records-counter">
+                    <strong id="contador-registros">0</strong>
+                    <span>registros</span>
+                </div>
+            </div>
+
+            <div class="selection-toolbar">
+                <label class="select-all">
+                    <input type="checkbox" id="selecionar-todos">
+                    <span>Selecionar todos</span>
+                </label>
+
+                <button type="button" class="btn-text"
+                    id="btn-limpar-selecao">
+                    Limpar seleção
+                </button>
+            </div>
+
+            <div class="table-wrapper">
+
+                <table class="records-table">
+                    <thead>
+                        <tr>
+                            <th class="column-check"></th>
+                            <th>Setor</th>
+                            <th>Suprimento</th>
+                            <th>Cor</th>
+                            <th>Quantidade</th>
+                            <th>Tipo</th>
+                            <th>Data</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="tabela-registros">
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                Nenhum registro carregado.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+        </section>
+
+        <!-- CONFIGURAÇÃO DO ENVIO -->
+        <section class="integrador-card">
+
+            <div class="section-heading">
+                <div>
+                    <h2>Configurar envio ao Pipefy</h2>
+                    <p>
+                        Escolha como os registros selecionados
+                        serão enviados.
+                    </p>
+                </div>
+            </div>
+
+            <div class="send-modes">
+
+                <label class="mode-option">
+                    <input
+                        type="radio"
+                        name="modo-envio"
+                        value="INDIVIDUAL"
+                        checked
+                    >
+
+                    <span class="mode-content">
+                        <span class="mode-icon">↗</span>
+
+                        <span>
+                            <strong>Envio individual</strong>
+                            <small>
+                                Cada movimentação gera um card
+                                independente no Pipefy.
+                            </small>
+                            <em>1 registro = 1 card</em>
+                        </span>
+                    </span>
+                </label>
+
+                <label class="mode-option">
+                    <input
+                        type="radio"
+                        name="modo-envio"
+                        value="CONSOLIDADO"
+                    >
+
+                    <span class="mode-content">
+                        <span class="mode-icon">▤</span>
+
+                        <span>
+                            <strong>Envio consolidado</strong>
+                            <small>
+                                Todos os registros selecionados
+                                são agrupados em um único card.
+                            </small>
+                            <em>Vários registros = 1 card</em>
+                        </span>
+                    </span>
+                </label>
+
+            </div>
+
+            <!-- RESUMO -->
+            <div class="send-summary">
+
+                <div>
+                    <span>Registros selecionados</span>
+                    <strong id="resumo-selecionados">0</strong>
+                </div>
+
+                <div>
+                    <span>Cards previstos</span>
+                    <strong id="resumo-cards">0</strong>
+                </div>
+
+                <div>
+                    <span>Modalidade</span>
+                    <strong id="resumo-modalidade">Individual</strong>
+                </div>
+
+            </div>
+
+            <!-- PRÉVIA -->
+            <div class="preview-section">
+
+                <div class="preview-heading">
+                    <div>
+                        <h3>Pré-visualização</h3>
+                        <p>Confira os dados antes de enviar.</p>
+                    </div>
+                </div>
+
+                <pre id="previewConteudo">
+Nenhum registro selecionado.
+                </pre>
+
+            </div>
+
+            <!-- AÇÕES -->
+            <div class="send-actions">
+
+                <button
+                    type="button"
+                    class="btn-clear"
+                    onclick="limparTudo()">
+                    Limpar consulta
+                </button>
+
+                <button
+                    type="button"
+                    class="btn-send"
+                    id="btn-enviar-pipefy"
+                    onclick="enviarAoPipefy()">
+                    Enviar ao Pipefy
+                </button>
+
+            </div>
+
+            <div id="resultado-envio" class="send-result" hidden></div>
+
+        </section>
+
+    </main>
+
+    <footer class="integrador-footer">
+        Sistema desenvolvido e mantido pela <strong>Equipe do GI</strong>
+        <br>
+        Cambaí Sementes © 2026
+    </footer>
 
     <script>
         const toggle = document.getElementById("menu-toggle");
@@ -72,47 +335,17 @@
 
         backdrop.addEventListener("click", () => setSidebar(false));
 
-        document.addEventListener("keydown", (e) => {
-            if (e.key === "Escape") setSidebar(false);
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") setSidebar(false);
         });
 
-        document.querySelectorAll("#menu a").forEach((link) => {
+        document.querySelectorAll("#menu a").forEach(link => {
             link.addEventListener("click", () => setSidebar(false));
         });
     </script>
 
-    <div class="container">
-        <div class="toolbar">
-            <div class="search-bar">
-                <input type="text" id="input-search" placeholder="Pesquisar por impressora...">
-                <button type="button" id="btn-search">
-                    <img src="/assets/search.png" alt="Ícone de pesquisa" width="20" height="20">
-                </button>
-            </div>
-            <button class="btn-primary" onclick="gerarReservas()">Estoque completo</button>
-            <button class="btn-primary" onclick="gerarRegistros()">Histórico de registros</button>
-        </div>
-
-        <div class="preview-section">
-            <div class="email-preview">
-                <h2>Pré-visualização</h2>
-                <pre id="previewConteudo">Visualização do conteúdo do relatório antes do envio.</pre>
-            </div>
-            <div class="preview-actions">
-                <button class="btn-success" id="btn-enviar-pipefy" onclick="enviarAoPipefy()">Enviar ao Pipefy</button>
-                <button class="btn-danger" onclick="limparTudo()">Limpar</button>
-            </div>
-        </div>
-    </div>
-
-
-
-    <footer style="margin:80px 0 40px; text-align:center; color:#666; font-size:14.5px;">
-        Sistema desenvolvido e mantido pela <strong>Equipe do GI</strong><br>
-        Cambaí Sementes © 2026
-    </footer>
-
     <script src="/Pages/Logic/sidebarperfil.js"></script>
     <script src="/Pages/Logic/integrador.js"></script>
+
 </body>
 </html>
