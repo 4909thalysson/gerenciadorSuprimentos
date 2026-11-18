@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ativos de TI - Cambaí Sementes</title>
+  <link rel="icon" type="image/jpeg" href="/assets/logoCambai.jpeg">
+  <link rel="stylesheet" href="/Pages/Styles/integrador.css">
+  <link rel="stylesheet" href="/Pages/Styles/sidebarperfil.css">
+  <link rel="stylesheet" href="/Pages/Styles/enterprise.css">
+  <link rel="stylesheet" href="/Pages/Styles/ativos.css">
+  <link rel="stylesheet" href="/Pages/Styles/menu-ti.css">
+</head>
+<body style="visibility:hidden">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/Pages/Logic/authguard.js"></script>
+
+  <aside class="sidebar" id="sidebar">
+    <button id="menu-toggle" class="logo-toggle" aria-label="Abrir ou fechar menu" aria-expanded="false" aria-controls="menu">
+      <a href="/index.html"><img src="/assets/logo_cambai_branco.png" alt="Logo Cambaí Sementes"></a>
+    </button>
+    <nav id="menu">
+      <a href="/index.html"><img src="/assets/apps.png" alt=""><span>Início</span></a>
+      <a href="/Pages/reserva.html"><img src="/assets/warehouse-alt.png" alt=""><span>Reserva</span></a>
+      <a href="/Pages/registros.html"><img src="/assets/deposit.png" alt=""><span>Registros</span></a>
+      <a href="/Pages/paginasimpressas.html"><img src="/assets/report.png" alt=""><span>Páginas Impressas</span></a>
+      <a href="/Pages/integrador.html"><img src="/assets/plug-connection.png" alt=""><span>Integrador</span></a>
+      <div class="ti-menu-group" id="ti-menu-group">
+        <button type="button" class="ti-menu-toggle" id="ti-menu-toggle" aria-expanded="false" aria-controls="ti-submenu">
+          <img src="/assets/apps.png" alt="">
+          <span>Ativos de TI</span>
+          <span class="ti-menu-chevron" aria-hidden="true">⌄</span>
+        </button>
+        <div class="ti-submenu" id="ti-submenu" hidden>
+          <a href="/Pages/ativos.html" data-ti-page="ativos"><span class="ti-submenu-dot"></span><span>Inventário de ativos</span></a>
+          <a href="/Pages/manutencao.html" data-ti-page="manutencao"><span class="ti-submenu-dot"></span><span>Manutenções</span></a>
+          <a href="/Pages/acompanhamento.html" data-ti-page="acompanhamento"><span class="ti-submenu-dot"></span><span>Acompanhamento</span></a>
+        </div>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="perfil-usuario"><div class="avatar-usuario">👤</div><span class="email-usuario" id="perfil-email">Carregando...</span></div>
+      <button id="btn-sair" class="btn-sair" aria-label="Sair da conta"><img src="/assets/logout-icon.png" alt=""><span>Sair</span></button>
+    </div>
+  </aside>
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+  <main class="ativos-main">
+    <header class="ativos-header">
+      <div>
+        <span class="eyebrow">INVENTÁRIO PATRIMONIAL</span>
+        <h1>Ativos de <strong>TI</strong></h1>
+        <p>Gerencie notebooks, celulares, tablets e computadores em um único lugar.</p>
+      </div>
+      <button class="btn-primary" id="btn-novo-ativo">+ Cadastrar ativo</button>
+    </header>
+
+    <section class="ativos-kpis" aria-label="Resumo do inventário">
+      <article class="ativo-kpi"><span>Total de ativos</span><strong id="kpi-total">—</strong><small>Equipamentos cadastrados</small></article>
+      <article class="ativo-kpi"><span>Notebooks</span><strong id="kpi-notebook">—</strong><small>Categoria notebook</small></article>
+      <article class="ativo-kpi"><span>Dispositivos móveis</span><strong id="kpi-moveis">—</strong><small>Celulares e tablets</small></article>
+      <article class="ativo-kpi"><span>Computadores</span><strong id="kpi-pc">—</strong><small>Categoria PC</small></article>
+    </section>
+
+    <section class="ativos-panel">
+      <div class="ativos-panel-head">
+        <div><h2>Inventário de equipamentos</h2><p id="resultado-contagem">Carregando ativos...</p></div>
+        <button class="btn-secondary" id="btn-atualizar">Atualizar lista</button>
+      </div>
+      <div class="ativos-filtros">
+        <label class="busca-ativo"><span>Pesquisar</span><input type="search" id="filtro-busca" placeholder="Descrição, série, modelo ou responsável"></label>
+        <label><span>Categoria</span><select id="filtro-categoria"><option value="">Todas</option><option>Notebook</option><option>Celular</option><option>Tablet</option><option>PC</option></select></label>
+        <label><span>Fabricante</span><select id="filtro-fabricante"><option value="">Todos</option></select></label>
+        <button class="btn-limpar" id="btn-limpar-filtros">Limpar filtros</button>
+      </div>
+      <div class="ativos-table-wrap">
+        <table class="ativos-table">
+          <thead><tr><th>Ativo</th><th>Categoria</th><th>Fabricante / modelo</th><th>Número de série</th><th>Responsável</th><th>Aquisição</th><th class="col-acoes">Ações</th></tr></thead>
+          <tbody id="ativos-tbody"><tr><td colspan="7" class="estado-tabela">Carregando inventário...</td></tr></tbody>
+        </table>
+      </div>
+      <div class="ativos-mobile-list" id="ativos-mobile-list"></div>
+    </section>
+    <div class="ativos-feedback" id="ativos-feedback" role="status" aria-live="polite"></div>
+    <footer class="ativos-footer">Sistema desenvolvido e mantido pela <strong>Equipe do GI</strong><br>Cambaí Sementes © 2026</footer>
+  </main>
+
+  <div class="ativo-modal" id="modal-ativo" aria-hidden="true">
+    <div class="ativo-modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+      <div class="ativo-modal-header"><div><span class="eyebrow">INVENTÁRIO DE TI</span><h2 id="modal-titulo">Cadastrar ativo</h2></div><button type="button" class="modal-close" id="btn-fechar-modal" aria-label="Fechar">&times;</button></div>
+      <form id="form-ativo">
+        <input type="hidden" id="ativo-id">
+        <div class="form-grid">
+          <label class="campo campo-full"><span>Descrição *</span><input id="descricao" maxlength="180" required placeholder="Ex.: Notebook administrativo"></label>
+          <label class="campo"><span>Categoria *</span><select id="categoria" required><option value="">Selecione</option><option>Notebook</option><option>Celular</option><option>Tablet</option><option>PC</option></select></label>
+          <label class="campo"><span>Fabricante</span><input id="fabricante" maxlength="100" placeholder="Ex.: Dell"></label>
+          <label class="campo"><span>Modelo</span><input id="modelo" maxlength="120" placeholder="Modelo do equipamento"></label>
+          <label class="campo"><span>Número de série</span><input id="numero_serie" maxlength="160" placeholder="Serial do fabricante"></label>
+          <label class="campo"><span>Responsável pelo uso</span><input id="responsavel_uso" maxlength="160" placeholder="Nome do colaborador"></label>
+          <label class="campo"><span>Data de aquisição</span><input id="data_aquisicao" type="date"></label>
+        </div>
+        <div class="especificacoes" id="bloco-especificacoes">
+          <div class="secao-form-titulo"><h3>Configuração técnica</h3><span>Opcional</span></div>
+          <div class="form-grid">
+            <label class="campo"><span>Memória RAM (GB)</span><input id="ram_gb" type="number" min="0" step="1" placeholder="Ex.: 16"></label>
+            <label class="campo"><span>Tipo de RAM</span><select id="tipo_ram"><option value="">Não informado</option><option>DDR3</option><option>DDR4</option><option>DDR5</option><option>LPDDR4</option><option>LPDDR5</option></select></label>
+            <label class="campo"><span>Armazenamento (GB)</span><input id="armazenamento_gb" type="number" min="0" step="1" placeholder="Ex.: 512"></label>
+            <label class="campo"><span>Tipo de armazenamento</span><select id="tipo_armazenamento"><option value="">Não informado</option><option>SSD</option><option>NVMe</option><option>HDD</option><option>eMMC</option></select></label>
+          </div>
+          <p class="ajuda-especificacoes">Para celulares e tablets, esses dados também podem ser preenchidos quando conhecidos.</p>
+        </div>
+        <div class="modal-actions"><button type="button" class="btn-secondary" id="btn-cancelar">Cancelar</button><button type="submit" class="btn-primary" id="btn-salvar-ativo">Salvar ativo</button></div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/Pages/Logic/sidebarperfil.js"></script>
+  <script src="/Pages/Logic/ativos.js"></script>
+  <script src="/Pages/Logic/menu-ti.js"></script>
+</body>
+</html>

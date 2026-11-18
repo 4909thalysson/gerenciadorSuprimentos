@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acompanhamento de manutenção - Cambaí Sementes</title>
+  <link rel="icon" type="image/jpeg" href="/assets/logoCambai.jpeg">
+  <link rel="stylesheet" href="/Pages/Styles/integrador.css">
+  <link rel="stylesheet" href="/Pages/Styles/sidebarperfil.css">
+  <link rel="stylesheet" href="/Pages/Styles/enterprise.css">
+  <link rel="stylesheet" href="/Pages/Styles/modulo-ti.css">
+  <link rel="stylesheet" href="/Pages/Styles/menu-ti.css">
+</head>
+<body>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <aside class="sidebar" id="sidebar">
+    <button id="menu-toggle" class="logo-toggle" aria-label="Abrir ou fechar menu" aria-expanded="false" aria-controls="menu">
+      <a href="/index.html"><img src="/assets/logo_cambai_branco.png" alt="Logo Cambaí Sementes"></a>
+    </button>
+    <nav id="menu">
+      <a href="/index.html"><img src="/assets/apps.png" alt=""><span>Início</span></a>
+      <a href="/Pages/reserva.html"><img src="/assets/warehouse-alt.png" alt=""><span>Reserva</span></a>
+      <a href="/Pages/registros.html"><img src="/assets/deposit.png" alt=""><span>Registros</span></a>
+      <a href="/Pages/paginasimpressas.html"><img src="/assets/report.png" alt=""><span>Páginas Impressas</span></a>
+      <a href="/Pages/integrador.html"><img src="/assets/plug-connection.png" alt=""><span>Integrador</span></a>
+      <div class="ti-menu-group" id="ti-menu-group">
+        <button type="button" class="ti-menu-toggle" id="ti-menu-toggle" aria-expanded="false" aria-controls="ti-submenu">
+          <img src="/assets/apps.png" alt=""><span>Ativos de TI</span><span class="ti-menu-chevron" aria-hidden="true">⌄</span>
+        </button>
+        <div class="ti-submenu" id="ti-submenu" hidden>
+          <a href="/Pages/ativos.html" data-ti-page="ativos"><span class="ti-submenu-dot"></span><span>Inventário de ativos</span></a>
+          <a href="/Pages/manutencao.html" data-ti-page="manutencao"><span class="ti-submenu-dot"></span><span>Manutenções</span></a>
+          <a href="/Pages/acompanhamento.html" data-ti-page="acompanhamento"><span class="ti-submenu-dot"></span><span>Acompanhamento</span></a>
+        </div>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="perfil-usuario"><div class="avatar-usuario">👤</div><span class="email-usuario" id="perfil-email">Carregando...</span></div>
+      <button id="btn-sair" class="btn-sair" aria-label="Sair da conta"><img src="/assets/logout-icon.png" alt=""><span>Sair</span></button>
+    </div>
+  </aside>
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+  <main class="modulo-ti-main">
+    <header class="modulo-ti-header">
+      <div><span class="eyebrow">CONSULTA DE SERVIÇO</span><h1>Acompanhamento</h1><p>Consulte o andamento de uma manutenção usando o código privado recebido no link de acompanhamento.</p></div>
+      <span class="modulo-ti-status">Acesso por código</span>
+    </header>
+    <section class="modulo-ti-lookup">
+      <div class="modulo-ti-icon">⌕</div>
+      <h2>Consultar manutenção</h2>
+      <p>O acompanhamento será carregado pelo token seguro presente no link enviado ao solicitante. O número do protocolo, isoladamente, não libera acesso aos dados.</p>
+      <label for="token-acompanhamento">Código de acompanhamento</label>
+      <div class="modulo-ti-lookup-row"><input id="token-acompanhamento" type="text" autocomplete="off" placeholder="Cole aqui o código recebido"><button type="button" id="btn-consultar-token" disabled>Consultar</button></div>
+      <small>Consulta pública sem necessidade de login. A integração com a função segura do Supabase será ativada na próxima etapa.</small>
+    </section>
+    <footer class="modulo-ti-footer">Sistema desenvolvido e mantido pela <strong>Equipe do GI</strong><br>Cambaí Sementes © 2026</footer>
+  </main>
+  <script src="/Pages/Logic/acompanhamento.js"></script>
+  <script src="/Pages/Logic/sidebarperfil.js"></script>
+  <script src="/Pages/Logic/menu-ti.js"></script>
+</body>
+</html>

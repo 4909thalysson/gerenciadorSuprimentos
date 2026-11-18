@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manutenções - Cambaí Sementes</title>
+  <link rel="icon" type="image/jpeg" href="/assets/logoCambai.jpeg">
+  <link rel="stylesheet" href="/Pages/Styles/integrador.css">
+  <link rel="stylesheet" href="/Pages/Styles/sidebarperfil.css">
+  <link rel="stylesheet" href="/Pages/Styles/enterprise.css">
+  <link rel="stylesheet" href="/Pages/Styles/modulo-ti.css">
+  <link rel="stylesheet" href="/Pages/Styles/menu-ti.css">
+</head>
+<body style="visibility:hidden">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/Pages/Logic/authguard.js"></script>
+  <aside class="sidebar" id="sidebar">
+    <button id="menu-toggle" class="logo-toggle" aria-label="Abrir ou fechar menu" aria-expanded="false" aria-controls="menu">
+      <a href="/index.html"><img src="/assets/logo_cambai_branco.png" alt="Logo Cambaí Sementes"></a>
+    </button>
+    <nav id="menu">
+      <a href="/index.html"><img src="/assets/apps.png" alt=""><span>Início</span></a>
+      <a href="/Pages/reserva.html"><img src="/assets/warehouse-alt.png" alt=""><span>Reserva</span></a>
+      <a href="/Pages/registros.html"><img src="/assets/deposit.png" alt=""><span>Registros</span></a>
+      <a href="/Pages/paginasimpressas.html"><img src="/assets/report.png" alt=""><span>Páginas Impressas</span></a>
+      <a href="/Pages/integrador.html"><img src="/assets/plug-connection.png" alt=""><span>Integrador</span></a>
+
+      <div class="ti-menu-group" id="ti-menu-group">
+        <button type="button" class="ti-menu-toggle" id="ti-menu-toggle" aria-expanded="false" aria-controls="ti-submenu">
+          <img src="/assets/apps.png" alt=""><span>Ativos de TI</span><span class="ti-menu-chevron" aria-hidden="true">⌄</span>
+        </button>
+        <div class="ti-submenu" id="ti-submenu" hidden>
+          <a href="/Pages/ativos.html" data-ti-page="ativos"><span class="ti-submenu-dot"></span><span>Inventário de ativos</span></a>
+          <a href="/Pages/manutencao.html" data-ti-page="manutencao"><span class="ti-submenu-dot"></span><span>Manutenções</span></a>
+          <a href="/Pages/acompanhamento.html" data-ti-page="acompanhamento"><span class="ti-submenu-dot"></span><span>Acompanhamento</span></a>
+        </div>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="perfil-usuario"><div class="avatar-usuario">👤</div><span class="email-usuario" id="perfil-email">Carregando...</span></div>
+      <button id="btn-sair" class="btn-sair" aria-label="Sair da conta"><img src="/assets/logout-icon.png" alt=""><span>Sair</span></button>
+    </div>
+  </aside>
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+  <main class="modulo-ti-main">
+    <header class="modulo-ti-header">
+      <div><span class="eyebrow">GESTÃO DE TI</span><h1>Manutenções</h1><p>Centralize solicitações, acompanhe atendimentos e organize o fluxo técnico dos equipamentos.</p></div>
+      <span class="modulo-ti-status">Módulo estruturado</span>
+    </header>
+    <section class="modulo-ti-grid">
+      <article class="modulo-ti-card"><span class="modulo-ti-icon">＋</span><h2>Solicitações</h2><p>Registro de problemas em notebooks, computadores, celulares, tablets e outros equipamentos.</p></article>
+      <article class="modulo-ti-card"><span class="modulo-ti-icon">▦</span><h2>Quadro Kanban</h2><p>Organização por etapas: aberta, triagem, aguardando, em manutenção, testes e concluída.</p></article>
+      <article class="modulo-ti-card"><span class="modulo-ti-icon">↗</span><h2>Histórico técnico</h2><p>Registro das atualizações e das ações realizadas em cada atendimento.</p></article>
+    </section>
+    <section class="modulo-ti-notice"><strong>Próxima etapa de implementação</strong><p>A interface de gestão está preparada como ponto de entrada. A conexão com as tabelas <code>manutencoes</code> e <code>historico_manutencoes</code>, os formulários e o Kanban serão implementados na etapa funcional.</p></section>
+    <footer class="modulo-ti-footer">Sistema desenvolvido e mantido pela <strong>Equipe do GI</strong><br>Cambaí Sementes © 2026</footer>
+  </main>
+  <script src="/Pages/Logic/manutencao.js"></script>
+  <script src="/Pages/Logic/sidebarperfil.js"></script>
+  <script src="/Pages/Logic/menu-ti.js"></script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+/* Submenu expansível de Ativos de TI */
+.ti-menu-group {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ti-menu-toggle {
+  position: relative;
+  width: 100%;
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 12px 12px 21px;
+  border: 0;
+  border-radius: 0 24px 24px 0;
+  background: transparent;
+  color: #fff;
+  font: 500 15px 'Segoe UI', system-ui, sans-serif;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color .2s ease, color .2s ease;
+}
+
+.ti-menu-toggle:hover,
+.ti-menu-toggle:focus-visible,
+.ti-menu-group.aberto .ti-menu-toggle {
+  background: rgba(255,255,255,.13);
+}
+
+.ti-menu-toggle img {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  object-fit: contain;
+}
+
+.ti-menu-toggle > span:not(.ti-menu-chevron) {
+  opacity: 0;
+  transition: opacity .2s ease;
+}
+
+.sidebar.expanded .ti-menu-toggle > span:not(.ti-menu-chevron) {
+  opacity: 1;
+}
+
+.ti-menu-chevron {
+  margin-left: auto;
+  margin-right: 10px;
+  font-size: 19px;
+  line-height: 1;
+  opacity: 0;
+  transform: rotate(0);
+  transition: opacity .2s ease, transform .2s ease;
+}
+
+.sidebar.expanded .ti-menu-chevron {
+  opacity: .8;
+}
+
+.ti-menu-group.aberto .ti-menu-chevron {
+  transform: rotate(180deg);
+}
+
+.ti-submenu {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 3px 0 5px;
+}
+
+.ti-submenu[hidden] {
+  display: none !important;
+}
+
+.ti-submenu a {
+  min-height: 38px !important;
+  padding: 9px 8px 9px 28px !important;
+  margin-left: 12px;
+  width: calc(100% - 12px);
+  gap: 10px !important;
+  border-radius: 8px 0 0 8px !important;
+  font-size: 12px !important;
+  color: rgba(255,255,255,.86) !important;
+}
+
+.ti-submenu a:hover,
+.ti-submenu a:focus-visible,
+.ti-submenu a.active {
+  background: rgba(255,255,255,.96) !important;
+  color: #0445b8 !important;
+}
+
+.ti-submenu a span:last-child {
+  opacity: 0;
+  transition: opacity .2s ease;
+}
+
+.sidebar.expanded .ti-submenu a span:last-child {
+  opacity: 1;
+}
+
+.ti-submenu-dot {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: .75;
+}
+
+/* O submenu só aparece quando a barra lateral está expandida. */
+.sidebar:not(.expanded) .ti-submenu {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .ti-menu-toggle {
+    min-height: 48px;
+  }
+
+  .ti-submenu a {
+    min-height: 42px !important;
+  }
+}

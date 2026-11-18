@@ -8,6 +8,7 @@
 
     <title>Painel de Impressoras | Gerenciador de Suprimentos</title>
     <link rel="stylesheet" href="/Pages/Styles/enterprise.css">
+    <link rel="stylesheet" href="/Pages/Styles/menu-ti.css">
 </head>
 <body style="visibility:hidden">
 
@@ -39,6 +40,18 @@
                 <img src="/assets/plug-connection.png" alt="">
                 <span>Integrador</span>
             </a>
+            <div class="ti-menu-group" id="ti-menu-group">
+              <button type="button" class="ti-menu-toggle" id="ti-menu-toggle" aria-expanded="false" aria-controls="ti-submenu">
+                <img src="/assets/apps.png" alt="">
+                <span>Ativos de TI</span>
+                <span class="ti-menu-chevron" aria-hidden="true">⌄</span>
+              </button>
+              <div class="ti-submenu" id="ti-submenu" hidden>
+                <a href="/Pages/ativos.html" data-ti-page="ativos"><span class="ti-submenu-dot"></span><span>Inventário de ativos</span></a>
+                <a href="/Pages/manutencao.html" data-ti-page="manutencao"><span class="ti-submenu-dot"></span><span>Manutenções</span></a>
+                <a href="/Pages/acompanhamento.html" data-ti-page="acompanhamento"><span class="ti-submenu-dot"></span><span>Acompanhamento</span></a>
+              </div>
+            </div>
         </nav>
 
         <div class="sidebar-footer">
@@ -162,32 +175,7 @@
     </footer>
 
     <script src="index.js"></script>
-    <script>
-        const toggle = document.getElementById("menu-toggle");
-        const sidebar = document.getElementById("sidebar");
-        const backdrop = document.getElementById("sidebar-backdrop");
-
-        function setSidebar(open) {
-            sidebar.classList.toggle("expanded", open);
-            backdrop.classList.toggle("active", open);
-            toggle.setAttribute("aria-expanded", open);
-        }
-
-        toggle.addEventListener("click", () => {
-            setSidebar(!sidebar.classList.contains("expanded"));
-        });
-
-        backdrop.addEventListener("click", () => setSidebar(false));
-
-        document.addEventListener("keydown", (e) => {
-            if (e.key === "Escape") setSidebar(false);
-        });
-
-        // Fecha o menu ao navegar (útil em telas menores)
-        document.querySelectorAll("#menu a").forEach((link) => {
-            link.addEventListener("click", () => setSidebar(false));
-        });
-    </script>
+    <script src="/Pages/Logic/menu-ti.js"></script>
 
 </body>
 </html>

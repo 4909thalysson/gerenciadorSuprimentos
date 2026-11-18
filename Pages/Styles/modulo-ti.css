@@ -1,0 +1,865 @@
+
+/* =====================================================
+   MÓDULOS DE TI — PADRÃO ENTERPRISE CAMBAÍ
+   Referência visual: ativos.css
+===================================================== */
+
+.modulo-ti-main {
+  width: calc(100% - 40px);
+  max-width: 1680px;
+  margin: 0 auto;
+  padding: 34px 28px 24px;
+  min-height: 100vh;
+  box-sizing: border-box;
+  color: #202b3c;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.eyebrow {
+  display: block;
+  color: #64748b;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.35px;
+  margin-bottom: 7px;
+}
+
+/* =====================================================
+   CABEÇALHO
+===================================================== */
+
+.modulo-ti-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin: 4px 0 28px;
+}
+
+.modulo-ti-header h1 {
+  font-size: 29px;
+  line-height: 1.2;
+  margin: 0;
+  color: #202b3c;
+  letter-spacing: -.7px;
+  font-weight: 750;
+}
+
+.modulo-ti-header p {
+  color: #697586;
+  margin: 8px 0 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.modulo-ti-status {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #dce6f5;
+  background: #f3f7fd;
+  color: #174ea6;
+  border-radius: 30px;
+  padding: 8px 12px;
+  font-size: 11px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+/* =====================================================
+   CARDS INFORMATIVOS
+===================================================== */
+
+.modulo-ti-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 15px;
+}
+
+.modulo-ti-card {
+  background: #fff;
+  border: 1px solid #e2e7ef;
+  border-radius: 12px;
+  padding: 22px;
+  box-shadow: 0 4px 18px rgba(20, 35, 60, .045);
+  box-sizing: border-box;
+}
+
+.modulo-ti-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: #edf3fc;
+  color: #174ea6;
+  font-size: 23px;
+  font-weight: 700;
+}
+
+.modulo-ti-card h2 {
+  font-size: 16px;
+  margin: 17px 0 8px;
+  color: #202b3c;
+}
+
+.modulo-ti-card p {
+  font-size: 13px;
+  line-height: 1.65;
+  color: #697586;
+  margin: 0;
+}
+
+.modulo-ti-notice {
+  margin-top: 20px;
+  padding: 19px 21px;
+  border: 1px solid #e2e7ef;
+  border-left: 4px solid #174ea6;
+  background: #fff;
+  border-radius: 10px;
+}
+
+.modulo-ti-notice strong {
+  font-size: 13px;
+  color: #202b3c;
+}
+
+.modulo-ti-notice p {
+  font-size: 12px;
+  line-height: 1.7;
+  color: #697586;
+  margin: 7px 0 0;
+}
+
+/* =====================================================
+   MANUTENÇÕES — INDICADORES
+===================================================== */
+
+#manutencao-app {
+  width: 100%;
+  margin-top: 0;
+}
+
+.manutencao-indicadores {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 15px;
+  margin-bottom: 22px;
+}
+
+.manutencao-indicadores .modulo-ti-card {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-height: 105px;
+  padding: 18px 20px;
+}
+
+.manutencao-indicadores .modulo-ti-card span {
+  color: #697586;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.manutencao-indicadores .modulo-ti-card strong {
+  color: #202b3c;
+  font-size: 29px;
+  line-height: 1.1;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+
+/* =====================================================
+   CENTRAL DE MANUTENÇÃO
+===================================================== */
+
+.manutencao-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 22px 22px 17px;
+  background: #fff;
+  border: 1px solid #e2e7ef;
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0 4px 18px rgba(20, 35, 60, .045);
+}
+
+.manutencao-toolbar h2 {
+  color: #202b3c;
+  font-size: 17px;
+  margin: 0;
+}
+
+.manutencao-toolbar p {
+  color: #8792a2;
+  font-size: 12px;
+  margin: 5px 0 0;
+}
+
+.manutencao-toolbar > div:last-child {
+  display: flex;
+  gap: 9px;
+}
+
+.manutencao-toolbar button {
+  min-height: 40px;
+  padding: 10px 16px;
+  border: 1px solid #dce3ed;
+  border-radius: 8px;
+  background: #fff;
+  color: #344054;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: .2s ease;
+}
+
+.manutencao-toolbar button:hover {
+  background: #f4f7fb;
+}
+
+.manutencao-toolbar #btn-nova-manutencao {
+  background: #174ea6;
+  border-color: #174ea6;
+  color: #fff;
+}
+
+.manutencao-toolbar #btn-nova-manutencao:hover {
+  background: #123d82;
+}
+
+/* =====================================================
+   FILTROS
+===================================================== */
+
+.manutencao-filtros {
+  display: grid;
+  grid-template-columns: minmax(230px, 2fr) minmax(145px, 1fr) minmax(145px, 1fr);
+  gap: 12px;
+  align-items: center;
+  padding: 18px 22px;
+  background: #fff;
+  border-left: 1px solid #e2e7ef;
+  border-right: 1px solid #e2e7ef;
+  border-bottom: 1px solid #edf0f5;
+}
+
+.manutencao-filtros input,
+.manutencao-filtros select {
+  width: 100%;
+  height: 40px;
+  box-sizing: border-box;
+  border: 1px solid #d6deea;
+  border-radius: 8px;
+  padding: 0 11px;
+  background: #fff;
+  color: #202b3c;
+  font-size: 12px;
+  min-width: 0;
+  outline: none;
+}
+
+.manutencao-filtros input:focus,
+.manutencao-filtros select:focus {
+  border-color: #174ea6;
+  box-shadow: 0 0 0 3px rgba(23, 78, 166, .08);
+}
+
+/* =====================================================
+   FEEDBACK
+===================================================== */
+
+#manutencao-feedback {
+  min-height: 20px;
+  padding: 10px 22px;
+  background: #fff;
+  border-left: 1px solid #e2e7ef;
+  border-right: 1px solid #e2e7ef;
+  font-size: 12px;
+  color: #16845b;
+}
+
+#manutencao-feedback.erro {
+  color: #b42332;
+}
+
+/* =====================================================
+   KANBAN
+===================================================== */
+
+.manutencao-kanban {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(235px, 1fr));
+  gap: 13px;
+  align-items: start;
+  overflow-x: auto;
+  padding: 18px 22px 22px;
+  background: #fff;
+  border: 1px solid #e2e7ef;
+  border-top: 0;
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 4px 18px rgba(20, 35, 60, .045);
+}
+
+.kanban-coluna {
+  min-width: 0;
+  min-height: 250px;
+  padding: 12px;
+  background: #f8f9fb;
+  border: 1px solid #e2e7ef;
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
+.kanban-coluna-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 13px;
+  padding: 2px 2px 12px;
+  border-bottom: 1px solid #e2e7ef;
+}
+
+.kanban-coluna-header h3 {
+  margin: 0;
+  color: #344054;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.kanban-coluna-header > span {
+  display: grid;
+  place-items: center;
+  min-width: 23px;
+  height: 23px;
+  padding: 0 5px;
+  box-sizing: border-box;
+  border-radius: 20px;
+  background: #edf3fc;
+  color: #174ea6;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.kanban-coluna-corpo {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.kanban-vazio {
+  padding: 25px 8px;
+  color: #98a2b3;
+  font-size: 11px;
+  text-align: center;
+}
+
+/* Cartões do Kanban */
+
+.kanban-card {
+  padding: 14px;
+  background: #fff;
+  border: 1px solid #e2e7ef;
+  border-radius: 9px;
+  box-shadow: 0 2px 7px rgba(20, 35, 60, .035);
+}
+
+.kanban-card-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.kanban-card-topo > span:first-child {
+  color: #174ea6;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.prioridade {
+  display: inline-flex;
+  padding: 5px 8px;
+  border-radius: 20px;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.prioridade-baixa {
+  background: #ecfdf3;
+  color: #027a48;
+}
+
+.prioridade-media {
+  background: #eff8ff;
+  color: #175cd3;
+}
+
+.prioridade-alta {
+  background: #fff6ed;
+  color: #c4320a;
+}
+
+.prioridade-critica {
+  background: #fef3f2;
+  color: #b42318;
+}
+
+.kanban-card h4 {
+  margin: 0 0 8px;
+  color: #202b3c;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.kanban-card > p {
+  margin: 0 0 13px;
+  color: #697586;
+  font-size: 11px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.kanban-card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-top: 10px;
+  border-top: 1px solid #edf0f5;
+}
+
+.kanban-card-meta span {
+  color: #8792a2;
+  font-size: 10px;
+}
+
+.kanban-card-acoes {
+  display: flex;
+  gap: 7px;
+  margin-top: 12px;
+}
+
+.kanban-card-acoes button {
+  flex: 1;
+  min-height: 32px;
+  padding: 6px 8px;
+  border: 1px solid #dce3ed;
+  border-radius: 6px;
+  background: #fff;
+  color: #475467;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.kanban-card-acoes button:hover {
+  background: #f2f6fc;
+  color: #174ea6;
+}
+
+/* =====================================================
+   ACOMPANHAMENTO
+===================================================== */
+
+.modulo-ti-lookup {
+  width: min(760px, 100%);
+  margin: 30px auto;
+  padding: 25px;
+  box-sizing: border-box;
+  background: #fff;
+  border: 1px solid #e2e7ef;
+  border-radius: 12px;
+  box-shadow: 0 4px 18px rgba(20, 35, 60, .05);
+}
+
+.modulo-ti-lookup > .modulo-ti-icon {
+  margin-bottom: 18px;
+}
+
+.modulo-ti-lookup h2 {
+  font-size: 19px;
+  margin: 0 0 8px;
+  color: #202b3c;
+}
+
+.modulo-ti-lookup p {
+  font-size: 13px;
+  color: #697586;
+  line-height: 1.7;
+  margin: 0 0 22px;
+}
+
+.modulo-ti-lookup label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #475467;
+}
+
+.modulo-ti-lookup-row {
+  display: flex;
+  gap: 9px;
+}
+
+.modulo-ti-lookup input {
+  flex: 1;
+  min-width: 0;
+  height: 42px;
+  border: 1px solid #d6deea;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 13px;
+  color: #202b3c;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.modulo-ti-lookup input:focus {
+  border-color: #174ea6;
+  box-shadow: 0 0 0 3px rgba(23, 78, 166, .08);
+}
+
+.modulo-ti-lookup button {
+  min-height: 42px;
+  border: 0;
+  border-radius: 8px;
+  background: #174ea6;
+  color: #fff;
+  padding: 0 18px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.modulo-ti-lookup button:hover:not(:disabled) {
+  background: #123d82;
+}
+
+.modulo-ti-lookup button:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+.modulo-ti-lookup small {
+  display: block;
+  color: #98a2b3;
+  font-size: 11px;
+  line-height: 1.6;
+  margin-top: 12px;
+}
+
+/* =====================================================
+   MODAIS DE MANUTENÇÃO
+===================================================== */
+
+.manutencao-modal[hidden] {
+  display: none !important;
+}
+
+.manutencao-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(15, 29, 49, .62);
+  overflow-y: auto;
+}
+
+.manutencao-modal-conteudo {
+  width: min(760px, 100%);
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  padding: 25px;
+  box-sizing: border-box;
+  background: #fff;
+  border: 1px solid #e2e7ef;
+  border-radius: 14px;
+  box-shadow: 0 20px 70px rgba(0, 0, 0, .24);
+}
+
+.manutencao-modal-conteudo > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 22px;
+}
+
+.manutencao-modal-conteudo h2 {
+  margin: 0;
+  color: #202b3c;
+  font-size: 21px;
+}
+
+.manutencao-modal-conteudo > header button {
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 7px;
+  background: #f2f4f7;
+  color: #475467;
+  font-size: 23px;
+  cursor: pointer;
+}
+
+.manutencao-modal-conteudo form {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.manutencao-modal-conteudo label {
+  display: block;
+  color: #475467;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.manutencao-modal-conteudo input,
+.manutencao-modal-conteudo select,
+.manutencao-modal-conteudo textarea {
+  width: 100%;
+  min-height: 41px;
+  margin-top: 7px;
+  padding: 10px 11px;
+  box-sizing: border-box;
+  border: 1px solid #d6deea;
+  border-radius: 8px;
+  background: #fff;
+  color: #202b3c;
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.manutencao-modal-conteudo textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.manutencao-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 15px;
+}
+
+.manutencao-modal-acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+  margin-top: 12px;
+  padding-top: 18px;
+  border-top: 1px solid #edf0f5;
+}
+
+.manutencao-modal-acoes button {
+  min-height: 40px;
+  padding: 10px 16px;
+  border: 1px solid #dce3ed;
+  border-radius: 8px;
+  background: #fff;
+  color: #344054;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.manutencao-modal-acoes button[type="submit"] {
+  background: #174ea6;
+  border-color: #174ea6;
+  color: #fff;
+}
+
+.manutencao-modal-acoes button[type="submit"]:hover {
+  background: #123d82;
+}
+
+/* =====================================================
+   DETALHES E HISTÓRICO
+===================================================== */
+
+.manutencao-detalhes {
+  width: min(760px, 100%);
+}
+
+#detalhes-manutencao-conteudo {
+  color: #475467;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+#detalhes-manutencao-conteudo h3 {
+  color: #202b3c;
+  font-size: 15px;
+}
+
+#detalhes-manutencao-conteudo p {
+  margin: 8px 0;
+  overflow-wrap: anywhere;
+}
+
+#detalhes-manutencao-conteudo hr {
+  margin: 20px 0;
+  border: 0;
+  border-top: 1px solid #e2e7ef;
+}
+
+.historico-manutencao {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 15px 0 20px;
+}
+
+.historico-manutencao article {
+  padding: 13px;
+  background: #f8f9fb;
+  border: 1px solid #e2e7ef;
+  border-radius: 8px;
+}
+
+.historico-manutencao strong {
+  color: #174ea6;
+  font-size: 12px;
+}
+
+.historico-manutencao small {
+  color: #98a2b3;
+  font-size: 10px;
+}
+
+/* =====================================================
+   RODAPÉ
+===================================================== */
+
+.modulo-ti-footer {
+  text-align: center;
+  color: #98a2b3;
+  font-size: 11px;
+  margin: 38px 0 12px;
+  line-height: 1.7;
+}
+
+/* =====================================================
+   RESPONSIVIDADE
+===================================================== */
+
+@media (max-width: 1050px) {
+  .modulo-ti-main {
+    width: calc(100% - 32px);
+    padding: 28px 16px;
+  }
+
+  .manutencao-indicadores {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .manutencao-filtros {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .manutencao-kanban {
+    grid-template-columns: repeat(6, 245px);
+  }
+}
+
+@media (max-width: 650px) {
+  .modulo-ti-main {
+    width: 100%;
+    margin: 0;
+    padding: 24px 14px 20px;
+  }
+
+  .modulo-ti-header {
+    align-items: flex-start;
+    flex-direction: column;
+    margin-top: 4px;
+  }
+
+  .modulo-ti-header h1 {
+    font-size: 25px;
+  }
+
+  .modulo-ti-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .manutencao-indicadores {
+    gap: 9px;
+  }
+
+  .manutencao-indicadores .modulo-ti-card {
+    min-height: 90px;
+    padding: 14px;
+  }
+
+  .manutencao-indicadores .modulo-ti-card strong {
+    font-size: 24px;
+  }
+
+  .manutencao-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 17px 14px;
+  }
+
+  .manutencao-toolbar > div:last-child {
+    width: 100%;
+  }
+
+  .manutencao-toolbar button {
+    flex: 1;
+    padding: 9px 10px;
+  }
+
+  .manutencao-filtros {
+    grid-template-columns: 1fr;
+    padding: 14px;
+  }
+
+  .manutencao-kanban {
+    grid-template-columns: repeat(6, 245px);
+    padding: 14px;
+  }
+
+  .modulo-ti-lookup {
+    padding: 21px 17px;
+    margin: 22px auto;
+  }
+
+  .modulo-ti-lookup-row {
+    flex-direction: column;
+  }
+
+  .modulo-ti-lookup button {
+    width: 100%;
+  }
+
+  .manutencao-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .manutencao-modal {
+    padding: 10px;
+    align-items: flex-start;
+  }
+
+  .manutencao-modal-conteudo {
+    padding: 19px;
+    margin: auto 0;
+  }
+
+  .manutencao-modal-acoes {
+    flex-direction: column-reverse;
+  }
+
+  .manutencao-modal-acoes button {
+    width: 100%;
+  }
+}
