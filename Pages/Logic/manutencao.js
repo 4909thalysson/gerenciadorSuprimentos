@@ -9,12 +9,15 @@
   const $ = id => document.getElementById(id);
 
   const ETAPAS = [
-    { id: 'aberta', nome: 'Aberta' },
-    { id: 'triagem', nome: 'Triagem' },
-    { id: 'aguardando', nome: 'Aguardando' },
+    { id: 'solicitacao_aberta', nome: 'Aberta' },
+    { id: 'em_triagem', nome: 'Triagem' },
+    { id: 'aguardando_peca', nome: 'Aguardando peça' },
+    { id: 'aguardando_aprovacao', nome: 'Aguardando aprovação' },
     { id: 'em_manutencao', nome: 'Em manutenção' },
     { id: 'em_testes', nome: 'Em testes' },
-    { id: 'concluida', nome: 'Concluída' }
+    { id: 'concluida', nome: 'Concluída' },
+    { id: 'entregue', nome: 'Entregue' },
+    { id: 'cancelada', nome: 'Cancelada' }
   ];
 
   const PRIORIDADES = ['baixa', 'media', 'alta', 'critica'];
@@ -157,8 +160,8 @@
 
             <div class="manutencao-form-grid">
               <div>
-                <label for="solicitante-email">E-mail</label>
-                <input id="solicitante-email" type="email" maxlength="160">
+                <label for="solicitante-email">E-mail *</label>
+                <input id="solicitante-email" type="email" maxlength="160" required>
               </div>
               <div>
                 <label for="solicitante-telefone">Telefone</label>
@@ -269,14 +272,16 @@
     $('kpi-total').textContent = manutencoes.length;
 
     $('kpi-andamento').textContent = manutencoes.filter(m =>
-      ['triagem', 'em_manutencao', 'em_testes'].includes(m.status)
+      ['em_triagem', 'em_manutencao', 'em_testes'].includes(m.status)
     ).length;
 
-    $('kpi-aguardando').textContent =
-      manutencoes.filter(m => m.status === 'aguardando').length;
+    $('kpi-aguardando').textContent = manutencoes.filter(m =>
+      ['aguardando_peca', 'aguardando_aprovacao'].includes(m.status)
+    ).length;
 
-    $('kpi-concluidas').textContent =
-      manutencoes.filter(m => m.status === 'concluida').length;
+    $('kpi-concluidas').textContent = manutencoes.filter(m =>
+      ['concluida', 'entregue'].includes(m.status)
+    ).length;
   }
 
   function nomeEtapa(status) {
@@ -310,7 +315,7 @@
     kanban.replaceChildren();
 
     ETAPAS.forEach(etapa => {
-      const itens = lista.filter(m => (m.status || 'aberta') === etapa.id);
+      const itens = lista.filter(m => (m.status || 'solicitacao_aberta') === etapa.id);
 
       const coluna = document.createElement('section');
       coluna.className = `kanban-coluna etapa-${etapa.id}`;
@@ -396,26 +401,37 @@
       return;
     }
 
-    const agora = new Date().toISOString();
+    const nome = normalizar($('solicitante-nome').value);
+    const email = normalizar($('solicitante-email').value);
+    const descricao = normalizar($('descricao-problema').value);
+
+    if (!nome || !email || !descricao) {
+      mensagem('Preencha o nome, o e-mail e a descrição do problema.', true);
+      return;
+    }
+
+    // Valida também o formato do e-mail, conforme o tipo do campo HTML.
+    if (!$('solicitante-email').checkValidity()) {
+      $('solicitante-email').reportValidity();
+      return;
+    }
 
     const payload = {
+      protocolo: gerarProtocolo(),
+      token_acompanhamento: gerarToken(),
       ativo_id: ativo.id,
       equipamento_descricao: ativo.descricao,
-      categoria: ativo.categoria,
-      fabricante: ativo.fabricante,
-      modelo: ativo.modelo,
-      numero_serie: ativo.numero_serie,
-      solicitante_nome: normalizar($('solicitante-nome').value),
-      solicitante_email: normalizar($('solicitante-email').value) || null,
+      categoria: ativo.categoria || null,
+      fabricante: ativo.fabricante || null,
+      modelo: ativo.modelo || null,
+      numero_serie: ativo.numero_serie || null,
+      solicitante_nome: nome,
+      solicitante_email: email,
       solicitante_setor: normalizar($('solicitante-setor').value) || null,
       solicitante_telefone: normalizar($('solicitante-telefone').value) || null,
-      descricao_problema: normalizar($('descricao-problema').value),
+      descricao_problema: descricao,
       prioridade: $('manutencao-prioridade').value,
-      status: 'aberta',
-      data_abertura: agora,
-      criado_em: agora,
-      atualizado_em: agora,
-      token_acompanhamento: gerarToken()
+      status: 'solicitacao_aberta'
     };
 
     const botao = $('salvar-manutencao');
@@ -434,7 +450,7 @@
       await registrarHistorico({
         manutencao_id: data.id,
         status_anterior: null,
-        status_novo: 'aberta',
+        status_novo: 'solicitacao_aberta',
         descricao: 'Solicitação de manutenção registrada.',
         usuario_id: usuario?.id || null,
         responsavel_nome: usuario?.email || 'Sistema',
@@ -442,7 +458,7 @@
       });
 
       fecharFormulario();
-      mensagem(`Solicitação ${data.protocolo || ''} registrada com sucesso.`);
+      mensagem(`Solicitação ${data.protocolo} registrada com sucesso.`);
 
       const link = new URL('/Pages/acompanhamento.html', location.origin);
       link.searchParams.set('token', data.token_acompanhamento);
@@ -457,12 +473,31 @@
       await carregarDados();
 
     } catch (error) {
-      console.error(error);
-      mensagem(`Não foi possível registrar: ${error.message}`, true);
+      console.error('Erro ao registrar manutenção:', error);
+      const detalhe = [
+        error.message,
+        error.code ? `Código: ${error.code}` : '',
+        error.details ? `Detalhes: ${error.details}` : '',
+        error.hint ? `Orientação: ${error.hint}` : ''
+      ].filter(Boolean).join(' | ');
+      mensagem(`Não foi possível registrar: ${detalhe || 'Erro desconhecido.'}`, true);
     } finally {
       botao.disabled = false;
       botao.textContent = 'Registrar solicitação';
     }
+  }
+
+  function gerarProtocolo() {
+    const data = new Date();
+    const ano = data.getFullYear();
+    const mes = String(data.getMonth() + 1).padStart(2, '0');
+    const dia = String(data.getDate()).padStart(2, '0');
+    const identificador = crypto.randomUUID()
+      .replace(/-/g, '')
+      .substring(0, 8)
+      .toUpperCase();
+
+    return `MAN-${ano}${mes}${dia}-${identificador}`;
   }
 
   function gerarToken() {
