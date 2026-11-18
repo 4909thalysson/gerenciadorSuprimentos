@@ -202,24 +202,82 @@ async function gerarEstoque() {
 }
 
 // ===============================
-// ENVIAR EMAIL (FORMSPREE)
-// ===============================
-function enviarEmail() {
-
-    if (!conteudoEmail) {
+// ENVIAR CARDS AO PIPEFY (VERCEL FUNCTION)
+// Cada item gerado no relatório cria um card individual no Pipefy.
+async function enviarAoPipefy() {
+    if (!dadosGerados.length) {
         alert("Gere um relatório antes de enviar.");
         return;
     }
 
-    document.getElementById("emailRemetente").value =
-        "gerenciadorsuprimentosgi@cambai.com";
+    const botao = document.getElementById("btn-enviar-pipefy");
+    if (botao?.disabled) return;
 
-    const assunto = `RELATÓRIO - ${relatorioAtual || "GERAL"}\n\n`;
+    if (!confirm(`Serão enviados ${dadosGerados.length} registro(s), criando um card por registro no Pipefy. Deseja continuar?`)) {
+        return;
+    }
 
-    document.getElementById("mensagemEmail").value =
-        assunto + conteudoEmail;
+    if (botao) {
+        botao.disabled = true;
+        botao.textContent = "Enviando...";
+    }
 
-    document.getElementById("formPipefy").submit();
+    try {
+        const { data: sessaoData, error: sessaoErro } = await supabaseIntegrador.auth.getSession();
+        const accessToken = sessaoData?.session?.access_token;
+
+        if (sessaoErro || !accessToken) {
+            throw new Error("Sua sessão expirou. Entre novamente no sistema.");
+        }
+
+        const resposta = await fetch("/api/pipefy", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${accessToken}`
+            },
+            body: JSON.stringify({
+                registros: dadosGerados.map(item => ({
+                    tipo: item.tipo,
+                    setor: item.setor,
+                    suprimento: item.suprimento,
+                    cor: item.cor || "",
+                    quantidade: Number(item.un),
+                    dataHora: item.dataHora || null
+                }))
+            })
+        });
+
+        const resultado = await resposta.json().catch(() => ({}));
+        if (!resposta.ok) {
+            throw new Error(resultado.error || `Falha na integração (HTTP ${resposta.status}).`);
+        }
+
+        const criados = resultado.criados || [];
+        const falhas = resultado.falhas || [];
+        let mensagem = `${criados.length} card(s) criado(s) no Pipefy.`;
+
+        if (criados.length) {
+            mensagem += "\n\nCards criados:\n" + criados.map(card =>
+                `${card.tipo} — ${card.setor} — ${card.suprimento}\n${card.url}`
+            ).join("\n\n");
+        }
+
+        if (falhas.length) {
+            mensagem += `\n\n${falhas.length} registro(s) não foram enviados:\n` +
+                falhas.map(f => `${f.tipo} — ${f.setor} — ${f.suprimento}: ${f.error}`).join("\n");
+        }
+
+        alert(mensagem);
+    } catch (error) {
+        console.error("Erro ao enviar cards ao Pipefy:", error);
+        alert(`Não foi possível concluir o envio: ${error.message}`);
+    } finally {
+        if (botao) {
+            botao.disabled = false;
+            botao.textContent = "Enviar ao Pipefy";
+        }
+    }
 }
 
 // ===============================
@@ -282,5 +340,5 @@ document.addEventListener("DOMContentLoaded", function () {
 // ===============================
 window.gerarReservas = gerarEstoque;
 window.gerarRegistros = gerarRegistros;
-window.enviarEmail = enviarEmail;
+window.enviarAoPipefy = enviarAoPipefy;
 window.limparTudo = limparTudo;

@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/Pages/Styles/sidebarperfil.css">
     <title>Integrador</title>
     <link rel="icon" type="image/jpeg" href="/assets/logoCambai.jpeg">
+    <link rel="stylesheet" href="/Pages/Styles/enterprise.css">
 </head>
 <body style="visibility:hidden">
 
@@ -98,24 +99,13 @@
                 <pre id="previewConteudo">Visualização do conteúdo do relatório antes do envio.</pre>
             </div>
             <div class="preview-actions">
-                <button class="btn-success" onclick="enviarEmail()">Enviar ao Pipefy</button>
+                <button class="btn-success" id="btn-enviar-pipefy" onclick="enviarAoPipefy()">Enviar ao Pipefy</button>
                 <button class="btn-danger" onclick="limparTudo()">Limpar</button>
             </div>
         </div>
     </div>
 
-    <form
-        id="formPipefy"
-        action="https://formspree.io/f/xbdzgyqg"
-        method="POST"
-        style="display:none;"
-    >
-        <input type="email" name="email" id="emailRemetente">
-        <textarea name="message" id="mensagemEmail"></textarea>
 
-        <input type="hidden" name="_subject" value="Relatório Integrador Pipefy">
-        <input type="hidden" name="_captcha" value="false">
-    </form>
 
     <footer style="margin:80px 0 40px; text-align:center; color:#666; font-size:14.5px;">
         Sistema desenvolvido e mantido pela <strong>Equipe do GI</strong><br>

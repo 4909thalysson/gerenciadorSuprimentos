@@ -6,7 +6,8 @@
     <link rel="stylesheet" href="index.css">
     <link rel="icon" type="image/jpeg" href="/assets/logoCambai.jpeg">
 
-    <title>printMap</title>
+    <title>Painel de Impressoras | Gerenciador de Suprimentos</title>
+    <link rel="stylesheet" href="/Pages/Styles/enterprise.css">
 </head>
 <body style="visibility:hidden">
 
@@ -18,7 +19,7 @@
         </button>
 
         <nav id="menu">
-            <a href="/index.html">
+            <a href="/index.html" class="active" aria-current="page">
                 <img src="/assets/apps.png" alt="">
                 <span>Início</span>
             </a>
@@ -34,7 +35,7 @@
                 <img src="/assets/report.png" alt="">
                 <span>Páginas Impressas</span>
             </a>
-            <a href="/Pages/integrador.html" class="active">
+            <a href="/Pages/integrador.html">
                 <img src="/assets/plug-connection.png" alt="">
                 <span>Integrador</span>
             </a>
@@ -54,6 +55,7 @@
 
     <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
 
+    <main class="dashboard-main">
     <div class="cards">
         <div class="card">
             Impressoras<br>
@@ -102,6 +104,7 @@
     </div>
 
     <div class="printmap" id="printmap"></div>
+    </main>
 
     <!-- Modal de Leitura -->
     <div id="modal-leitura" class="modal-overlay">
