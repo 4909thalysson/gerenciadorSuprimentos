@@ -1,86 +1,334 @@
-/* =============================== */
-/* LOGIN — tela isolada, sem sidebar */
-/* Depende das variáveis base de index.css */
-/* =============================== */
+
+/* =====================================================
+   PRINT CONTROL — LOGIN
+   Identidade visual Enterprise
+   ===================================================== */
+
+:root {
+    --login-primary: #073B78;
+    --login-primary-dark: #052D5C;
+    --login-primary-light: #0B57A4;
+
+    --login-background: #F1F4F8;
+    --login-white: #FFFFFF;
+
+    --login-text: #172B45;
+    --login-muted: #738096;
+
+    --login-border: #DCE3EC;
+
+    --login-danger: #B42318;
+    --login-danger-bg: #FEF3F2;
+
+    --login-radius: 14px;
+}
+
+/* =====================================================
+   ESTRUTURA GERAL
+   ===================================================== */
 
 .login-body {
-    padding-left: 0;
+    margin: 0;
+    padding: 0;
+
+    width: 100%;
     min-height: 100vh;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(160deg, #0445b8 0%, #0056b3 45%, #f4f6fa 45%);
+
+    background:
+        radial-gradient(
+            circle at 15% 15%,
+            rgba(35, 105, 180, 0.35),
+            transparent 35%
+        ),
+        linear-gradient(
+            145deg,
+            #052D5C 0%,
+            #073B78 50%,
+            #0A4B8F 100%
+        );
+
+    font-family: "Segoe UI", Arial, sans-serif;
+
+    box-sizing: border-box;
 }
 
-.login-wrap {
+.login-body *,
+.login-body *::before,
+.login-body *::after {
+    box-sizing: border-box;
+}
+
+/* =====================================================
+   CONTAINER
+   ===================================================== */
+
+.login-container {
     width: 100%;
-    max-width: 380px;
-    padding: 20px;
+    max-width: 460px;
+
+    padding: 32px 24px;
+
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 24px;
 }
 
+/* =====================================================
+   CARD
+   ===================================================== */
+
 .login-card {
-    background: #ffffff;
-    border-radius: 14px;
-    padding: 36px 32px;
     width: 100%;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+
+    background: var(--login-white);
+
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: var(--login-radius);
+
+    padding: 40px 38px 26px;
+
+    box-shadow:
+        0 24px 65px rgba(0, 0, 0, 0.22),
+        0 4px 12px rgba(0, 0, 0, 0.06);
+
+    display: flex;
+    flex-direction: column;
+}
+
+/* =====================================================
+   CABEÇALHO
+   ===================================================== */
+
+.login-header {
     display: flex;
     flex-direction: column;
     align-items: center;
+
     text-align: center;
 }
 
+.login-brand {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 28px;
+}
+
 .login-logo {
-    height: 56px;
+    max-width: 210px;
+    max-height: 78px;
+
     width: auto;
+    height: auto;
+
     object-fit: contain;
-    background: #0445b8;
-    padding: 10px;
-    border-radius: 10px;
-    margin-bottom: 16px;
+}
+
+.login-heading {
+    width: 100%;
+}
+
+.login-overline {
+    display: block;
+
+    color: var(--login-primary-light);
+
+    font-size: 10px;
+    font-weight: 700;
+
+    letter-spacing: 2px;
+
+    margin-bottom: 9px;
 }
 
 .login-card h1 {
-    color: #0056b3;
-    font-size: 24px;
-    margin-bottom: 4px;
+    margin: 0;
+
+    color: var(--login-text);
+
+    font-size: 29px;
+    font-weight: 700;
+
+    letter-spacing: -0.8px;
 }
 
 .login-subtitulo {
-    color: #666;
+    margin: 9px 0 0;
+
+    color: var(--login-muted);
+
     font-size: 14px;
-    margin-bottom: 24px;
+    line-height: 1.5;
 }
 
-.login-card form {
+/* =====================================================
+   DIVISOR
+   ===================================================== */
+
+.login-divider {
     width: 100%;
+    height: 1px;
+
+    background: var(--login-border);
+
+    margin: 28px 0;
+}
+
+/* =====================================================
+   FORMULÁRIO
+   ===================================================== */
+
+.login-form {
+    width: 100%;
+
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    text-align: left;
+    gap: 20px;
 }
+
+.login-card .form-group {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    margin: 0;
+}
+
+.login-card .form-group label {
+    color: var(--login-text);
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.login-card .form-group input {
+    width: 100%;
+    height: 48px;
+
+    padding: 0 14px;
+
+    border: 1px solid var(--login-border);
+    border-radius: 8px;
+
+    background: #FAFBFD;
+
+    color: var(--login-text);
+
+    font-family: inherit;
+    font-size: 14px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.login-card .form-group input::placeholder {
+    color: #A0AABA;
+}
+
+.login-card .form-group input:hover {
+    border-color: #AAB8CA;
+}
+
+.login-card .form-group input:focus {
+    background: #FFFFFF;
+
+    border-color: var(--login-primary-light);
+
+    box-shadow:
+        0 0 0 3px rgba(11, 87, 164, 0.12);
+}
+
+/* =====================================================
+   MENSAGEM DE ERRO
+   ===================================================== */
 
 .login-erro {
     display: none;
-    color: #b30000;
-    background: #ffe5e5;
-    border: 1px solid #f5b5b5;
-    border-radius: 6px;
-    padding: 8px 10px;
-    font-size: 13px;
+
+    width: 100%;
+
     margin: 0;
+
+    padding: 11px 13px;
+
+    color: var(--login-danger);
+
+    background: var(--login-danger-bg);
+
+    border: 1px solid #FECACA;
+    border-radius: 7px;
+
+    font-size: 13px;
+    line-height: 1.5;
 }
 
 .login-erro.ativo {
     display: block;
 }
 
+/* =====================================================
+   BOTÃO
+   ===================================================== */
+
+.login-card .form-actions {
+    width: 100%;
+    margin-top: 3px;
+}
+
 .login-card .btn-salvar {
     width: 100%;
+    min-height: 49px;
+
+    padding: 0 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    background: var(--login-primary);
+
+    color: #FFFFFF;
+
+    border: none;
+    border-radius: 8px;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.login-card .btn-salvar:hover:not(:disabled) {
+    background: var(--login-primary-dark);
+
+    box-shadow: 0 5px 14px rgba(7, 59, 120, 0.22);
+
+    transform: translateY(-1px);
+}
+
+.login-card .btn-salvar:active:not(:disabled) {
+    transform: translateY(0);
 }
 
 .login-card .btn-salvar:disabled {
@@ -88,15 +336,157 @@
     cursor: not-allowed;
 }
 
-.login-wrap footer {
-    margin: 0;
-    color: rgba(255, 255, 255, 0.85);
-    font-size: 13px;
-    text-align: center;
+.login-arrow {
+    font-size: 19px;
+    line-height: 1;
+
+    transition: transform 0.2s ease;
 }
 
+.login-card .btn-salvar:hover:not(:disabled) .login-arrow {
+    transform: translateX(3px);
+}
+
+/* =====================================================
+   RODAPÉ DO CARD
+   ===================================================== */
+
+.login-card-footer {
+    width: 100%;
+
+    margin-top: 27px;
+    padding-top: 19px;
+
+    border-top: 1px solid var(--login-border);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-security {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    color: var(--login-muted);
+
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.security-dot {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #16A36A;
+
+    box-shadow: 0 0 0 3px rgba(22, 163, 106, 0.12);
+}
+
+/* =====================================================
+   RODAPÉ GERAL
+   ===================================================== */
+
+.login-footer {
+    width: 100%;
+
+    text-align: center;
+
+    color: rgba(255, 255, 255, 0.75);
+
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.login-footer p {
+    margin: 0;
+}
+
+.login-footer strong {
+    color: #FFFFFF;
+    font-weight: 600;
+}
+
+/* =====================================================
+   RESPONSIVIDADE
+   ===================================================== */
+
 @media (max-width: 480px) {
-    .login-card {
-        padding: 28px 22px;
+
+    .login-container {
+        padding: 22px 18px;
+        gap: 20px;
     }
+
+    .login-card {
+        padding: 32px 24px 23px;
+    }
+
+    .login-logo {
+        max-width: 185px;
+        max-height: 68px;
+    }
+
+    .login-card h1 {
+        font-size: 26px;
+    }
+
+    .login-divider {
+        margin: 23px 0;
+    }
+
+}
+
+@media (max-width: 360px) {
+
+    .login-container {
+        padding: 16px 12px;
+    }
+
+    .login-card {
+        padding: 27px 19px 21px;
+    }
+
+    .login-card h1 {
+        font-size: 24px;
+    }
+
+}
+
+/* =====================================================
+   TELAS COM POUCA ALTURA
+   ===================================================== */
+
+@media (max-height: 650px) and (min-width: 481px) {
+
+    .login-body {
+        align-items: flex-start;
+    }
+
+    .login-container {
+        padding-top: 20px;
+        padding-bottom: 20px;
+        gap: 15px;
+    }
+
+    .login-card {
+        padding-top: 25px;
+        padding-bottom: 20px;
+    }
+
+    .login-brand {
+        margin-bottom: 15px;
+    }
+
+    .login-divider {
+        margin: 18px 0;
+    }
+
+    .login-card-footer {
+        margin-top: 18px;
+    }
+
 }

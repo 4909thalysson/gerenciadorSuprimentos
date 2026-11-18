@@ -1,46 +1,132 @@
+
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#073B78">
+    <meta name="description" content="Print Control - Sistema de gerenciamento e controle de impressoras.">
+
+    <link rel="icon" type="image/jpeg" href="/assets/logoCambai.jpeg">
     <link rel="stylesheet" href="/index.css">
     <link rel="stylesheet" href="/login.css">
-    <link rel="icon" type="image/jpeg" href="/assets/logoCambai.jpeg">
 
-    <title>Entrar · printMap</title>
+    <title>Entrar | Print Control</title>
 </head>
+
 <body class="login-body">
 
-    <div class="login-wrap">
-        <div class="login-card">
-            <img class="login-logo" src="/assets/logo_cambai_branco.png" alt="Logo Cambaí Sementes">
+    <main class="login-container">
 
-            <h1>Print Control</h1>
-            <p class="login-subtitulo">Entre com sua conta para continuar</p>
+        <section class="login-card">
 
-            <form id="form-login">
-                <div class="form-group">
-                    <label for="login-email">E-mail:</label>
-                    <input type="email" id="login-email" autocomplete="username" required>
-                </div>
-                <div class="form-group">
-                    <label for="login-senha">Senha:</label>
-                    <input type="password" id="login-senha" autocomplete="current-password" required>
+            <header class="login-header">
+
+                <div class="login-brand">
+                    <img
+                        class="login-logo"
+                        src="assets/Logo Cambaí_page-0002.jpg"
+                        alt="Cambaí Sementes"
+                    >
                 </div>
 
-                <p id="login-erro" class="login-erro"></p>
+                <div class="login-heading">
+                    <span class="login-overline">GESTÃO DA INFORMAÇÃO</span>
+
+                    <h1>Print Control</h1>
+
+                    <p class="login-subtitulo">
+                        Acesse sua conta para continuar
+                    </p>
+                </div>
+
+            </header>
+
+            <div class="login-divider"></div>
+
+            <form id="form-login" class="login-form">
+
+                <div class="form-group">
+
+                    <label for="login-email">
+                        E-mail
+                    </label>
+
+                    <input
+                        type="email"
+                        id="login-email"
+                        name="email"
+                        placeholder="seu.email@empresa.com"
+                        autocomplete="username"
+                        required
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="login-senha">
+                        Senha
+                    </label>
+
+                    <input
+                        type="password"
+                        id="login-senha"
+                        name="senha"
+                        placeholder="Digite sua senha"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                </div>
+
+                <p
+                    id="login-erro"
+                    class="login-erro"
+                    role="alert"
+                    aria-live="polite"
+                ></p>
 
                 <div class="form-actions">
-                    <button type="submit" class="btn-salvar" id="btn-entrar">Entrar</button>
-                </div>
-            </form>
-        </div>
 
-        <footer>
-            Sistema desenvolvido e mantido pela <strong>Equipe do GI</strong><br>
-            Cambaí Sementes © 2026
+                    <button
+                        type="submit"
+                        class="btn-salvar"
+                        id="btn-entrar"
+                    >
+                        <span>Entrar no sistema</span>
+                        <span class="login-arrow" aria-hidden="true">→</span>
+                    </button>
+
+                </div>
+
+            </form>
+
+            <footer class="login-card-footer">
+                <span class="login-security">
+                    <span class="security-dot"></span>
+                    Ambiente de acesso seguro
+                </span>
+            </footer>
+
+        </section>
+
+        <footer class="login-footer">
+
+            <p>
+                Sistema desenvolvido e mantido pela
+                <strong>Equipe do GI</strong>
+            </p>
+
+            <p>
+                Cambaí Sementes © 2026
+            </p>
+
         </footer>
-    </div>
+
+    </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="/login.js"></script>
