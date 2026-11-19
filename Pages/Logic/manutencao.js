@@ -366,6 +366,20 @@
         <button type="button" data-acao="detalhes">Detalhes</button>
         <button type="button" data-acao="avancar">Alterar etapa</button>
       </div>
+      <div class="kanban-card-acoes kanban-card-acompanhamento">
+        <button
+          type="button"
+          data-acao="compartilhar-acompanhamento"
+          ${item.token_acompanhamento ? '' : 'disabled'}
+          title="${item.token_acompanhamento ? 'Compartilhar link privado' : 'Esta solicitação não possui token de acompanhamento'}"
+        >Compartilhar</button>
+        <button
+          type="button"
+          data-acao="copiar-acompanhamento"
+          ${item.token_acompanhamento ? '' : 'disabled'}
+          title="${item.token_acompanhamento ? 'Copiar link privado' : 'Esta solicitação não possui token de acompanhamento'}"
+        >Copiar link</button>
+      </div>
     `;
 
     card.querySelector('[data-acao="detalhes"]')
@@ -374,7 +388,83 @@
     card.querySelector('[data-acao="avancar"]')
       .addEventListener('click', () => alterarEtapa(item));
 
+    card.querySelector('[data-acao="compartilhar-acompanhamento"]')
+      .addEventListener('click', () => compartilharAcompanhamento(item));
+
+    card.querySelector('[data-acao="copiar-acompanhamento"]')
+      .addEventListener('click', () => copiarLinkAcompanhamento(item));
+
     return card;
+  }
+
+  function gerarLinkAcompanhamento(item) {
+    const token = normalizar(item?.token_acompanhamento);
+
+    if (!token) {
+      throw new Error('Esta solicitação não possui token de acompanhamento.');
+    }
+
+    const link = new URL('/Pages/acompanhamento.html', window.location.origin);
+    link.searchParams.set('token', token);
+
+    return link.toString();
+  }
+
+  async function copiarTexto(texto) {
+    if (navigator.clipboard?.writeText && window.isSecureContext) {
+      await navigator.clipboard.writeText(texto);
+      return;
+    }
+
+    const campo = document.createElement('textarea');
+    campo.value = texto;
+    campo.setAttribute('readonly', '');
+    campo.style.position = 'fixed';
+    campo.style.opacity = '0';
+    document.body.appendChild(campo);
+    campo.select();
+
+    const copiado = document.execCommand('copy');
+    campo.remove();
+
+    if (!copiado) {
+      window.prompt('Copie o link de acompanhamento:', texto);
+    }
+  }
+
+  async function copiarLinkAcompanhamento(item) {
+    try {
+      const link = gerarLinkAcompanhamento(item);
+      await copiarTexto(link);
+      mensagem('Link privado de acompanhamento copiado.');
+    } catch (error) {
+      console.error('Erro ao copiar link de acompanhamento:', error);
+      mensagem(error.message || 'Não foi possível copiar o link.', true);
+    }
+  }
+
+  async function compartilharAcompanhamento(item) {
+    try {
+      const link = gerarLinkAcompanhamento(item);
+      const dados = {
+        title: `Acompanhamento ${item.protocolo || 'da manutenção'}`,
+        text: `Acompanhe sua solicitação de manutenção ${item.protocolo || ''}.`,
+        url: link
+      };
+
+      if (navigator.share) {
+        await navigator.share(dados);
+        mensagem('Link de acompanhamento pronto para compartilhar.');
+      } else {
+        await copiarTexto(link);
+        mensagem('Seu navegador não oferece compartilhamento direto. Link copiado.');
+      }
+    } catch (error) {
+      if (error.name === 'AbortError') return;
+
+      console.error('Erro ao compartilhar acompanhamento:', error);
+      mensagem(error.message || 'Não foi possível compartilhar o acompanhamento.', true);
+    }
   }
 
   function abrirFormulario() {
