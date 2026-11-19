@@ -397,19 +397,23 @@
     return card;
   }
 
-  function gerarLinkAcompanhamento(item) {
-    const token = normalizar(item?.token_acompanhamento);
+    function gerarLinkAcompanhamento(item) {
+      const token = normalizar(item?.token_acompanhamento);
 
-    if (!token) {
-      throw new Error('Esta solicitação não possui token de acompanhamento.');
+      if (!token) {
+        throw new Error('Esta solicitação não possui token de acompanhamento.');
+      }
+
+      const link = new URL(
+        '/Pages/acompanhamento-publico.html',
+        window.location.origin
+      );
+
+      link.searchParams.set('token', token);
+
+      return link.toString();
     }
-
-    const link = new URL('/Pages/acompanhamento.html', window.location.origin);
-    link.searchParams.set('token', token);
-
-    return link.toString();
-  }
-
+    
   async function copiarTexto(texto) {
     if (navigator.clipboard?.writeText && window.isSecureContext) {
       await navigator.clipboard.writeText(texto);
