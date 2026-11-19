@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#123d82">
+  <title>Acompanhamento de manutenção - Cambaí Sementes</title>
+  <link rel="icon" type="image/jpeg" href="/assets/logoCambai.jpeg">
+  <link rel="stylesheet" href="/Pages/Styles/modulo-ti.css">
+  <link rel="stylesheet" href="/Pages/Styles/acompanhamento-publico.css">
+</head>
+<body class="pagina-acompanhamento-publico">
+  <main class="modulo-ti-main acompanhamento-publico-main">
+    <header class="modulo-ti-header acompanhamento-publico-header">
+      <div>
+        <span class="eyebrow">CAMBAÍ SEMENTES · SUPORTE DE TI</span>
+        <h1>Acompanhamento de manutenção</h1>
+        <p>Consulte o andamento do atendimento utilizando o código privado recebido no link de acompanhamento.</p>
+      </div>
+      <span class="modulo-ti-status">Consulta pública</span>
+    </header>
+
+    <section class="modulo-ti-lookup acompanhamento-publico-lookup" aria-labelledby="titulo-consulta">
+      <div class="modulo-ti-icon" aria-hidden="true">⌕</div>
+      <h2 id="titulo-consulta">Consultar manutenção</h2>
+      <p>Informe ou cole abaixo o código de acompanhamento recebido. O protocolo, sozinho, não permite consultar os dados.</p>
+
+      <label for="token-acompanhamento">Código de acompanhamento</label>
+      <div class="modulo-ti-lookup-row">
+        <input
+          id="token-acompanhamento"
+          type="text"
+          autocomplete="off"
+          autocapitalize="off"
+          spellcheck="false"
+          placeholder="Cole aqui o código recebido"
+          aria-describedby="orientacao-token"
+        >
+        <button type="button" id="btn-consultar-token" disabled>Consultar</button>
+      </div>
+      <small id="orientacao-token">A consulta é feita por um código privado. Não compartilhe este código com outras pessoas.</small>
+      <div id="acompanhamento-feedback" role="status" aria-live="polite"></div>
+    </section>
+
+    <footer class="modulo-ti-footer acompanhamento-publico-footer">
+      Sistema desenvolvido e mantido pela <strong>Equipe do GI</strong><br>
+      Cambaí Sementes © 2026
+    </footer>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/Pages/Logic/acompanhamento-publico.js"></script>
+</body>
+</html>
